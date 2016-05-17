@@ -1289,7 +1289,7 @@ namespace ServerCenterLis
                 #region  状态信息上报
                 else if (strindex.Equals("03"))
                 {
-                    session.cls_vlss = session.getClsVlsS();  //123
+                    session.cls_vlss = session.getClsVlsS();  //456
                     //采集时间
                     session.cls_bjdb.Date = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
                     //状态标志
