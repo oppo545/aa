@@ -1012,7 +1012,7 @@ namespace ServerCenterLis
             buffer.Append("\"identifying\":\"" + identifying + "\",");
             buffer.Append("\"data\":{");
             buffer.Append("\"systemNo\":\"" + infos[0] + "\",");
-            buffer.Append("\"currentTime\":\"" + infos[1] + "\",");
+            buffer.Append("\"currentTime\":\"" + infos[1] + "\"},");
             buffer.Append("\"signalNames\":{");
             for (int i = 0; i < infos[2].Split(';').Count()-1; i++)
             {
@@ -1027,7 +1027,7 @@ namespace ServerCenterLis
                     buffer.Append("\"" + infos[2].Split(';')[i].Split('~')[1] + "\"");
                 }
             }
-            buffer.Append("}}}");
+            buffer.Append("}}");
             return buffer.ToString();
         }
 
@@ -1276,7 +1276,7 @@ namespace ServerCenterLis
                     //TO 中心服务器    TODOnotPush
                     if (!string.IsNullOrEmpty(sendmsgtol) && !session.isSupplement)
                     {
-                        session.SendAsToServersB(FomatToJosnByUnified(1, "", infovalue.Split(',')[0] + "," + infovalue.Split(',')[10] + "," + sendmsgtol)+"\b");
+                        session.SendAsToServersB(FomatToJosnByUnified(1, "", infovalue.Split(',')[0].Replace('\'', ' ').Trim() + "," + infovalue.Split(',')[10].Replace('\'', ' ').Trim() + "," + sendmsgtol) + "\b");
                     }
 
                     //TO Mysql数据库
