@@ -184,6 +184,12 @@ public class MsMq : Mq
         }
 
     }
+
+    public void SendMsg4(string info)
+    {
+
+    }
+
     public void SendMsgByAlarm(string info)
     {
         try

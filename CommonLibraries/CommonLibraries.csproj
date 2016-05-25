@@ -70,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Cls_SHDB.cs" />
     <Compile Include="Helper\WebServiceHelper.cs" />
     <Compile Include="Model\Cls_Evt.cs" />
     <Compile Include="Model\Cls_ZzRc.cs" />

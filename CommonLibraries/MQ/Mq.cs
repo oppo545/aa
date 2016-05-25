@@ -32,6 +32,12 @@ using System.Text;
         void SendMsg3(string info);
 
         /// <summary>
+        /// 下发指令回复小程序
+        /// </summary>
+        /// <param name="info"></param>
+        void SendMsg4(string info);
+
+        /// <summary>
         /// 车载设备上传 alarm [发送给中心服务器]
         /// </summary>
         /// <param name="info"></param>

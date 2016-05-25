@@ -107,7 +107,10 @@ public class MqActive : Mq
     private static object _lock3 = new object();
 
 
-
+    /// <summary>
+    /// Can
+    /// </summary>
+    /// <param name="sender"></param>
     private static void SendDataCallback(Object sender)
     {
         lock (_lock1)
@@ -141,6 +144,10 @@ public class MqActive : Mq
             }
         }
     }
+    /// <summary>
+    /// PutQueue
+    /// </summary>
+    /// <param name="sender"></param>
     private static void SendDataCallback1(Object sender)
     {
         lock (_lock2)
@@ -174,6 +181,10 @@ public class MqActive : Mq
             }
         }
     }
+    /// <summary>
+    /// OriginalMessage
+    /// </summary>
+    /// <param name="sender"></param>
     private static void SendDataCallback2(Object sender)
     {
         lock (_lock3)
@@ -196,7 +207,7 @@ public class MqActive : Mq
                     }
                     if (lissql3.Count > 0)
                     {
-                        sendObject("OriginalMessage", lissql3);
+                        sendObject("ActiveMQ.OrderReply", lissql3);
                         lissql3.Clear();
                     }
                 }

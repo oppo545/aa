@@ -58,6 +58,19 @@ namespace ServerCenterLis
         public string InsertVehicleInfo = System.Configuration.ConfigurationManager.AppSettings["InsertVehicleInfo"].ToString();
 
         /// <summary>
+        /// 自动加车,入库Sql
+        /// 2016-01-22   
+        /// </summary>
+        public string OrganizationID = System.Configuration.ConfigurationManager.AppSettings["OrganizationID"].ToString();
+
+        /// <summary>
+        /// 自动加车,入库Sql
+        /// 2016-01-22   
+        /// </summary>
+        public string VehicleTypeID = System.Configuration.ConfigurationManager.AppSettings["VehicleTypeID"].ToString();
+
+
+        /// <summary>
         /// 车型数组,可配置
         /// </summary>
         public string VehicleModels = System.Configuration.ConfigurationManager.AppSettings["VehicleModels"].ToString();
@@ -123,6 +136,11 @@ namespace ServerCenterLis
         ///记录 设备信息 是否入库 
         /// </summary>
         public bool isDBExist = false;
+
+        /// <summary>
+        ///是否为上标车辆
+        /// </summary>
+        public bool isMarkedVehicles = false;
         #endregion
 
 
@@ -689,6 +707,17 @@ namespace ServerCenterLis
             return Sle;
         }
 
+        public Cls_SHDB_Register clsshdb_register;
+
+        public Cls_SHDB_Register getSHDBRegister()
+        {
+            if (clsshdb_register == null)
+            {
+                clsshdb_register = new Cls_SHDB_Register();
+            }
+            return clsshdb_register;
+        }
+
         private string sssim;
         /// <summary>
         /// 记录ss客户端 标识  <string, string> 
@@ -1074,6 +1103,11 @@ namespace ServerCenterLis
         public void SendAsToServersB(string strinfo)
         {
             mqs.SendMsg2(strinfo);
+        }
+
+        public void SendToReply(string strinfo)
+        {
+            mqs.SendMsg4(strinfo);
         }
         /// <summary>
         /// activemq 区分   SendMsgByAlarm:  Alarm

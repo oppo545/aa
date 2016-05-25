@@ -245,7 +245,7 @@ namespace ServerCenterLis
                                 // 开关门 车辆不在线 回复   (以下 如果是center下发 回复)
                                 if (session.OtherClient.Equals("center"))
                                 {
-                                    session.SendAsToServers(strinfo);
+                                    session.SendToReply(strinfo);
                                 }
                                 else
                                 {
@@ -264,6 +264,12 @@ namespace ServerCenterLis
                                 }
 
                             }
+                            else
+                            {
+                                string info = "{\"key\":\"client_message\",\"sendType\":\"3\",\"receiver\":\"admin\",\"identifying\":\"G27\",\"data\":{\"sysnos\":\"" + session.siCode + "\",\"result\":\"4\"}}";
+                                session.SendToReply(info);
+                            }
+
                         }
 
                         //为下发指令后, 处理指令后,避免 后面 在线之类的干扰
@@ -281,7 +287,9 @@ namespace ServerCenterLis
                 if (strindex.Equals("01"))
                 {
                     session.cls_register = session.getClsRegister();
+                    session.clsshdb_register = session.getSHDBRegister();
 
+                    session.clsshdb_register.registime = desc.Substring(0, 17);
                     session.cls_register.Zc_zcsj = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
                     session.cls_register.Zc_zclsh = desc.Substring(18, 5);
                     session.cls_register.Zc_cph = PublicMethods.GetHexToAscii(desc.Substring(24, 23));
@@ -317,6 +325,9 @@ namespace ServerCenterLis
                             session.cls_vlsei.BatteryProductionDateCode = PublicMethods.GetFormatTme(session.siCode, PublicMethods.GetGMT8Data(Numberinfo.Substring(27, 8), 0));
                             session.cls_vlsei.SerialNumber = PublicMethods.Get16To10(Numberinfo.Substring(36, 5)).ToString();
 
+                            string dcyl = onecode.Substring(45, 14);
+
+
                             // 59 长度+1 +起始
                             n = 59 + 1 + n;
                         }
@@ -330,16 +341,42 @@ namespace ServerCenterLis
                     int Activate = int.Parse(yl.Substring(15, 2));
                     //HM   自动加车    Activate 1表示 第一次注册                  
                     //if (session.vlsType == 0 && Activate == 1 && !session.isActivate)
-                    if (session.vlsType == 0 && Activate == 1 && !session.isDBExist)
+                    int OrganizationID = 0; string SiOrganizationID = "";
+                    int vlsTypeid = 0; string VehicleTypeID = "";
+                    if (Activate == 1 && !session.isDBExist)
                     {
-                        string InsertVehicleInfo="";
+                        string InsertVehicleInfo = "";
+                        string nowTime = string.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
+                        WriteLog.WriteTestLog("Online", string.Format("Activate-{0}-{1}", session.siCode, nowTime), true);
+                        InsertVehicleInfo = session.InsertVehicleInfo.Replace("siCode", session.siCode);
+                        InsertVehicleInfo = InsertVehicleInfo.Replace("nowTime", nowTime);
+                        if (session.vlsType == 0)
+                        {
+                            OrganizationID = 0;
+                            vlsTypeid = 0;
+                        }
+                        if (session.vlsType == 14)
+                        {
+                            OrganizationID = 1;
+                            vlsTypeid = 1;
+                        }
+                        if (session.vlsType == 13)
+                        {
+                            OrganizationID = 1;
+                            vlsTypeid = 2;
+                        }
+                        if (session.vlsType == 19)
+                        {
+                            OrganizationID = 1;
+                            vlsTypeid = 3;
+                        }
+                        SiOrganizationID = session.OrganizationID.Split(',')[OrganizationID].ToString();
+                        VehicleTypeID = session.VehicleTypeID.Split(',')[vlsTypeid].ToString();
+                        InsertVehicleInfo = InsertVehicleInfo.Replace("SiOrganizationID", SiOrganizationID);
+                        InsertVehicleInfo = InsertVehicleInfo.Replace("vlsType", VehicleTypeID);
                         if (session.Activenum == 0)
                         {
                             session.isActivate = true;
-                            string nowTime = string.Format("{0:yyyy-MM-dd HH:mm:ss}", DateTime.Now);
-                            WriteLog.WriteTestLog("Online", string.Format("Activate-{0}-{1}", session.siCode, nowTime), true);
-                            InsertVehicleInfo = session.InsertVehicleInfo.Replace("siCode", session.siCode);
-                            InsertVehicleInfo = InsertVehicleInfo.Replace("nowTime", nowTime);
                             session.mqs.SendMsg0(InsertVehicleInfo);
                             session.Activenum++;
                         }
@@ -398,6 +435,12 @@ namespace ServerCenterLis
                                 WriteLog.WriteTestLog("Online", string.Format("online-{0}-{1:yyyy-MM-dd HH:mm:ss}", session.siCode, DateTime.Now), true);
                             }
                         }
+                        //自动加车成功后 推送数据发给卢
+                        if (Activate == 1)
+                        {
+                            strinfo = "{\"key\":\"client_message\",\"sendType\":\"2\",\"receiver\":\"\",\"identifying\":\"G032\",\"data\":{\"systemNo\":\"" + session.siCode + "\",\"VehicleNo\":\"" + session.siCode + "\",\"OrganizationID\":\"" + SiOrganizationID + "\"}";
+                            session.SendAsToServers(strinfo);
+                        }
                     }
                     else
                     {
@@ -413,10 +456,10 @@ namespace ServerCenterLis
                     //    }
                     //}
 
-                    
+
                 }
                 #endregion
-            
+
                 #region  查询命令回复 80, 参数设置命令回复 81
                 if (strindex.Equals("80") || strindex.Equals("81"))
                 {
@@ -483,7 +526,7 @@ namespace ServerCenterLis
                     buffer.AppendFormat("\"result\":\"{0}\"", result);
                     strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, ident, buffer.ToString());
                     //指令 设置回执
-                    session.SendAsToServers(strinfo);
+                    session.SendToReply(strinfo);
 
 
                 }
@@ -508,7 +551,7 @@ namespace ServerCenterLis
                     buffer.AppendFormat("\"result\":\"{0}\"", result);
                     strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, "G24", buffer.ToString());
                     //指令 设置回执
-                    session.SendAsToServers(strinfo);
+                    session.SendToReply(strinfo);
                 }
                 #endregion
                 #region  C0 -分时租赁 回复
@@ -559,7 +602,7 @@ namespace ServerCenterLis
                         else
                         {
                             // 开关门 回复
-                            session.SendAsToServers(strinfo);
+                            session.SendToReply(strinfo);
 
                             //记录指令回复
                             WriteLog.WriteLogZL("retrunRecv:" + strinfo);
@@ -1323,6 +1366,14 @@ namespace ServerCenterLis
                 {
                     WriteLog.WriteLogrecvStr(session.siCode, datetimenow + "\r\n" + sendCommand);
                 }
+
+                #region 上标封装
+                if (session.isMarkedVehicles)
+                {
+
+                }
+                #endregion
+
 
             }
             catch (Exception ex)
