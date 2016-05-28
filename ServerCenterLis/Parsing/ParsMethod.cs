@@ -100,10 +100,10 @@ public class ParsMethod
 
     #region 解析[两种顺序的不同,只是跟哪几个字节有关,当前 直接传递字节,半自动,所以 不管顺序]
     /// <summary>
-    ///  根据二进制获取值
-    ///  起始所在字节标识 E  默认以0开始
+    ///  根据16进制(一个字节)获取值二进制的10进制
+    ///  起始所在字节标识 E  默认以0开始  (紧计算了位)
     /// </summary>
-    /// <param name="data">二进制数据</param>
+    /// <param name="data">数据</param>
     /// <param name="StartBit">起始位 B</param>
     /// <param name="BitLength">位长度 C</param>
     ///  <param name="StartBytes">起始所在字节标识 E  默认以0开始</param>
@@ -284,6 +284,9 @@ public class ParsMethod
 
     #endregion
 
+    #region 封装 上标数据格式
+    
+   
     /// <summary>
     ///  封装 上标数据格式
     /// </summary>
@@ -299,8 +302,6 @@ public class ParsMethod
         result += string.Format("{0} {1} 7E", info, PublicMethods.GetJy(info.Split(' ')));
         return result;
     }
-
-
 
     /// <summary>
     /// 注册
@@ -434,5 +435,5 @@ public class ParsMethod
 
         return result;
     }
- 
+    #endregion
 }

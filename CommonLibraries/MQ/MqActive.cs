@@ -542,6 +542,106 @@ public class MqActive : Mq
     }
 
     #endregion
+
+    #region Send Forward To Center
+    static System.Threading.Timer sendDataTimerbyForward = null;
+    /// <summary>
+    /// 入库lis
+    /// </summary>
+    static List<string> lisForward = new List<string>();
+    /// <summary>
+    /// 装载箱1
+    /// </summary>
+    static List<string> lisForward1 = new List<string>();
+    /// <summary>
+    /// 装载箱1
+    /// </summary>
+    static List<string> lisForward2 = new List<string>();
+    /// <summary>
+    /// 集合轮询调用开关
+    /// </summary>
+    static bool flagForward = false;
+    /// <summary>
+    /// lock
+    /// </summary>
+    private static object _lockForward = new object();
+
+    private static void SendDataCallbackbyForward(Object sender)
+    {
+        lock (_lockForward)
+        {
+            try
+            {
+                if ((lisForward1.Count > 0 || lisForward2.Count > 0) && lisForward.Count == 0)
+                {
+                    if (!flagForward)
+                    {
+                        flagForward = true;
+                        lisForward.AddRange(lisForward1);
+                        lisForward1.Clear();
+                    }
+                    else
+                    {
+                        flagForward = false;
+                        lisForward.AddRange(lisForward2);
+                        lisForward2.Clear();
+                    }
+                    if (lisForward.Count > 0)
+                    {
+                        sendObjectbyForward("ForwardToSHDB", lisForward);
+                        lisForward.Clear();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog.WriteLogZLOther("ErrorAS", "______Mq异常:SendDataCallback" + ex.Message, true);
+            }
+        }
+    }
+    public void SendMsgByForwardToSHDB(string info)
+    {
+        if (!flagForward)
+            lisForward1.Add(info);
+        else lisForward2.Add(info);
+    }
+    static IMessageProducer prodForward;
+    static ITextMessage messageForward;
+    public static void sendObjectbyForward(string mqname, List<string> SQLStringList)
+    {
+        try
+        {
+            List<string> lisSql = new List<string>();
+            lisSql.AddRange(SQLStringList);
+            using (connection = factory.CreateConnection())
+            {
+
+                //通过连接创建Session会话
+                using (session = connection.CreateSession())
+                {
+                    //通过会话创建生产者，方法里面new出来的是MQ中的Queue
+                    prodForward = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                    for (int i = 0; i < lisSql.Count(); i++)
+                    {
+                        //创建一个发送的消息对象
+                        messageForward = prodForward.CreateTextMessage();
+                        //给这个对象赋实际的消息
+                        messageForward.Text = lisSql[i].ToString();
+                        //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
+                        messageForward.Properties.SetString("filter", "demo");
+                        //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
+                        prodForward.Send(messageForward, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            lisForward.Clear();
+        }
+    }
+
+    #endregion
 }
 
 

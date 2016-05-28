@@ -111,7 +111,58 @@ public class Cls_Evt : Cls_RealInformation
     public int ABS_BrakeSignal { get; set; }
     [Description("制动开关有效信号")]
     public int VCU_BrakePedalSwitchValid { get; set; }
+    public int VehicleState { get; set; }
+    public int mode_Motor_req { get; set; }
+    public int req_Regen { get; set; }
+    public int req_BattPackHV { get; set; }
+    public int flg_BMSSleepAllow { get; set; }
+    public int ChargePortConnect_VCU { get; set; }
+    public double CP_Voltage { get; set; }
+    public double ACCharger_Max_Cur { get; set; }
 
+    public double charge_cable_capacity { get; set; }
+    public string PowerBattLV { get; set; }
+    public string batt_sys_flt { get; set; }
+    public string MCUorMotor_ot_flt { get; set; }
+    public string EPS_flt { get; set; }
+    public string state_PowerReady { get; set; }
+    public string state_EPB_enable { get; set; }
+
+    public string state_mainErrLight { get; set; }
+    public string state_DCSysErrLight { get; set; }
+    public string state_CruiseLight { get; set; }
+    public string state_PowerSysErrLight { get; set; }
+    public string state_OverSpeedAlarm { get; set; }
+    public string state_PTCContactorInterlock { get; set; }
+    public string state_ACContactorInterlock { get; set; }
+
+    public string ABS_SysFault { get; set; }
+    public string AcceleratorFault { get; set; }
+    public string VehErrShutDown { get; set; }
+    public string state_ThreehaseInterlock { get; set; }
+    public string state_EHPSInterlock { get; set; }
+    public string state_ACPowerInterlock { get; set; }
+    public string state_DCPowerInterlock { get; set; }
+    public string state_PowerBatteryInterlock { get; set; }
+
+    public string state_Information1 { get; set; }
+    public string state_Information2 { get; set; }
+    public string state_Information3 { get; set; }
+    public string state_Information4 { get; set; }
+    public string state_Information5 { get; set; }
+    public string state_Information6 { get; set; }
+    public string state_Information7 { get; set; }
+    public string state_Information8 { get; set; }
+
+    public double PowerCons { get; set; }
+    public double VehPowerPercent { get; set; }
+    public int req_PowerCostReset { get; set; }
+    public int flg_EPB_State { get; set; }
+
+    public double LeftFrontWheelSpeed { get; set; }
+    public double RightFrontWheelSpeed { get; set; }
+    public double LeftRearWheelSpeed { get; set; }
+    public double RightRearWheelSpeed { get; set; }
     [Description("电机扭矩")]
     /// <summary>
     /// 电机扭矩
@@ -152,6 +203,38 @@ public class Cls_Evt : Cls_RealInformation
     public double Motor_AllowMaxTorque { get; set; }
     [Description("电机功率")]
     public double Motor_OutputPower { get; set; }
+    public int EpsMotSpeed { get; set; }
+    public double U_MotCurrent { get; set; }
+    public double V_MotCurrent { get; set; }
+    public double W_MotCurrent { get; set; }
+    public int MCU_MotRunMode { get; set; }
+    public int MCU_MotFeedBackMode { get; set; }
+    public int MCU_PreComplete { get; set; }
+    public int MCU_InitializeCompl { get; set; }
+    public int MCU_MotOTFault { get; set; }
+    public int MCU_MotOverCurrent { get; set; }
+    public int MCU_IGBTTempProtect { get; set; }
+    public int MCU_OverVoltage { get; set; }
+    public int MCU_UnderVoltage { get; set; }
+    public int MCU_OTFault { get; set; }
+    public int MCU_MotOverSpeed { get; set; }
+    public int MCU_OverCurrent { get; set; }
+
+    public string MCU_CANFault { get; set; }
+    public string MCU_TSensorFault { get; set; }
+    public string MCU_MotTSensorFault { get; set; }
+    public string MCU_CSensorFault { get; set; }
+    public string MCU_MotMCUCheckSelfFault { get; set; }
+    public string MCU_IGBTFault { get; set; }
+    public string MCU_MotEncoderFault { get; set; }
+    public string MCU_PreChargeFault { get; set; }
+
+    public string GroundShortCircuit { get; set; }
+    public string PhaseShortCircuit { get; set; }
+    public string MotLackPhase { get; set; }
+    public string MotOverLoad { get; set; }
+    public string MotLoseSpeed { get; set; }
+    public double MotMaxTorque { get; set; }
     [Description("充电机输出的充电电压")]
     public double ONC_OutputVoltage { get; set; }
     [Description("充电机输出的充电电流")]
@@ -164,6 +247,22 @@ public class Cls_Evt : Cls_RealInformation
     public int ONC_ONCTemp { get; set; }
     [Description("交流输入状态")]
     public int BMS_ChargerACInput { get; set; }
+
+    public double InChargingVolt { get; set; }
+    public double InChargingCurr { get; set; }
+    public int HVDischargeLimit { get; set; }
+
+    public int HVChargeLimit { get; set; }
+    public int state_ChargeContactor { get; set; }
+    public int HVPreChrgRdy { get; set; }
+    public int req_ChargeContactorEn { get; set; }
+    public int req_Charger_Enable { get; set; }
+    public int req_ChargeVoltage { get; set; }
+    public int req_ChargeCurrent { get; set; }
+    public double InputPowerFactor { get; set; }
+    public double ChargerEfficiency { get; set; }
+    public int ChargerTemp { get; set; }
+    public int state_Charging { get; set; }
     [Description("DCDC状态")]
     /// <summary>
     /// DCDC状态
@@ -187,7 +286,8 @@ public class Cls_Evt : Cls_RealInformation
     public double DCDC_InputVoltage { get; set; }
     [Description("DC-DC输入电流")]
     public double DCDC_InputCurrent { get; set; }
-
+    public double DCDC_Efficiency { get; set; }
+    public double DCDC_Temp { get; set; }
 
     [Description("ABS故障")]
     /// <summary>
@@ -204,6 +304,9 @@ public class Cls_Evt : Cls_RealInformation
     /// DCDC故障
     /// </summary>
     public int DCDC_Fault { get; set; }
+    public string DCDC_OutputShortcircuit { get; set; }
+    public string DCDC_OverheatFault { get; set; }
+
     [Description("助力转向故障")]
     /// <summary>
     /// 助力转向故障
@@ -355,7 +458,24 @@ public class Cls_Evt : Cls_RealInformation
     public string DCDC_LowTempAlarm { get; set; }
     [Description("高温报警")]
     public string DCDC_HighTempAlarm { get; set; }
+    public int req_DCDC_Enable { get; set; }
+    public int MotorSpeed_req { get; set; }
+    public double MotorTq_req { get; set; }
+    public int DCDCMaxOtptPower { get; set; }
 
+    public string ChargerHardware { get; set; }
+    public string ChargerTempAlarm { get; set; }
+    public string ChargerInputUnderVolt { get; set; }
+    public string ChargerInputOverVolt { get; set; }
+    public string ChargerOutputOverCurr { get; set; }
+    public string BattConnectFault { get; set; }
+
+    public string EBD_Fault { get; set; }
+    public string ABS_Sign { get; set; }
+    public string WheelSpeed_Fault { get; set; }
+    public string ABS_Function { get; set; }
+    public string ABS_FaultStatusLed { get; set; }
+    public string EBD_FaultLed { get; set; }
 
     [Description("温度过高报警（电池）")]
     public int BatteryFault_OverTemperature { get; set; }
@@ -397,6 +517,25 @@ public class Cls_Evt : Cls_RealInformation
 
     [Description("BMS_Fault")]
     public int BMS_Fault { get; set; }
+    public int BMS_BattOverTemp { get; set; }
+    public int BMS_BattInsulation { get; set; }
+    public int BMS_BattOverVolt { get; set; }
+    public int BMS_BattOverCurrent { get; set; }
+
+    public int BMS_BattUnderVolt { get; set; }
+    public string BMS_VMSCommOverTime { get; set; }
+    public string BMS_LECUCommOverTime { get; set; }
+    public string BMS_BattPackSmoke { get; set; }
+    public string BMS_ChargerCommOverTime { get; set; }
+
+    public string BMS_BattCheckSelf { get; set; }
+    public string BMS_BattVoltDiff { get; set; }
+
+    public int BMS_BattPosContactor { get; set; }
+    public int BMS_BattNegContactor { get; set; }
+
+    public int BMS_PreChargeContactor { get; set; }
+    public int BMS_interlock { get; set; }
 
     #endregion
 
@@ -433,7 +572,25 @@ public class Cls_Evt : Cls_RealInformation
     /// 剩余动力电池电量
     /// </summary>
     public double BMS_RemainingBattPower { get; set; }
-
+    public int BMSMode { get; set; }
+    public int req_BMSSleep { get; set; }
+    public int req_HeatOrCoolBatt { get; set; }
+    public int HVMaxVoltage1_Num { get; set; }
+    public double HVMaxVoltage1 { get; set; }
+    public int HVMaxVoltage2_Num { get; set; }
+    public double HVMaxVoltage2 { get; set; }
+    public int HVMaxVoltage3_Num { get; set; }
+    public double HVMaxVoltage3 { get; set; }
+    public int HVMaxVoltage4_Num { get; set; }
+    public double HVMaxVoltage4 { get; set; }
+    public int HVMinVoltage1_Num { get; set; }
+    public double HVMinVoltage1 { get; set; }
+    public int HVMinVoltage2_Num { get; set; }
+    public double HVMinVoltage2 { get; set; }
+    public int HVMinVoltage3_Num { get; set; }
+    public double HVMinVoltage3 { get; set; }
+    public int HVMinVoltage4_Num { get; set; }
+    public double HVMinVoltage4 { get; set; }
     [Description("电池组充电状态报警")]
     /// <summary>
     /// 电池组充电状态报警
@@ -490,7 +647,21 @@ public class Cls_Evt : Cls_RealInformation
     /// </summary>
     public int AuxiliaryDrivingSetTemperature { get; set; }
 
+    public int req_CMC_Enable { get; set; }
+    public int CMCMotSpeed { get; set; }
+    public double CMCHVVolt { get; set; }
+    public double CMCPower { get; set; }
+    public double CompSpeed { get; set; }
 
+    public int CMCWork { get; set; }
 
+    public string CPR_CMCSelfCheck { get; set; }
+    public string CPR_CMCOverVolt { get; set; }
+    public string CPR_CMCUnderVolt { get; set; }
+    public string CPR_CompOverCurrent { get; set; }
+    public string CPR_CompOverTemp { get; set; }
+    public string CPR_CompLocked { get; set; }
+    public string CPR_CompFailurePhase { get; set; }
+    public string CPR_ACSysFault { get; set; }
 
 }

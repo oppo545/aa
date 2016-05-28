@@ -209,4 +209,11 @@ public class MsMq : Mq
         }
 
     }
+
+    public void SendMsgByForwardToSHDB(string info)
+    {
+
+    }
+
+
 }

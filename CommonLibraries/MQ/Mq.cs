@@ -43,4 +43,10 @@ using System.Text;
         /// <param name="info"></param>
         void SendMsgByAlarm(string info);
 
+
+        /// <summary>
+        /// 数据封装转发上海地标
+        /// </summary>
+        /// <param name="info"></param>
+        void SendMsgByForwardToSHDB(string info);
     }

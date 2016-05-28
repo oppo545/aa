@@ -287,9 +287,9 @@ namespace ServerCenterLis
                 if (strindex.Equals("01"))
                 {
                     session.cls_register = session.getClsRegister();
-                    session.clsshdb_register = session.getSHDBRegister();
+                    session.clsshdb_register = session.getSHDBRegister();  //sb
 
-                    session.clsshdb_register.registime = desc.Substring(0, 17);
+                    session.clsshdb_register.registime = desc.Substring(0, 17);//sb
                     session.cls_register.Zc_zcsj = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
                     session.cls_register.Zc_zclsh = desc.Substring(18, 5);
                     session.cls_register.Zc_cph = PublicMethods.GetHexToAscii(desc.Substring(24, 23));
@@ -325,8 +325,19 @@ namespace ServerCenterLis
                             session.cls_vlsei.BatteryProductionDateCode = PublicMethods.GetFormatTme(session.siCode, PublicMethods.GetGMT8Data(Numberinfo.Substring(27, 8), 0));
                             session.cls_vlsei.SerialNumber = PublicMethods.Get16To10(Numberinfo.Substring(36, 5)).ToString();
 
-                            string dcyl = onecode.Substring(45, 14);
-
+                            if (i == 0)    //上标使用了 第一个包的预留位
+                            {
+                                string dcyl = onecode.Substring(45, 14);
+                                session.isMarkedVehicles = ParsMethod.GetParsBig(dcyl, 1, 0, 1) == 1;//sb
+                                session.clsshdb_register.VehicleType = ParsMethod.GetParsBig(dcyl, 1, 2, 2);//sb
+                                session.clsshdb_register.VehicleModels = "";//sb 
+                                session.clsshdb_register.DrivingMotorType = ParsMethod.GetParsBig(dcyl, 1, 4, 4);//sb
+                                session.clsshdb_register.DriveMotorArrangementType = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 0, 4);//sb
+                                session.clsshdb_register.DrivingMotorCoolingMode = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 4, 2);//sb
+                                session.clsshdb_register.EnergyStorageDeviceType = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 6, 2);//sb
+                                session.clsshdb_register.DrivingRangeElectricVehicle = ParsMethod.GetParsWholeByte(dcyl.Substring(6, 5));
+                                session.clsshdb_register.MaxSpeedElectricVehicle = ParsMethod.GetParsWholeByte(dcyl.Substring(12, 2));
+                            }
 
                             // 59 长度+1 +起始
                             n = 59 + 1 + n;
@@ -343,6 +354,7 @@ namespace ServerCenterLis
                     //if (session.vlsType == 0 && Activate == 1 && !session.isActivate)
                     int OrganizationID = 0; string SiOrganizationID = "";
                     int vlsTypeid = 0; string VehicleTypeID = "";
+                    #region 自动加车
                     if (Activate == 1 && !session.isDBExist)
                     {
                         string InsertVehicleInfo = "";
@@ -369,6 +381,11 @@ namespace ServerCenterLis
                         {
                             OrganizationID = 1;
                             vlsTypeid = 3;
+                        }
+                        if (session.vlsType == 7)
+                        {
+                            OrganizationID = 1;
+                            vlsTypeid = 4;
                         }
                         SiOrganizationID = session.OrganizationID.Split(',')[OrganizationID].ToString();
                         VehicleTypeID = session.VehicleTypeID.Split(',')[vlsTypeid].ToString();
@@ -410,7 +427,7 @@ namespace ServerCenterLis
                     {
                         session.isDBExist = true;
                     }
-
+                    #endregion
                     if (session.vlsType != -1 && session.isDBExist)
                     {
                         byte[] btemp = SendPttyyd("01", Simno);
@@ -455,8 +472,6 @@ namespace ServerCenterLis
                     //        valuestr += string.Format(",'{0}'", p.GetValue(session.cls_register, null));
                     //    }
                     //}
-
-
                 }
                 #endregion
 

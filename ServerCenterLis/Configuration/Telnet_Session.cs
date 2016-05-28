@@ -1117,6 +1117,10 @@ namespace ServerCenterLis
         {
             mqs.SendMsgByAlarm(strinfo);
         }
+        public void SendAsToServersByForwardToSHDB(string strinfo)    
+        {
+            mqs.SendMsgByForwardToSHDB(strinfo);
+        }
         public static int GetAlarmType(string alarmtypename)
         {
             int result = 0;
@@ -1316,6 +1320,7 @@ namespace ServerCenterLis
                     //TO Mysql数据库
                     if (!string.IsNullOrEmpty(sendtomysql))
                     {
+                        sendtomysql = sendtomysql.Replace(",insert", ";insert");
                         string[] mysqlstr = sendtomysql.Split(';');
                         for (int i = 0; i < mysqlstr.Count() - 1; i++)
                         {
