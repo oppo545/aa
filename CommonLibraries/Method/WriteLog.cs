@@ -160,7 +160,7 @@ public class WriteLog
     {
         if (LogInfobySystemNo.Contains("," + systemNo + ","))
         {
-            WriteLogs("From" + systemNo, "LogDebug/RecvStr", recvStr,true);
+            WriteLogs("From" + systemNo, "LogDebug/RecvStr", recvStr, true);
         }
     }
     /// <summary>
@@ -203,10 +203,9 @@ public class WriteLog
                 witlogxt.WriteLine(recvStr);
                 foreach (System.Reflection.PropertyInfo p in obj.GetType().GetProperties())
                 {
-                    //判断是否是 非泛型
                     if (p.PropertyType.IsGenericType) continue;
                     object[] objs = obj.GetType().GetProperty(p.Name).GetCustomAttributes(typeof(DescriptionAttribute), true);
-                    if (objs.Length > 0 &&!string.IsNullOrEmpty(p.GetValue(obj, null).ToString()))
+                    if (objs.Length > 0 && p.GetValue(obj, null) != null)
                     {
                         witlogxt.WriteLine(string.Format("{0}\t{1}\t\t\t{2}", p.GetValue(obj, null), ((DescriptionAttribute)objs[0]).Description, p.Name));
                     }

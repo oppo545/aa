@@ -549,23 +549,37 @@ public class Cls_Evt : Cls_RealInformation
     public string DCDC_LowTempAlarm { get; set; }
     [Description("高温报警")]
     public string DCDC_HighTempAlarm { get; set; }
+     [Description("ABCD")]
     public int? req_DCDC_Enable { get; set; }
+     [Description("ABCD")]
     public int? MotorSpeed_req { get; set; }
+     [Description("ABCD")]
     public double MotorTq_req { get; set; }
+     [Description("ABCD")]
     public int? DCDCMaxOtptPower { get; set; }
-
+     [Description("ABCD")]
     public string ChargerHardware { get; set; }
+     [Description("ABCD")]
     public string ChargerTempAlarm { get; set; }
+     [Description("ABCD")]
     public string ChargerInputUnderVolt { get; set; }
+     [Description("ABCD")]
     public string ChargerInputOverVolt { get; set; }
+     [Description("ABCD")]
     public string ChargerOutputOverCurr { get; set; }
+     [Description("ABCD")]
     public string BattConnectFault { get; set; }
-
+     [Description("ABCD")]
     public string EBD_Fault { get; set; }
+     [Description("ABCD")]
     public string ABS_Sign { get; set; }
+     [Description("ABCD")]
     public string WheelSpeed_Fault { get; set; }
+     [Description("ABCD")]
     public string ABS_Function { get; set; }
+     [Description("ABCD")]
     public string ABS_FaultStatusLed { get; set; }
+     [Description("ABCD")]
     public string EBD_FaultLed { get; set; }
 
     [Description("温度过高报警（电池）")]
@@ -608,24 +622,36 @@ public class Cls_Evt : Cls_RealInformation
 
     [Description("BMS_Fault")]
     public int? BMS_Fault { get; set; }
+     [Description("ABCD")]
     public int? BMS_BattOverTemp { get; set; }
+     [Description("ABCD")]
     public int? BMS_BattInsulation { get; set; }
+     [Description("ABCD")]
     public int? BMS_BattOverVolt { get; set; }
+     [Description("ABCD")]
     public int? BMS_BattOverCurrent { get; set; }
-
+     [Description("ABCD")]
     public int? BMS_BattUnderVolt { get; set; }
+     [Description("ABCD")]
     public string BMS_VMSCommOverTime { get; set; }
+     [Description("ABCD")]
     public string BMS_LECUCommOverTime { get; set; }
+     [Description("ABCD")]
     public string BMS_BattPackSmoke { get; set; }
+     [Description("ABCD")]
     public string BMS_ChargerCommOverTime { get; set; }
 
+    [Description("ABCD")]
     public string BMS_BattCheckSelf { get; set; }
+     [Description("ABCD")]
     public string BMS_BattVoltDiff { get; set; }
-
+     [Description("ABCD")]
     public int? BMS_BattPosContactor { get; set; }
+     [Description("ABCD")]
     public int? BMS_BattNegContactor { get; set; }
-
+    [Description("ABCD")]
     public int? BMS_PreChargeContactor { get; set; }
+     [Description("ABCD")]
     public int? BMS_interlock { get; set; }
 
     #endregion
