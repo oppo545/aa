@@ -346,9 +346,10 @@ namespace ServerCenterLis
                     }
                     //预留位 11   校验位,已除
                     string yl = desc.Substring(desc.Length - 32, 32);
-
+                    //前5个表示车型
                     session.cls_register.Styling = session.GetVehicleStyle(yl.Substring(0, 14));
                     session.vlsType = session.cls_register.Styling;
+                    //第6个 自动驾车标识
                     int Activate = int.Parse(yl.Substring(15, 2));
                     //HM   自动加车    Activate 1表示 第一次注册                  
                     //if (session.vlsType == 0 && Activate == 1 && !session.isActivate)

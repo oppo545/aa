@@ -546,7 +546,7 @@ namespace ServerCenterLis
                         case "0127":       /// 电机最大输出转矩2
                             num = 2;
                             str_data1 = str_all.Substring(0, 5);
-                            session.cd_evt.MotMaxTorque = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            session.cd_evt.MotMaxTorque = ParsMethod.GetParsWholeByte(str_data1, 0.1,-1000);
                             break;
                         #endregion
 
