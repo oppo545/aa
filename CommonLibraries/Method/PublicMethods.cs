@@ -622,7 +622,7 @@ public class PublicMethods
     }
 
 
-    public static string GetCanFaultStr(string faultSignalName, string faultCodes, int faultLever, int faultInt)
+    public static string GetCanFaultStr(string faultSignalName, string faultCodes, int faultLever, int? faultInt)
     {
         string resultstr = "";
         if (faultInt > 0)

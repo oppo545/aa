@@ -206,7 +206,7 @@ public class WriteLog
                     //判断是否是 非泛型
                     if (p.PropertyType.IsGenericType) continue;
                     object[] objs = obj.GetType().GetProperty(p.Name).GetCustomAttributes(typeof(DescriptionAttribute), true);
-                    if (objs.Length > 0)
+                    if (objs.Length > 0 &&!string.IsNullOrEmpty(p.GetValue(obj, null).ToString()))
                     {
                         witlogxt.WriteLine(string.Format("{0}\t{1}\t\t\t{2}", p.GetValue(obj, null), ((DescriptionAttribute)objs[0]).Description, p.Name));
                     }

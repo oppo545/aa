@@ -14,7 +14,7 @@ namespace ServerCenterLis
         static string lastPackageNumber;
         static int num = 1;//信号长度 字节数
         /// 故障值  0正常         /// 故障等级    1	轻微故障,2	一般故障,3	严重故障,4	致命故障
-        static int faultlever = 1, faultint = 0;
+        static int faultlever = 1; static int? faultint = 0;
         public static Cls_RealInformation GetParsEVT(Telnet_Session session, string info1, int msgnumber, ref string canfault)
         {
             try
@@ -651,6 +651,11 @@ namespace ServerCenterLis
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.state_Charging = ParsMethod.GetParsWholeByte(str_data1);
                             break;
+                        case "0217":             ///高精度充电机输出的充电电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.ONC_HighPreOutputCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
                         #endregion
 
                         #region DC/DC 0x280-0x2FF
@@ -1254,7 +1259,7 @@ namespace ServerCenterLis
                         case "0801":                    /// 电池平均温度
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BMS_Temp_Ave = ParsMethod.GetParsWholeByte(str_data1, 1, -40);
+                            session.cd_evt.BMS_Temp_Ave = ParsMethod.GetParsWholeByte(str_data1, 0.1, -40);
                             break;
                         case "0802":           /// 电池组当前容量指数 (分辨率1%) 
                             num = 1;
@@ -1379,6 +1384,11 @@ namespace ServerCenterLis
                             num = 2;
                             str_data1 = str_all.Substring(0, 5);
                             session.cd_evt.HVMinVoltage4 = ParsMethod.GetParsWholeByte(str_data1, 0.01);
+                            break;
+                        case "0920":             /// 高精度电池平均温度
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BMS_TempHighPreAve = ParsMethod.GetParsWholeByte(str_data1, 0.1, -40);
                             break;
                         #endregion
                         #region 电池报警0XC00--0XDFF
