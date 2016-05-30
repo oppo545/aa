@@ -141,6 +141,16 @@ namespace ServerCenterLis
         ///是否为上标车辆
         /// </summary>
         public bool isMarkedVehicles = false;
+
+        public List<string> lisRegister;
+        public List<string> getLisRegister()
+        {
+            if (lisRegister == null)
+            {
+                lisRegister = new List<string>();
+            }
+            return lisRegister;
+        }
         #endregion
 
 
@@ -1146,7 +1156,25 @@ namespace ServerCenterLis
             }
             return result;
         }
-
+        /// <summary>
+        /// 消息封装
+        /// </summary>
+        /// <param name="info">验证码,消息头,消息体</param>
+        /// <returns></returns>
+        public static string GetXxfz(string info)
+        {
+            Regex reg = new Regex("7d", RegexOptions.IgnoreCase);
+            if (reg.IsMatch(info))
+            {
+                info = reg.Replace(info, "7d 01");
+            }
+            reg = new Regex("7e", RegexOptions.IgnoreCase);
+            if (reg.IsMatch(info))
+            {
+                info = reg.Replace(info, "7d 02");
+            }
+            return info.ToUpper();
+        }
         string[] batteryrecord = { "BMS_BattNo", "BMS_BattPackNo", "BMS_ChargeFS", "BMS_ChargerACInput", "BMS_ChargerDCInput", "BMS_ChargeSt", "BMS_CreepageMonitor", "BMS_Current", "BMS_FastChargeSt", "BMS_Fault", "BMS_FaultDislpay", "BMS_FaultState", "BMS_HighVolSt", "BMS_MaxCellBatt", "BMS_MaxCellBattNumber", "BMS_MaxTempNumber", "BMS_MinCellBatt", "BMS_MinCellBattNumber", "BMS_MinTempNumber", "BMS_OFCConnectSignal", "BMS_OutsideChargeSignal", "BMS_SlowChargeSt", "BMS_SOC", "BMS_SOCCalculate", "BMS_Temperature", "BMS_Temp_Ave", "BMS_Temp_Max", "BMS_Temp_Min", "BMS_Voltage", "IC_TotalOdmeter", "VCU_CruisingRange", "VCU_Keyposition" };
         string[] mileagerecord = { "IC_Odmeter", "IC_TotalOdmeter", "VCU_CruisingRange", "VCU_BrakeEnergy", "VCU_BrakePedalSt", "VCU_Fault", "VCU_Keyposition", "BMS_SOC" };
         string[] motorrecord = { "MCU_ElecMachineFault", "MCU_ElecPowerTrainMngtState", "MCU_InternalMachineTemp", "Motor_MaxGenTorque", "MCU_MaxMotorTorque", "Motor_Torqueestimation", "MCU_ActiveDischarge", "Motor_AllowMaxTorque", "Motor_ControllerTemp", "Motor_DCCurrent", "Motor_DCVolt", "Motor_Fault", "Motor_OutputPower", "Motor_OutputTorque", "Motor_Revolution", "Motor_RunDirection", "Motor_State", "Motor_Temperature", "Motor_TorqueFeedback", "Motor_WaterTemp", "VCU_Keyposition" };
@@ -1394,7 +1422,20 @@ namespace ServerCenterLis
 
         }
 
-
+        /// <summary>
+        ///  上标车辆注册列表
+        ///  0,00 01 --原始插入
+        ///  1,23   --一个字节,23-> 17
+        /// </summary>
+        /// <param name="info"></param>
+        public void AddLisRegister(string info)
+        {
+            if (lisRegister == null)
+            {
+                lisRegister = new List<string>();
+            }
+            lisRegister.Add(info);
+        }
 
     }
 }

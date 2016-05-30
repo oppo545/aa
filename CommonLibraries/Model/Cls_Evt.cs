@@ -349,6 +349,26 @@ public class Cls_Evt : Cls_RealInformation
     public int? state_Charging { get; set; }
     [Description("ABCD")]
     public double ONC_HighPreOutputCurrent { get; set; }
+
+    [Description("最高允许充电端电流")]
+    public double MaxAllowChargingCurrent { get; set; }
+    [Description("最高允许充电端电压")]
+    public double MaxAllowChargingVoltage { get; set; }
+    [Description("充电控制指令")]
+    public int? ChargeControlCommand { get; set; }
+    [Description("慢充充电连接状态")]
+    public int? SlowChargingStatus { get; set; }
+    [Description("快充充电连接状态")]
+    public int? FastChargingStatus { get; set; }
+    [Description("硬件故障")]
+    public int? HardwareFailure { get; set; }
+    [Description("启动状态")]
+    public int? StartState { get; set; }
+    [Description("充电机最大充电电流")]
+    public double ONC_Charge_Maxallow_A { get; set; }
+    [Description("高精度充电电流")]
+    public double HighPreChargingCurrent { get; set; }
+
     [Description("DCDC状态")]
     /// <summary>
     /// DCDC状态
@@ -560,7 +580,7 @@ public class Cls_Evt : Cls_RealInformation
      [Description("ABCD")]
     public string ChargerHardware { get; set; }
      [Description("ABCD")]
-    public string ChargerTempAlarm { get; set; }
+    public int ChargerTempAlarm { get; set; }
      [Description("ABCD")]
     public string ChargerInputUnderVolt { get; set; }
      [Description("ABCD")]
@@ -656,6 +676,11 @@ public class Cls_Evt : Cls_RealInformation
 
     #endregion
 
+     [Description("内网can通讯丢失")]
+     public int? IntranetCanFault { get; set; }
+     [Description("整车CAN通信丢失")]
+     public int? VehicleCanFault { get; set; }
+
 
 
     [Description("电池平均温度")]
@@ -730,6 +755,27 @@ public class Cls_Evt : Cls_RealInformation
     public double HVMinVoltage4 { get; set; }
     [Description("ABCD")]
     public double BMS_TempHighPreAve { get; set; }
+    [Description("电池健康状态SOH")]
+    /// <summary>
+    /// 电池组充电状态报警
+    /// </summary>
+    public int? BatteryHealthSOH { get; set; }
+    [Description("电池模块个数")]
+    /// <summary>
+    /// 电池组充电状态报警
+    /// </summary>
+    public int? BatteryModulesNumber { get; set; }
+    [Description("电池最大允许放电功率")]
+    /// <summary>
+    /// 电池组充电状态报警
+    /// </summary>
+    public double BMS_Battery_Discharge_KW_MA { get; set; }
+    [Description("电池最大允许充电功率")]
+    /// <summary>
+    /// 电池组充电状态报警
+    /// </summary>
+    public double BMS_Battery_Charge_KW_MAX { get; set; }
+
     [Description("电池组充电状态报警")]
     /// <summary>
     /// 电池组充电状态报警

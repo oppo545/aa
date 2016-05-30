@@ -1,8 +1,10 @@
-﻿using System;
+﻿using ServerCenterLis;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
@@ -295,45 +297,44 @@ public class ParsMethod
     /// <param name="vin"></param>
     /// <param name="dataUnit"></param>
     /// <returns></returns>
-    public string GetFormatByMarkedVehicles(string commandName, string lsh, string vin, string dataUnit)
+    public static string GetFormatByMarkedVehicles(string commandName, string lsh, string vin, string dataUnit)
     {
         string result = "7E ";
         string info = string.Format("23 23 {0} {1} 00 {2} {3}", commandName, lsh, vin, PublicMethods.Get10To16(dataUnit.Split(' ').Count().ToString(), 2).ToString(), dataUnit);
+        info = Telnet_Session.GetXxfz(info);
         result += string.Format("{0} {1} 7E", info, PublicMethods.GetJy(info.Split(' ')));
         return result;
     }
 
-    /// <summary>
-    /// 注册
-    /// </summary>
-    /// <param name="registime">注册时间</param>
-    /// <param name="VehicleType">车辆类型</param>
-    /// <param name="VehicleModels">车辆型号</param>
-    /// <param name="EnergyStorageDeviceType">储能装置种类</param>
-    /// <param name="DrivingMotorType">驱动电机类型</param>
-    /// <param name="DriveMotorRatedPower">驱动电机额定功率</param>
-    /// <param name="DriveMotorRatedSpeed">驱动电机额定转速</param>
-    /// <param name="DriveMotorRatedTorque">驱动电机额定转矩</param>
-    /// <param name="DriveMotorInstallationQuantity">驱动电机安装数量</param>
-    /// <param name="DriveMotorArrangementType">驱动电机布置型式/位置</param>
-    /// <param name="DrivingMotorCoolingMode">驱动电机冷却方式</param>
-    /// <param name="DrivingRangeElectricVehicle">电动汽车续驶里程</param>
-    /// <param name="MaxSpeedElectricVehicle">电动汽车最高车速</param>
-    /// <param name="dldcgs">动力蓄电池包总数N</param>
-    /// <param name="Id">动力蓄电池包序号</param>
-    /// <param name="ProductionCode">生产厂商代码</param>
-    /// <param name="BatteryTypeCode">电池类型代码</param>
-    /// <param name="RatedEnergy">额定能量</param>
-    /// <param name="RatedVoltage">额定电压</param>
-    /// <param name="BatteryProductionDateCode">电池生产日期代码</param>
-    /// <param name="SerialNumber">流水号</param>
-    /// <returns></returns>
-    public string GetFormatByRegister(string registime, string VehicleType, string VehicleModels, string EnergyStorageDeviceType, string DrivingMotorType, string DriveMotorRatedPower, string DriveMotorRatedSpeed, string DriveMotorRatedTorque, string DriveMotorInstallationQuantity, string DriveMotorArrangementType, string DrivingMotorCoolingMode, string DrivingRangeElectricVehicle, string MaxSpeedElectricVehicle, string dldcgs, string Id, string ProductionCode, string BatteryTypeCode, string RatedEnergy, string RatedVoltage, string BatteryProductionDateCode, string SerialNumber)
-    {
-        string result = "7E ";
 
+
+    public static string GetFormatByRegister(List<string> lisRegister)
+    {
+        string result = "",info="";
+        int num = 0;
+        for (int i = 0; i < lisRegister.Count(); i++)
+        {
+            num = int.Parse(lisRegister[i].Split(',')[0].ToString());
+            info = lisRegister[i].Split(',')[1];
+            if (num == 0)
+            {
+                //原始数据
+                result += info+" ";
+            }
+            else
+            {
+                result += PublicMethods.Get10To16(info, num) + " ";
+            }
+        }
         return result;
     }
+
+    //public string GetFomateSHDB(string info,int number)
+    //{
+    //    string result = "";
+    //    PublicMethods.Get10To16(info)
+    //    return result;
+    //}
 
     /// <summary>
     ///    点火与熄火时间

@@ -287,9 +287,9 @@ namespace ServerCenterLis
                 if (strindex.Equals("01"))
                 {
                     session.cls_register = session.getClsRegister();
-                    session.clsshdb_register = session.getSHDBRegister();  //sb
+                    session.clsshdb_register = session.getSHDBRegister();  //shdb
 
-                    session.clsshdb_register.registime = desc.Substring(0, 17);//sb
+                    session.AddLisRegister("0,"+desc.Substring(0, 17));//shdb
                     session.cls_register.Zc_zcsj = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
                     session.cls_register.Zc_zclsh = desc.Substring(18, 5);
                     session.cls_register.Zc_cph = PublicMethods.GetHexToAscii(desc.Substring(24, 23));
@@ -303,7 +303,7 @@ namespace ServerCenterLis
                     //动力蓄电池包总数
                     int dldcgs = int.Parse(desc.Substring(84, 2));
                     session.cls_register.Zc_dlxdc = new List<Cls_bjdb_dlxdc>();
-
+                    string Id = "", Numberinfo = "";
                     if (dldcgs > 0)
                     {
                         //总长度-前面的长度-后面的长度-3个空格=中间需要的长度 
@@ -315,9 +315,9 @@ namespace ServerCenterLis
                         {
                             onecode = dldccode.Substring(n, 59);
                             session.cls_vlsei = session.getClsVlsEI();
-                            string Id = PublicMethods.Getdecimal(onecode.Substring(0, 2)).ToString();
+                            Id = PublicMethods.Getdecimal(onecode.Substring(0, 2)).ToString();
                             //动力蓄电池编码定义
-                            string Numberinfo = onecode.Substring(3, 41);
+                            Numberinfo = onecode.Substring(3, 41);
                             session.cls_vlsei.ProductionCode = PublicMethods.GetHexToAscii(Numberinfo.Substring(0, 11));
                             session.cls_vlsei.BatteryTypeCode = PublicMethods.Get16To10(Numberinfo.Substring(12, 2)).ToString();
                             session.cls_vlsei.RatedEnergy = PublicMethods.Get16To10(Numberinfo.Substring(15, 5)).ToString();
@@ -327,16 +327,23 @@ namespace ServerCenterLis
 
                             if (i == 0)    //上标使用了 第一个包的预留位
                             {
+                                //shdb
                                 string dcyl = onecode.Substring(45, 14);
-                                session.isMarkedVehicles = ParsMethod.GetParsBig(dcyl, 1, 0, 1) == 1;//sb
-                                session.clsshdb_register.VehicleType = ParsMethod.GetParsBig(dcyl, 1, 2, 2);//sb
-                                session.clsshdb_register.VehicleModels = "";//sb 
-                                session.clsshdb_register.DrivingMotorType = ParsMethod.GetParsBig(dcyl, 1, 4, 4);//sb
-                                session.clsshdb_register.DriveMotorArrangementType = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 0, 4);//sb
-                                session.clsshdb_register.DrivingMotorCoolingMode = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 4, 2);//sb
-                                session.clsshdb_register.EnergyStorageDeviceType = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 6, 2);//sb
+                                session.isMarkedVehicles = ParsMethod.GetParsBig(dcyl, 1, 0, 1) == 1;
+                                session.clsshdb_register.VehicleType = ParsMethod.GetParsBig(dcyl, 1, 2, 2);
+                                session.clsshdb_register.VehicleModels = "";
+                                session.clsshdb_register.DrivingMotorType = ParsMethod.GetParsBig(dcyl, 1, 4, 4);
+                                session.clsshdb_register.DriveMotorArrangementType = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 0, 4);
+                                session.clsshdb_register.DrivingMotorCoolingMode = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 4, 2);
+                                session.clsshdb_register.EnergyStorageDeviceType = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 6, 2);
                                 session.clsshdb_register.DrivingRangeElectricVehicle = ParsMethod.GetParsWholeByte(dcyl.Substring(6, 5));
                                 session.clsshdb_register.MaxSpeedElectricVehicle = ParsMethod.GetParsWholeByte(dcyl.Substring(12, 2));
+
+                                session.AddLisRegister("0,01");
+                                session.AddLisRegister("1," + session.clsshdb_register.VehicleType);
+                                session.AddLisRegister("20," + session.clsshdb_register.VehicleModels);
+                                session.AddLisRegister("1," + session.clsshdb_register.EnergyStorageDeviceType);
+                                session.AddLisRegister("1," + session.clsshdb_register.DrivingMotorType);
                             }
 
                             // 59 长度+1 +起始
@@ -351,11 +358,12 @@ namespace ServerCenterLis
                     session.vlsType = session.cls_register.Styling;
                     //第6个 自动驾车标识
                     int Activate = int.Parse(yl.Substring(15, 2));
+                    #region 自动加车
                     //HM   自动加车    Activate 1表示 第一次注册                  
                     //if (session.vlsType == 0 && Activate == 1 && !session.isActivate)
                     int OrganizationID = 0; string SiOrganizationID = "";
                     int vlsTypeid = 0; string VehicleTypeID = "";
-                    #region 自动加车
+                   
                     if (Activate == 1 && !session.isDBExist)
                     {
                         string InsertVehicleInfo = "";
@@ -429,6 +437,45 @@ namespace ServerCenterLis
                         session.isDBExist = true;
                     }
                     #endregion
+                    #region 上标注册扩展
+                    if (session.isMarkedVehicles)  //是否是上标车辆
+                    {
+                        
+                        string sbyl=  yl.Substring(18);
+                        session.clsshdb_register.DriveMotorRatedPower = ParsMethod.GetParsWholeByte(sbyl.Substring(0, 2));
+                        session.clsshdb_register.DriveMotorRatedSpeed = ParsMethod.GetParsWholeByte(sbyl.Substring(3, 5));
+                        session.clsshdb_register.DriveMotorRatedTorque = ParsMethod.GetParsWholeByte(sbyl.Substring(9, 5));
+                        session.clsshdb_register.DriveMotorInstallationQuantity = ParsMethod.GetParsWholeByte(sbyl.Substring(15, 2));
+
+                        session.AddLisRegister("0," + sbyl.Substring(0, 2));
+                        session.AddLisRegister("0," + sbyl.Substring(3, 5));
+                        session.AddLisRegister("0," + sbyl.Substring(9, 5));
+                        session.AddLisRegister("0," + sbyl.Substring(15, 2));
+                        session.AddLisRegister("1," + session.clsshdb_register.DriveMotorArrangementType);
+                        session.AddLisRegister("1," + session.clsshdb_register.DrivingMotorCoolingMode);
+                        session.AddLisRegister("2," + session.clsshdb_register.DrivingRangeElectricVehicle);
+                        session.AddLisRegister("1," + session.clsshdb_register.MaxSpeedElectricVehicle);
+                        session.AddLisRegister("11,0");
+
+                        //发送给上海平台
+                        string result = ParsMethod.GetFormatByMarkedVehicles("01", "", "", ParsMethod.GetFormatByRegister(session.lisRegister));
+                        session.SendAsToServersByForwardToSHDB(result);
+                        //  session.AddLisRegister("11,0");
+                        session.AddLisRegister("0,02");
+                        session.AddLisRegister("0," + desc.Substring(84, 2));
+                        session.AddLisRegister("1," + Id);
+                        session.AddLisRegister("0," + Numberinfo.Substring(0, 11));
+                        session.AddLisRegister("0," + Numberinfo.Substring(12, 2));
+                        session.AddLisRegister("0," + Numberinfo.Substring(15, 5));
+                        session.AddLisRegister("0," + Numberinfo.Substring(21, 5));
+                        session.AddLisRegister("0," + Numberinfo.Substring(27, 8)+" 00 00 00");
+                        session.AddLisRegister("0," + Numberinfo.Substring(36, 5));
+
+                        result = ParsMethod.GetFormatByMarkedVehicles("01", "", "", ParsMethod.GetFormatByRegister(session.lisRegister));
+                        session.SendAsToServersByForwardToSHDB(result);
+                    }
+                    #endregion
+                    #region 推送上线信息
                     if (session.vlsType != -1 && session.isDBExist)
                     {
                         byte[] btemp = SendPttyyd("01", Simno);
@@ -464,6 +511,7 @@ namespace ServerCenterLis
                     {
                         WriteLog.WriteErrorLog("NovlsType", session.siCode + "__" + sendCommand, false);
                     }
+                    #endregion
 
                     //foreach (System.Reflection.PropertyInfo p in session.cls_register.GetType().GetProperties())
                     //{

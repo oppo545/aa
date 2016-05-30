@@ -656,6 +656,51 @@ namespace ServerCenterLis
                             str_data1 = str_all.Substring(0, 5);
                             session.cd_evt.ONC_HighPreOutputCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
                             break;
+                        case "0218":             ///最高允许充电端电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.MaxAllowChargingCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "0219":             ///最高允许充电端电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.MaxAllowChargingVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "021A":             ///充电控制指令 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.ChargeControlCommand = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "021B":             ///慢充充电连接状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.SlowChargingStatus = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "021C":             ///快充充电连接状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.FastChargingStatus = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "021D":             ///硬件故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.HardwareFailure = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "021E":             ///启动状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.StartState = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "021F":             ///充电机最大充电电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.ONC_Charge_Maxallow_A = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "0220":             ///高精度充电电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.HighPreChargingCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
                         #endregion
 
                         #region DC/DC 0x280-0x2FF
@@ -1208,7 +1253,7 @@ namespace ServerCenterLis
                             session.cd_evt.ChargerHardware = result;//.Equals("0") ? "" : result;
                             canfault += PublicMethods.GetCanFaultStr("ChargerHardware", "0X" + str_data2 + "-bit0", 1, int.Parse(result));
                             result = str_data1.Substring(6, 1);
-                            session.cd_evt.ChargerTempAlarm = result;//.Equals("0") ? "" : result;
+                            session.cd_evt.ChargerTempAlarm = int.Parse(result);//.Equals("0") ? "" : result;
                             canfault += PublicMethods.GetCanFaultStr("ChargerTempAlarm", "0X" + str_data2 + "-bit1", 1, int.Parse(result));
                             result = str_data1.Substring(5, 1);
                             session.cd_evt.ChargerInputUnderVolt = result;//.Equals("0") ? "" : result;
@@ -1251,6 +1296,24 @@ namespace ServerCenterLis
                             result = str_data1.Substring(1, 1);
                             session.cd_evt.EBD_FaultLed = result;//.Equals("0") ? "" : result;
                             canfault += PublicMethods.GetCanFaultStr("EBD_FaultLed", "0X" + str_data2 + "-bit6", 1, int.Parse(result));
+                            break;
+                        case "0701":             ///内网can通讯丢失 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.IntranetCanFault = ParsMethod.GetParsWholeByte(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("IntranetCanFault", "0X" + str_data1, 1, session.cd_evt.IntranetCanFault);
+                            break;
+                        case "0702":             ///整车CAN通信丢失 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.VehicleCanFault = ParsMethod.GetParsWholeByte(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("VehicleCanFault", "0X" + str_data1, 1, session.cd_evt.VehicleCanFault);
+                            break;
+                        case "0703":             ///充电机温度报警 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.ChargerTempAlarm = ParsMethod.GetParsWholeByte(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("ChargerTempAlarm", "0X" + str_data1, 1, session.cd_evt.ChargerTempAlarm);
                             break;
                         #endregion
                         #endregion
@@ -1389,6 +1452,26 @@ namespace ServerCenterLis
                             num = 2;
                             str_data1 = str_all.Substring(0, 5);
                             session.cd_evt.BMS_TempHighPreAve = ParsMethod.GetParsWholeByte(str_data1, 0.1, -40);
+                            break;
+                        case "0921":             /// 电池健康状态SOH
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BatteryHealthSOH = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0922":             /// 电池模块个数
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BatteryModulesNumber = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0923":             /// 电池最大允许放电功率
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BMS_Battery_Discharge_KW_MA = ParsMethod.GetParsWholeByte(str_data1,0.1);
+                            break;
+                        case "0924":             /// 电池最大允许充电功率
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BMS_Battery_Charge_KW_MAX = ParsMethod.GetParsWholeByte(str_data1,0.1);
                             break;
                         #endregion
                         #region 电池报警0XC00--0XDFF

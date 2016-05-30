@@ -214,7 +214,7 @@ public class PublicMethods
     /// 格式化字符串, 补足0,添加空格 2 N(字节)
     /// </summary>
     /// <param name="info">The info.</param>
-    /// <param name="nums">位数 00 00-&gt;0000 4</param>
+    /// <param name="nums">字节 00 00-&gt;0000 4</param>
     /// <returns>System.String.</returns>
     public static string GetFomartZK(string info, int nums)
     {
