@@ -213,7 +213,7 @@ public class PublicMethods
     /// <summary>
     /// 格式化字符串, 补足0,添加空格 2 N(字节)
     /// </summary>
-    /// <param name="info">The info.</param>
+    /// <param name="info">The info. 无空格</param>
     /// <param name="nums">字节 00 00-&gt;0000 4</param>
     /// <returns>System.String.</returns>
     public static string GetFomartZK(string info, int nums)
@@ -224,6 +224,23 @@ public class PublicMethods
         }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < info.Length; ++i)
+        {
+            sb.Append(info[i]);
+            if ((i + 1) % 2 == 0)
+                sb.Append(" ");
+        }
+        string result = sb.ToString().Substring(0, sb.Length - 1);
+        return result;
+    }
+
+    public static string GetFomartZKbyPadRight(string info, int nums)
+    {
+        if (info.Length < nums * 2)
+        {
+            info = info.PadRight(nums * 2, '0');
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < info.Length; i++)
         {
             sb.Append(info[i]);
             if ((i + 1) % 2 == 0)

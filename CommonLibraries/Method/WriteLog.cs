@@ -203,7 +203,7 @@ public class WriteLog
                 witlogxt.WriteLine(recvStr);
                 foreach (System.Reflection.PropertyInfo p in obj.GetType().GetProperties())
                 {
-                    if (p.PropertyType.IsGenericType) continue;
+                    //if (p.PropertyType.IsGenericType) continue;
                     object[] objs = obj.GetType().GetProperty(p.Name).GetCustomAttributes(typeof(DescriptionAttribute), true);
                     if (objs.Length > 0 && p.GetValue(obj, null) != null)
                     {

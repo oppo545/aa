@@ -17,7 +17,7 @@ using System.Data;
 using SuperSocket.SocketEngine;
 namespace ServerCenterLis
 {
-    /// <summary>                                                  D:\01.Data\vls.ServerCenterLis\3.0\ServerCenterLis_3.1_20160308_EVT自定义_改故障码\ServerCenterLis\Command\ProtocolFormat_7E.cs
+    /// <summary>                                                  
     /// 088/2011,2013
     /// </summary>
     public class ProtocolFormat_7E : CommandBase<Telnet_Session, StringRequestInfo>

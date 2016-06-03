@@ -166,10 +166,10 @@ public class ParsMethod
     /// <summary>
     ///获取大端模式解释
     /// </summary>
-    /// <param name="BeginningBytes">起始字节标识 </param>
-    /// <param name="Datas">数据</param>
+    /// <param name="BeginningBytes">起始字节标识 默认以1开始</param>
+    /// <param name="Datas">数据,分字节后</param>
     /// <param name="StartBytes">起始字节</param>
-    /// <param name="StartBit">起始位</param>
+    /// <param name="StartBit">起始位,紧换算位</param>
     /// <param name="BitLength">位长度</param>
     /// <param name="Resolution">精度</param>
     /// <param name="Offset">偏移量</param>
@@ -300,7 +300,7 @@ public class ParsMethod
     public static string GetFormatByMarkedVehicles(string commandName, string lsh, string vin, string dataUnit)
     {
         string result = "7E ";
-        string info = string.Format("23 23 {0} {1} 00 {2} {3}", commandName, lsh, vin, PublicMethods.Get10To16(dataUnit.Split(' ').Count().ToString(), 2).ToString(), dataUnit);
+        string info = string.Format("23 23 {0} FE {1} {2} 00 {3} {4}", commandName, lsh, vin, PublicMethods.Get10To16(dataUnit.Split(' ').Count().ToString(), 2).ToString(), dataUnit);
         info = Telnet_Session.GetXxfz(info);
         result += string.Format("{0} {1} 7E", info, PublicMethods.GetJy(info.Split(' ')));
         return result;
@@ -316,25 +316,43 @@ public class ParsMethod
         {
             num = int.Parse(lisRegister[i].Split(',')[0].ToString());
             info = lisRegister[i].Split(',')[1];
+            
             if (num == 0)
             {
+                info = string.IsNullOrEmpty(info) ? GetFomateSHDB(info, num) : info;
                 //原始数据
                 result += info+" ";
             }
             else
             {
+                info = string.IsNullOrEmpty(info) ? "00" : info;
                 result += PublicMethods.Get10To16(info, num) + " ";
+            }
+        }
+        lisRegister.Clear();
+        return result.Trim();
+    }
+
+    public static string GetFomateSHDB(string info, int number)
+    {
+        string result = "";
+        if (string.IsNullOrEmpty(info))
+        {
+            for (int i = 0; i < number; i++)
+            {
+
+                if (i == number - 1)
+                {
+                    result += "FE";
+                }
+                else
+                {
+                    result += "FF";
+                }
             }
         }
         return result;
     }
-
-    //public string GetFomateSHDB(string info,int number)
-    //{
-    //    string result = "";
-    //    PublicMethods.Get10To16(info)
-    //    return result;
-    //}
 
     /// <summary>
     ///    点火与熄火时间

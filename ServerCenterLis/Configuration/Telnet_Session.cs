@@ -49,6 +49,10 @@ namespace ServerCenterLis
 
 
             Lastcantime = "";
+            if (lisRegister != null)
+            {
+                lisRegister.Clear();        //清空
+            }
         }
 
         /// <summary>
@@ -81,7 +85,7 @@ namespace ServerCenterLis
         public int num = 0;
 
 
-    
+
         public int Activenum = 0;
 
         #region 公共
@@ -137,6 +141,7 @@ namespace ServerCenterLis
         /// </summary>
         public bool isDBExist = false;
 
+        #region 上标
         /// <summary>
         ///是否为上标车辆
         /// </summary>
@@ -151,6 +156,56 @@ namespace ServerCenterLis
             }
             return lisRegister;
         }
+
+
+        /// <summary>
+        /// 上标 启动时间
+        /// </summary>
+        public string StartupTime;
+        /// <summary>
+        /// 上标 熄火时间
+        /// </summary>
+        public string TurnOffTime;
+
+            public string Org_RegisterTime; 
+        /// <summary>
+        /// 存储16原始时间
+        /// </summary>
+        public string Org_NowTime;
+        public string Org_IsLocation;
+        public string Org_Longitude;
+        public string Org_Latitude;
+        public string Org_Motor_ControllerTemp = "FF";
+        public string Org_Motor_Revolution = "FF FF";
+        public string Org_Motor_Temperature = "FF";
+        public string Org_Motor_Current = "FF FF";
+        //public string Org_Latitude;
+
+       
+
+        public string dcbgs;//电池温度个数1,2
+        public string Temp; //最高,最低;最高,最低;
+
+    
+        public string Org_AcceleratorPedalStroke="00";
+        public string Org_BrakePedalState = "02";//不启用
+        public string Org_PowerSystemReady = "00";    //未就绪
+        public string Org_EmergencyPowerRequest = "00"; //正常
+        public string Org_VehicleCurrentStatus = "00"; //停止
+
+        public string Org_BMS_Current = "FF FF";
+        public string Org_BMS_SOC = "FF";
+        public string Org_ResidualCapacity = "FF FF";
+        public string Org_BMS_Voltage = "FF FF";
+        public string Org_BMS_Temp_Max = "FF";
+        public string Org_BMS_Temp_Min = "FF";
+        public string Org_BMS_MaxCellBatt = "FF FF";
+        public string Org_BMS_MinCellBatt = "FF FF";
+        public string Org_InsulationResistance = "FF FF";
+        public string Org_BatteryBalancedActivation = "00"; //无均衡
+        public string Org_LiquidFuelConsumption = "FF FF";
+
+        #endregion
         #endregion
 
 
@@ -1053,7 +1108,7 @@ namespace ServerCenterLis
             buffer.Append("\"systemNo\":\"" + infos[0] + "\",");
             buffer.Append("\"currentTime\":\"" + infos[1] + "\"},");
             buffer.Append("\"signalNames\":{");
-            for (int i = 0; i < infos[2].Split(';').Count()-1; i++)
+            for (int i = 0; i < infos[2].Split(';').Count() - 1; i++)
             {
                 if (i != infos[2].Split(';').Count() - 2)
                 {
@@ -1127,7 +1182,7 @@ namespace ServerCenterLis
         {
             mqs.SendMsgByAlarm(strinfo);
         }
-        public void SendAsToServersByForwardToSHDB(string strinfo)    
+        public void SendAsToServersByForwardToSHDB(string strinfo)
         {
             mqs.SendMsgByForwardToSHDB(strinfo);
         }
@@ -1248,7 +1303,14 @@ namespace ServerCenterLis
                                 if (i == DecompositionNum * num)
                                 {
                                     //temp = string.Format("insert into vehiclerunninginfo.runningrecord({0},`SignalName`,`CurrentValue`,`MaxValue`,`MinValue`) values ", infokey);
-                                    temp = string.Format(string.Format("insert into vehiclerunninginfo.runningrecord({0},`SignalName`,`CurrentValue`) values({{0}}),", infokey), tempstr);
+                                    if (lisinfo.Count == 1)
+                                    {
+                                        temp = string.Format(string.Format("insert into vehiclerunninginfo.runningrecord({0},`SignalName`,`CurrentValue`) values({{0}})", infokey), tempstr);
+                                    }
+                                    else
+                                    {
+                                        temp = string.Format(string.Format("insert into vehiclerunninginfo.runningrecord({0},`SignalName`,`CurrentValue`) values({{0}}),", infokey), tempstr);
+                                    }
                                     num++;
                                 }
                                 else
@@ -1350,9 +1412,12 @@ namespace ServerCenterLis
                     {
                         sendtomysql = sendtomysql.Replace(",insert", ";insert");
                         string[] mysqlstr = sendtomysql.Split(';');
-                        for (int i = 0; i < mysqlstr.Count() - 1; i++)
+                        for (int i = 0; i < mysqlstr.Count(); i++)
                         {
-                            session.mqs.SendMsg(mysqlstr[i] + ";");
+                            if (!string.IsNullOrEmpty(mysqlstr[i]))
+                            {
+                                session.mqs.SendMsg(mysqlstr[i] + ";");
+                            }
                         }
                     }
 
@@ -1439,3 +1504,5 @@ namespace ServerCenterLis
 
     }
 }
+
+

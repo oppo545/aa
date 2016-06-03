@@ -26,6 +26,7 @@ public class MqActive : Mq
             sendDataTimer2 = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallback2), null, Polltime, Polltime);
             sendDataTimerbyGPS = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyGPS), null, Polltime, Polltime);
             sendDataTimerbyAlarm = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyAlarm), null, Polltime, Polltime);
+            sendDataTimerbyForward = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyForward), null, Polltime, Polltime);
         }
         catch (Exception)
         {

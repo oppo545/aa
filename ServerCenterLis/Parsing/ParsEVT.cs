@@ -453,38 +453,38 @@ namespace ServerCenterLis
                             #region byte2
                             str_data1 = str_all.Substring(3, 2);
                             faultlever = ParsMethod.GetValuebyBinary(str_data1, 8, 2, 1);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.MCU_MotOTFault = faultint;
                             canfault += PublicMethods.GetCanFaultStr("MCU_MotOTFault", "0X" + str_data1 + "-bit7", faultlever, faultint);
                             faultlever = ParsMethod.GetValuebyBinary(str_data1, 10, 2, 1);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.MCU_MotOverCurrent = faultint;
                             canfault += PublicMethods.GetCanFaultStr("MCU_MotOverCurrent", "0X" + str_data1 + "-bit5", faultlever, faultint);
                             faultlever = ParsMethod.GetValuebyBinary(str_data1, 12, 2, 1);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.MCU_IGBTTempProtect = faultint;
                             canfault += PublicMethods.GetCanFaultStr("MCU_IGBTTempProtect", "0X" + str_data1 + "-bit3", faultlever, faultint);
                             faultlever = ParsMethod.GetValuebyBinary(str_data1, 14, 2, 1);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.MCU_OverVoltage = faultint;//.Equals("0") ? "" : result;
                             canfault += PublicMethods.GetCanFaultStr("MCU_OverVoltage", "0X" + str_data1 + "-bit1", faultlever, faultint);
                             #endregion
                             #region byte3
                             str_data1 = str_all.Substring(6, 2);
                             faultlever = ParsMethod.GetValuebyBinary(str_data1, 16, 2, 2);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.MCU_UnderVoltage = faultint;
                             canfault += PublicMethods.GetCanFaultStr("MCU_UnderVoltage", "0X" + str_data1 + "-bit7", faultlever, faultint);
                             faultlever = ParsMethod.GetValuebyBinary(str_data1, 18, 2, 2);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.MCU_OTFault = faultint;
                             canfault += PublicMethods.GetCanFaultStr("MCU_OTFault", "0X" + str_data1 + "-bit5", faultlever, faultint);
                             faultlever = ParsMethod.GetValuebyBinary(str_data1, 20, 2, 2);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.MCU_MotOverSpeed = faultint;
                             canfault += PublicMethods.GetCanFaultStr("MCU_MotOverSpeed", "0X" + str_data1 + "-bit3", faultlever, faultint);
                             faultlever = ParsMethod.GetValuebyBinary(str_data1, 22, 2, 2);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.MCU_OverCurrent = faultint;//.Equals("0") ? "" : result;
                             canfault += PublicMethods.GetCanFaultStr("MCU_OverCurrent", "0X" + str_data1 + "-bit1", faultlever, faultint);
                             #endregion
@@ -543,7 +543,7 @@ namespace ServerCenterLis
                             session.cd_evt.MotLoseSpeed = result;//.Equals("0") ? "" : result;
                             canfault += PublicMethods.GetCanFaultStr("MotLoseSpeed", "0X" + str_data2 + "-bit4", 1, int.Parse(result));
                             break;
-                        case "0127":       /// 电机最大输出转矩2
+                        case "0127":       /// 电机最大输出转矩
                             num = 2;
                             str_data1 = str_all.Substring(0, 5);
                             session.cd_evt.MotMaxTorque = ParsMethod.GetParsWholeByte(str_data1, 0.1,-1000);
@@ -657,7 +657,7 @@ namespace ServerCenterLis
                             session.cd_evt.ONC_HighPreOutputCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
                             break;
                         case "0218":             ///最高允许充电端电流 
-                            num = 2;
+                            num = 2;                                     
                             str_data1 = str_all.Substring(0, 5);
                             session.cd_evt.MaxAllowChargingCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
                             break;
@@ -774,7 +774,7 @@ namespace ServerCenterLis
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.DCDC_Efficiency = ParsMethod.GetParsWholeByte(str_data1);
                             break;
-                        case "0295":             /// sk DCDC输入电压
+                        case "0295":             /// sk DCDC温度
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.DCDC_Temp = ParsMethod.GetParsWholeByte(str_data1, 1, -40);
@@ -1315,6 +1315,17 @@ namespace ServerCenterLis
                             session.cd_evt.ChargerTempAlarm = ParsMethod.GetParsWholeByte(str_data1);
                             canfault += PublicMethods.GetCanFaultStr("ChargerTempAlarm", "0X" + str_data1, 1, session.cd_evt.ChargerTempAlarm);
                             break;
+                        case "0704":             ///充电机输入电压状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.ONC_InputVoltage = ParsMethod.GetParsWholeByte(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("ONC_InputVoltage", "0X" + str_data1, 1, session.cd_evt.ONC_InputVoltage);
+                            break;
+                        case "0705":             ///高精度充电机输出电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.ONC_HighPreInputCurrent = ParsMethod.GetParsWholeByte(str_data1,0.1);
+                            break;
                         #endregion
                         #endregion
                         #region 电池 0X800-0XFFF
@@ -1322,7 +1333,7 @@ namespace ServerCenterLis
                         case "0801":                    /// 电池平均温度
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BMS_Temp_Ave = ParsMethod.GetParsWholeByte(str_data1, 0.1, -40);
+                            session.cd_evt.BMS_Temp_Ave = ParsMethod.GetParsWholeByte(str_data1, 1, -40);
                             break;
                         case "0802":           /// 电池组当前容量指数 (分辨率1%) 
                             num = 1;
@@ -1472,6 +1483,11 @@ namespace ServerCenterLis
                             num = 2;
                             str_data1 = str_all.Substring(0, 5);
                             session.cd_evt.BMS_Battery_Charge_KW_MAX = ParsMethod.GetParsWholeByte(str_data1,0.1);
+                            break;
+                        case "0927":             /// 电池正极继电器状态
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BMS_Positive_Relay = ParsMethod.GetParsWholeByte(str_data1);
                             break;
                         #endregion
                         #region 电池报警0XC00--0XDFF
@@ -1787,20 +1803,20 @@ namespace ServerCenterLis
                             num = 4;    //电池故障信息
                             #region byte1
                             str_data2 = str_all.Substring(0, 2);
-                            faultlever = ParsMethod.GetValuebyBinary(str_data2, 0, 2);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultlever = ParsMethod.GetValuebyBinary(str_data2, 0, 2);                  
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.BMS_BattOverTemp = faultint;
                             canfault += PublicMethods.GetCanFaultStr("BMS_BattOverTemp", "0X" + str_data2, faultlever, faultint);
                             faultlever = ParsMethod.GetValuebyBinary(str_data2, 2, 2);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.BMS_BattInsulation = faultlever;
                             canfault += PublicMethods.GetCanFaultStr("BMS_BattInsulation", "0X" + str_data2, faultlever, faultint);
                             faultlever = ParsMethod.GetValuebyBinary(str_data2, 4, 2);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.BMS_BattOverVolt = faultint;
                             canfault += PublicMethods.GetCanFaultStr("BMS_BattOverVolt", "0X" + str_data2, faultlever, faultint);
                             faultlever = ParsMethod.GetValuebyBinary(str_data2, 6, 2);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.BMS_BattOverCurrent = faultint;
                             canfault += PublicMethods.GetCanFaultStr("BMS_BattOverCurrent", "0X" + str_data2, faultlever, faultint);
                             #endregion
@@ -1812,7 +1828,7 @@ namespace ServerCenterLis
                                 str_data1 = str_data1.PadLeft(8, '0');
                             result = str_data1.Substring(6, 2);
                             faultlever = PublicMethods.Get2To10(result);
-                            faultint = faultlever.Equals("0") ? 0 : 1;
+                            faultint = faultlever==0 ? 0 : 1;
                             session.cd_evt.BMS_BattUnderVolt = faultint;
                             canfault += PublicMethods.GetCanFaultStr("BMS_BattUnderVolt", "0X" + str_data2 + "-bit1", faultlever, faultint);
                             result = str_data1.Substring(5, 1);
@@ -1936,6 +1952,38 @@ namespace ServerCenterLis
                             canfault += PublicMethods.GetCanFaultStr("CPR_ACSysFault", "0X" + str_data2 + "-bit7", 1, int.Parse(result));
                             break;
                         #endregion
+                        #endregion
+                        #region 上海地标实时部分   实时上传0x2000--0x20FF
+                        case "2000":
+                            num = 1;       //动力系统就绪
+                            str_data1 = str_all.Substring(0, 2);
+                            session.Org_PowerSystemReady = str_data1;
+                            session.cd_evt.PowerSystemReady = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "2001":
+                            num = 1;       //紧急下电请求
+                            str_data1 = str_all.Substring(0, 2);
+                            session.Org_EmergencyPowerRequest = str_data1;
+                            session.cd_evt.EmergencyPowerRequest = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "2002":
+                            num = 1;       //电池均衡激活
+                            str_data1 = str_all.Substring(0, 2);
+                            session.Org_BatteryBalancedActivation = str_data1;
+                            session.cd_evt.BatteryBalancedActivation = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "2003":
+                            num = 1;       //车辆当前状态
+                            str_data1 = str_all.Substring(0, 2);
+                            session.Org_VehicleCurrentStatus = str_data1;
+                            session.cd_evt.VehicleCurrentStatus = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "2004":
+                            num = 2;       //液体燃料消耗量
+                            str_data1 = str_all.Substring(0, 5);
+                            session.Org_LiquidFuelConsumption = str_data1;
+                            session.cd_evt.LiquidFuelConsumption = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
                         #endregion
                         default:
                             WriteLog.WriteTestLog("ZDY", "Not Found:" + packageNumber + "___Last:" + lastPackageNumber, true);

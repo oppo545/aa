@@ -6,16 +6,14 @@ using System.Text;
 using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Protocol;
-
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Data.SqlClient;
 using System.Data;
-
-
 using SuperSocket.SocketEngine;
 using CommonLibraries;
+
 namespace ServerCenterLis
 {
     /// <summary>
@@ -289,11 +287,11 @@ namespace ServerCenterLis
                     session.cls_register = session.getClsRegister();
                     session.clsshdb_register = session.getSHDBRegister();  //shdb
 
-                    session.AddLisRegister("0,"+desc.Substring(0, 17));//shdb
                     session.cls_register.Zc_zcsj = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
                     session.cls_register.Zc_zclsh = desc.Substring(18, 5);
                     session.cls_register.Zc_cph = PublicMethods.GetHexToAscii(desc.Substring(24, 23));
 
+                    session.Org_RegisterTime = desc.Substring(0, 17);
                     //车载终端编号
                     string czzdbh = desc.Substring(48, 35);
                     session.cls_register.Zc_zd_csdm = PublicMethods.GetHexToAscii(czzdbh.Substring(0, 11));
@@ -304,6 +302,13 @@ namespace ServerCenterLis
                     int dldcgs = int.Parse(desc.Substring(84, 2));
                     session.cls_register.Zc_dlxdc = new List<Cls_bjdb_dlxdc>();
                     string Id = "", Numberinfo = "";
+
+                    //预留位 11   校验位,已除
+                    string yl = desc.Substring(desc.Length - 32, 32);
+                    //前5个表示车型
+                    session.cls_register.Styling = session.GetVehicleStyle(yl.Substring(0, 14));
+                    session.vlsType = session.cls_register.Styling;
+
                     if (dldcgs > 0)
                     {
                         //总长度-前面的长度-后面的长度-3个空格=中间需要的长度 
@@ -329,10 +334,10 @@ namespace ServerCenterLis
                             {
                                 //shdb
                                 string dcyl = onecode.Substring(45, 14);
-                                session.isMarkedVehicles = ParsMethod.GetParsBig(dcyl, 1, 0, 1) == 1;
-                                session.clsshdb_register.VehicleType = ParsMethod.GetParsBig(dcyl, 1, 2, 2);
-                                session.clsshdb_register.VehicleModels = "";
-                                session.clsshdb_register.DrivingMotorType = ParsMethod.GetParsBig(dcyl, 1, 4, 4);
+                                session.isMarkedVehicles = ParsMethod.GetParsBig(dcyl.Substring(0, 2), 1, 0, 1) == 1;
+                                session.clsshdb_register.VehicleType = ParsMethod.GetParsBig(dcyl.Substring(0, 2), 1, 2, 2);
+                                session.clsshdb_register.VehicleModels = yl.Substring(0, 14).Replace(" ", "");
+                                session.clsshdb_register.DrivingMotorType = ParsMethod.GetParsBig(dcyl.Substring(0, 2), 1, 4, 4);
                                 session.clsshdb_register.DriveMotorArrangementType = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 0, 4);
                                 session.clsshdb_register.DrivingMotorCoolingMode = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 4, 2);
                                 session.clsshdb_register.EnergyStorageDeviceType = ParsMethod.GetParsBig(dcyl.Substring(3), 1, 6, 2);
@@ -340,10 +345,23 @@ namespace ServerCenterLis
                                 session.clsshdb_register.MaxSpeedElectricVehicle = ParsMethod.GetParsWholeByte(dcyl.Substring(12, 2));
 
                                 session.AddLisRegister("0,01");
+                                session.AddLisRegister("0," + session.Org_RegisterTime);//shdb
                                 session.AddLisRegister("1," + session.clsshdb_register.VehicleType);
-                                session.AddLisRegister("20," + session.clsshdb_register.VehicleModels);
+                                if (session.clsshdb_register.VehicleModels.Equals("0000000000"))
+                                {
+                                    session.AddLisRegister("0," + PublicMethods.GetFomartZKbyPadRight(PublicMethods.GetAsciiToHex("海马").Replace(" ", ""), 20));
+                                }
+                                else
+                                {
+                                    session.AddLisRegister("0," + PublicMethods.GetFomartZKbyPadRight(session.clsshdb_register.VehicleModels, 20));
+                                }
                                 session.AddLisRegister("1," + session.clsshdb_register.EnergyStorageDeviceType);
                                 session.AddLisRegister("1," + session.clsshdb_register.DrivingMotorType);
+                            }
+                            if (i == 1 && session.isMarkedVehicles)
+                            {
+                                string dcyl = onecode.Substring(45, 14);
+                                session.clsshdb_register.DriveMotorInstallationQuantity = ParsMethod.GetParsWholeByte(dcyl.Substring(0, 2));
                             }
 
                             // 59 长度+1 +起始
@@ -352,10 +370,10 @@ namespace ServerCenterLis
 
                     }
                     //预留位 11   校验位,已除
-                    string yl = desc.Substring(desc.Length - 32, 32);
+                    //string yl = desc.Substring(desc.Length - 32, 32);
                     //前5个表示车型
-                    session.cls_register.Styling = session.GetVehicleStyle(yl.Substring(0, 14));
-                    session.vlsType = session.cls_register.Styling;
+                    //session.cls_register.Styling = session.GetVehicleStyle(yl.Substring(0, 14));
+                    //session.vlsType = session.cls_register.Styling;
                     //第6个 自动驾车标识
                     int Activate = int.Parse(yl.Substring(15, 2));
                     #region 自动加车
@@ -363,7 +381,7 @@ namespace ServerCenterLis
                     //if (session.vlsType == 0 && Activate == 1 && !session.isActivate)
                     int OrganizationID = 0; string SiOrganizationID = "";
                     int vlsTypeid = 0; string VehicleTypeID = "";
-                   
+
                     if (Activate == 1 && !session.isDBExist)
                     {
                         string InsertVehicleInfo = "";
@@ -440,17 +458,17 @@ namespace ServerCenterLis
                     #region 上标注册扩展
                     if (session.isMarkedVehicles)  //是否是上标车辆
                     {
-                        
-                        string sbyl=  yl.Substring(18);
+
+                        string sbyl = yl.Substring(18);
                         session.clsshdb_register.DriveMotorRatedPower = ParsMethod.GetParsWholeByte(sbyl.Substring(0, 2));
                         session.clsshdb_register.DriveMotorRatedSpeed = ParsMethod.GetParsWholeByte(sbyl.Substring(3, 5));
                         session.clsshdb_register.DriveMotorRatedTorque = ParsMethod.GetParsWholeByte(sbyl.Substring(9, 5));
-                        session.clsshdb_register.DriveMotorInstallationQuantity = ParsMethod.GetParsWholeByte(sbyl.Substring(15, 2));
+                        // session.clsshdb_register.DriveMotorInstallationQuantity = ParsMethod.GetParsWholeByte(sbyl.Substring(15, 2));
 
-                        session.AddLisRegister("0," + sbyl.Substring(0, 2));
+                        session.AddLisRegister("0,00 " + sbyl.Substring(0, 2)); //有效值范围：0～255,2字节
                         session.AddLisRegister("0," + sbyl.Substring(3, 5));
                         session.AddLisRegister("0," + sbyl.Substring(9, 5));
-                        session.AddLisRegister("0," + sbyl.Substring(15, 2));
+                        session.AddLisRegister("1," + session.clsshdb_register.DriveMotorInstallationQuantity);
                         session.AddLisRegister("1," + session.clsshdb_register.DriveMotorArrangementType);
                         session.AddLisRegister("1," + session.clsshdb_register.DrivingMotorCoolingMode);
                         session.AddLisRegister("2," + session.clsshdb_register.DrivingRangeElectricVehicle);
@@ -458,9 +476,8 @@ namespace ServerCenterLis
                         session.AddLisRegister("11,0");
 
                         //发送给上海平台
-                        string result = ParsMethod.GetFormatByMarkedVehicles("01", "", "", ParsMethod.GetFormatByRegister(session.lisRegister));
+                        string result = ParsMethod.GetFormatByMarkedVehicles("01", desc.Substring(18, 5), PublicMethods.GetFomartZK(Simno, 17), ParsMethod.GetFormatByRegister(session.lisRegister));
                         session.SendAsToServersByForwardToSHDB(result);
-                        //  session.AddLisRegister("11,0");
                         session.AddLisRegister("0,02");
                         session.AddLisRegister("0," + desc.Substring(84, 2));
                         session.AddLisRegister("1," + Id);
@@ -468,10 +485,10 @@ namespace ServerCenterLis
                         session.AddLisRegister("0," + Numberinfo.Substring(12, 2));
                         session.AddLisRegister("0," + Numberinfo.Substring(15, 5));
                         session.AddLisRegister("0," + Numberinfo.Substring(21, 5));
-                        session.AddLisRegister("0," + Numberinfo.Substring(27, 8)+" 00 00 00");
+                        session.AddLisRegister("0," + Numberinfo.Substring(27, 8) + " 00 00 00");
                         session.AddLisRegister("0," + Numberinfo.Substring(36, 5));
 
-                        result = ParsMethod.GetFormatByMarkedVehicles("01", "", "", ParsMethod.GetFormatByRegister(session.lisRegister));
+                        result = ParsMethod.GetFormatByMarkedVehicles("01", desc.Substring(18, 5), PublicMethods.GetFomartZK(Simno, 17), ParsMethod.GetFormatByRegister(session.lisRegister));
                         session.SendAsToServersByForwardToSHDB(result);
                     }
                     #endregion
@@ -702,11 +719,12 @@ namespace ServerCenterLis
                     #region MyRegion
                     #region MyRegion
                     List<string> lis = new List<string>();
-                    string jeams = "";
+                    string jeams = ""; session.dcbgs = ""; session.Temp = "";
                     try
                     {
                         //采集时间
-                        session.cls_bjdb.Date = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
+                        session.Org_NowTime = desc.Substring(0, 17);
+                        session.cls_bjdb.Date = PublicMethods.GetGMT8Data(session.Org_NowTime, 1);
                         //PublicMethods.TimeDetermine(session.siCode, session.cls_bjdb.Date, out dtimeput);
 
                         if (desc.Length < 18) { return; }
@@ -748,7 +766,7 @@ namespace ServerCenterLis
                                             for (int i = 0; i < session.cls_sbv.SingleBatteryPackTotal; i++)
                                             {
                                                 zcinfo = zcinfo.Substring(startindexnum, zcinfo.Length - startindexnum);
-                                                session.cls_vvl = session.getClsVvl();
+                                                session.cls_vvl = session.getClsVvl(); session.cls_vvl.BatteryVoltage = "";
                                                 session.cls_vvl.PowerBatteryPackNumber = PublicMethods.Get16To10(zcinfo.Substring(0, 2));
                                                 session.cls_vvl.PowerBatteryTotal = PublicMethods.Get16To10(zcinfo.Substring(3, 2));
                                                 tempTValue = zcinfo.Substring(6, zcinfo.Length - 6);
@@ -806,27 +824,32 @@ namespace ServerCenterLis
                                             string tempTValue;
                                             int numlength = 0;
                                             zcinfo = zcinfo.Substring(9);
+                                            int maxtemp = 0; int mintemp = 165;//最大值
                                             for (int i = 0; i < session.cls_pbp.PowerBatteryPackTotal; i++)
                                             {
                                                 zcinfo = zcinfo.Substring(startindexnum, zcinfo.Length - startindexnum);
-                                                session.cls_tvl = session.getClsTvl();
+                                                session.cls_tvl = session.getClsTvl(); session.cls_tvl.ProbeTemperature = "";
                                                 session.cls_tvl.PowerBatteryPackNumber = PublicMethods.Get16To10(zcinfo.Substring(0, 2));
+                                                //shdb
+                                                session.dcbgs += zcinfo.Substring(0, 2) + ",";
                                                 session.cls_tvl.TemperatureProbeTotal = PublicMethods.Get16To10(zcinfo.Substring(3, 2));
                                                 tempTValue = zcinfo.Substring(6, zcinfo.Length - 6);
                                                 for (int j = 0; j < session.cls_tvl.TemperatureProbeTotal; j++)
                                                 {
                                                     int temperature = PublicMethods.Get16To10(tempTValue.Substring(0, 2)) - 40;
-                                                    //多电池多电压 
-                                                    //if (vlstypes.Contains(session.vlsType)) //比亚迪 卡车-客车
-                                                    //{
+                                                    if (maxtemp < temperature) maxtemp = temperature;
+                                                    if (mintemp > temperature) mintemp = temperature;
+
                                                     jeams += string.Format("${0}^{1}", string.Format("BatteryPack{0}ProbeTemp{1}", session.cls_tvl.PowerBatteryPackNumber, (j + 1)), temperature);
-                                                    //}
+
                                                     session.cls_tvl.ProbeTemperature += "," + temperature;
                                                     if (j < session.cls_tvl.TemperatureProbeTotal - 1)
                                                     {
                                                         tempTValue = tempTValue.Substring(3, tempTValue.Length - 3);
                                                     }
                                                 }
+                                                //shdb  偏移量
+                                                session.Temp += (maxtemp + 40) + "," + (mintemp + 40) + ";";
                                                 if (!string.IsNullOrEmpty(session.cls_tvl.ProbeTemperature))
                                                 {
                                                     //去掉开始逗号
@@ -870,6 +893,7 @@ namespace ServerCenterLis
                                             session.cls_vls.BrakeTravelPer = PublicMethods.Get16To10(zcinfo.Substring(24, 2));
                                             //充放电状态
                                             temps = zcinfo.Substring(27, 2);
+                                            #region BMS_ChargeSt
                                             switch (temps)
                                             {
                                                 case "01": //充电
@@ -895,6 +919,7 @@ namespace ServerCenterLis
                                                         break;
                                                     }
                                             }
+                                            #endregion
                                             //电机控制器温度
                                             session.cls_vls.Motor_ControllerTemp = PublicMethods.Get16To10(zcinfo.Substring(30, 2)) - 40;
                                             //电机转速
@@ -908,6 +933,12 @@ namespace ServerCenterLis
                                             //空调设定温度
                                             session.cls_vls.AirSettingTemperature = PublicMethods.Get16To10(zcinfo.Substring(54, 2));
 
+                                            session.Org_AcceleratorPedalStroke = zcinfo.Substring(21, 2);
+                                            session.Org_BrakePedalState = zcinfo.Substring(24, 2);
+                                            session.Org_Motor_ControllerTemp = zcinfo.Substring(30, 2);
+                                            session.Org_Motor_Revolution = zcinfo.Substring(33, 5);
+                                            session.Org_Motor_Temperature = zcinfo.Substring(39, 2);
+                                            session.Org_Motor_Current = zcinfo.Substring(48, 5);
                                             //取startindex, 以0字节为第一个字节, 总共有5个字节,取第6个字节 n=5 3n=15 
                                             //此时 26*3=78 已经包括了后面的空格
                                             //由于 26个字节未包含 报文id,所以继续添加一个  27*3=81
@@ -931,6 +962,7 @@ namespace ServerCenterLis
                                         {
                                             session.cls_ptd = session.getClsPTD();
                                             string IsLocation = PublicMethods.Get16To2(zcinfo.Substring(0, 2), 1);
+                                            session.Org_IsLocation = zcinfo.Substring(0, 2);
                                             //因为平台中 1为定位,0为未定位
                                             //本协议 1为未定位
                                             session.cls_ptd.IsLocation = IsLocation.Substring(7, 1).Equals("0") ? "1" : "0";
@@ -938,7 +970,8 @@ namespace ServerCenterLis
                                             session.cls_ptd.EastWest = IsLocation.Substring(5, 1);
                                             session.cls_ptd.Longitude = Math.Round(PublicMethods.Get16To10(zcinfo.Substring(3, 11)) / 1000000d, 6);
                                             session.cls_ptd.Latitude = Math.Round(PublicMethods.Get16To10(zcinfo.Substring(15, 11)) / 1000000d, 6);
-
+                                            session.Org_Longitude = zcinfo.Substring(3, 11);
+                                            session.Org_Latitude = zcinfo.Substring(15, 11);
 
                                             //BMK经纬度处理
                                             if (session.cls_ptd.Longitude > 0)
@@ -985,10 +1018,20 @@ namespace ServerCenterLis
 
                                             session.cls_exd.BMS_Voltage = Math.Round(PublicMethods.Get16To10(zcinfo.Substring(42, 5)) * 0.1d, 2);
                                             session.cls_exd.BMS_Current = Math.Round(PublicMethods.Get16To10(zcinfo.Substring(48, 5)) * 0.1d - 1000, 2);
+
                                             session.cls_exd.BMS_SOC = Math.Round(PublicMethods.Get16To10(zcinfo.Substring(54, 2)) * 0.4d, 2);
                                             session.cls_exd.ResidualCapacity = Math.Round(PublicMethods.Get16To10(zcinfo.Substring(57, 5)) * 0.1d, 2);
                                             session.cls_exd.InsulationResistance = PublicMethods.Get16To10(zcinfo.Substring(63, 5));
 
+                                            session.Org_BMS_Current = zcinfo.Substring(48, 5);
+                                            session.Org_BMS_SOC = zcinfo.Substring(54, 2);
+                                            session.Org_ResidualCapacity = zcinfo.Substring(57, 5);
+                                            session.Org_BMS_Voltage = zcinfo.Substring(42, 5);
+                                            session.Org_BMS_Temp_Max = zcinfo.Substring(30, 2);
+                                            session.Org_BMS_Temp_Min = zcinfo.Substring(39, 2);
+                                            session.Org_BMS_MaxCellBatt = zcinfo.Substring(6, 5);
+                                            session.Org_BMS_MinCellBatt = zcinfo.Substring(18, 5);
+                                            session.Org_InsulationResistance = zcinfo.Substring(63, 5);
                                             int startindexnum = 87;
                                             if (info.Length > startindexnum)
                                             {
@@ -1257,7 +1300,7 @@ namespace ServerCenterLis
                                             //不是E0,却包含E0的报警,过滤
                                             if (session.vlsType != 10 && OtherFaultListStyle10.Contains(p.Name)) continue;
                                             //判断是否是 非泛型
-                                            if (p.PropertyType.IsGenericType) continue;
+                                            // if (p.PropertyType.IsGenericType) continue;
                                             //过滤gps字段
                                             if (Filtered.Contains(p.Name)) continue;
                                             //过滤 重复 singalName 
@@ -1432,8 +1475,91 @@ namespace ServerCenterLis
                 }
 
                 #region 上标封装
-                if (session.isMarkedVehicles)
+                if (session.isMarkedVehicles && (strindex.Equals("02") || strindex.Equals("05")))
                 {
+                    //实时上传
+                    session.AddLisRegister("0," + session.Org_NowTime);
+                    int Keypos = session.cd_evt.VCU_Keyposition.Value;
+                    if (Keypos == 0)
+                    {
+                        session.TurnOffTime = session.Org_NowTime;
+                    }
+                    else
+                    {     //启动时间
+                        session.StartupTime = session.Org_NowTime;
+                    }
+                    // 启动时间数据
+                    session.AddLisRegister("0,01");
+                    session.AddLisRegister("0," + (!string.IsNullOrEmpty(session.StartupTime) == true ? session.StartupTime : "00 00 00 00 00 00"));
+                    session.AddLisRegister("0," + (!string.IsNullOrEmpty(session.TurnOffTime) == true ? session.TurnOffTime : "00 00 00 00 00 00"));  
+                    if (session.cls_vls != null)
+                    {
+                        //累计行驶里程
+                        session.AddLisRegister("0,02");
+                        session.AddLisRegister("4," + session.cls_vls.IC_TotalOdmeter * 10);
+                    }
+                    if (session.cls_ptd != null)
+                    {
+                        //定位数据
+                        session.AddLisRegister("0,03");
+                        session.AddLisRegister("0," + session.Org_IsLocation);
+                        session.AddLisRegister("0," + session.Org_Longitude);
+                        session.AddLisRegister("0," + session.Org_Latitude);
+                        session.AddLisRegister("2," + session.cls_ptd.Speed * 10);
+                        session.AddLisRegister("2," + session.cls_ptd.Direction);
+                        session.AddLisRegister("0,00 00 00 00");
+                    }
+                    if (session.cls_vls != null)
+                    {
+                        //驱动电机数据
+                        session.AddLisRegister("0,04");
+                        session.AddLisRegister("0," + session.Org_Motor_ControllerTemp);
+                        session.AddLisRegister("0," + session.Org_Motor_Revolution);
+                        session.AddLisRegister("0," + session.Org_Motor_Temperature);
+                        session.AddLisRegister("0," + session.Org_Motor_Current);
+                    }
+                    if (session.cls_vls != null)
+                    {
+                        //车辆状态
+                        session.AddLisRegister("0,05");
+                        session.AddLisRegister("0," + session.Org_AcceleratorPedalStroke);
+                        session.AddLisRegister("0," + session.Org_BrakePedalState);
+                        session.AddLisRegister("0," + session.Org_PowerSystemReady);
+                        session.AddLisRegister("0," + session.Org_EmergencyPowerRequest);
+                        session.AddLisRegister("0," + session.Org_VehicleCurrentStatus);
+                    }
+                    if (session.cls_pbp != null && !string.IsNullOrEmpty(session.dcbgs))
+                    {
+                        //电池实时数据
+                        session.AddLisRegister("0,06");
+                        session.AddLisRegister("1," + session.cls_pbp.PowerBatteryPackTotal);
+                        session.dcbgs = session.dcbgs.Substring(0, session.dcbgs.Length - 1);
+                        session.Temp = session.Temp.Substring(0, session.Temp.Length - 1);
+                        for (int i = 0; i < session.dcbgs.Split(',').Count(); i++)
+                        {
+                            session.AddLisRegister("1," + session.dcbgs.Split(',')[i]);
+                            session.AddLisRegister("1," + session.Temp.Split(';')[i].Split(',')[0]);
+                            session.AddLisRegister("1," + session.Temp.Split(';')[i].Split(',')[1]);
+                        }
+                    }
+                    if (session.cls_exd != null)
+                    {
+                        // 电池包总体数据
+                        session.AddLisRegister("0,07");
+                        session.AddLisRegister("0," + session.Org_BMS_Current);
+                        session.AddLisRegister("0," + session.Org_BMS_SOC);
+                        session.AddLisRegister("0," + session.Org_ResidualCapacity);
+                        session.AddLisRegister("0," + session.Org_BMS_Voltage);
+                        session.AddLisRegister("0," + session.Org_BMS_Temp_Max);
+                        session.AddLisRegister("0," + session.Org_BMS_Temp_Min);
+                        session.AddLisRegister("0," + session.Org_BMS_MaxCellBatt);
+                        session.AddLisRegister("0," + session.Org_BMS_MinCellBatt);
+                        session.AddLisRegister("0," + session.Org_InsulationResistance);
+                        session.AddLisRegister("0," + session.Org_BatteryBalancedActivation);
+                        session.AddLisRegister("0," + session.Org_LiquidFuelConsumption);
+                    }
+                    string result = ParsMethod.GetFormatByMarkedVehicles("02", desc.Substring(18, 5), PublicMethods.GetFomartZK(Simno, 17), ParsMethod.GetFormatByRegister(session.lisRegister));
+                    session.SendAsToServersByForwardToSHDB(result);
 
                 }
                 #endregion
