@@ -16,7 +16,7 @@ public class PublicMethods
     /// <summary>
     /// The timeout
     /// </summary>
-    private static int timeout =int.Parse( ConfigurationManager.AppSettings["Timeout"].ToString());
+    private static int timeout = int.Parse(ConfigurationManager.AppSettings["Timeout"].ToString());
 
     /// <summary>
     /// 获取时间或日期 2035-11-11 14:25:01 || 2035-11-11
@@ -92,8 +92,9 @@ public class PublicMethods
     /// </summary>
     /// <param name="systemno"></param>
     /// <param name="dtime"></param>
+    ///      <param name="index">true:一般;false:实时</param>
     /// <returns></returns>
-    public static string GetFormatTme(string systemno, string dtime)
+    public static string GetFormatTme(string systemno, string dtime, bool index = true)
     {
         string time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         if (!string.IsNullOrEmpty(dtime))
@@ -107,12 +108,21 @@ public class PublicMethods
                 //TODO Filter  过滤 时间超过服务器时间的数据  
                 if (DateTime.Compare(dtnow, dt) < 0)
                 {
-                    WriteLog.WriteFilterLog(systemno + "时间超过服务器时间" + timeout + "分钟：" + dt);
+                    WriteLog.WriteFilterLog(systemno + "时间超过服务器时间" + timeout + "分钟以上：" + dt);
                     dt = dtnow.AddMinutes(-timeout);
                 }
                 else
                 {
-                    dt = DateTime.Parse(dtime);
+                    dtnow = DateTime.Now.AddMinutes(-timeout);
+                    if (!index && DateTime.Compare(dtnow, dt) > 0)
+                    {
+                        WriteLog.WriteFilterLog(systemno + "时间低于服务器时间" + timeout + "分钟以上：" + dt);
+                        dt = dtnow.AddMinutes(timeout);
+                    }
+                    else
+                    {
+                        dt = DateTime.Parse(dtime);
+                    }
                 }
             }
             else
@@ -276,9 +286,9 @@ public class PublicMethods
     public static string GetTransformationsSizeSide(string info)
     {
         string result = "";
-        for (int i = info.Split(' ').Length-1; i >=0 ; i--)
+        for (int i = info.Split(' ').Length - 1; i >= 0; i--)
         {
-            result += info.Split(' ')[i].ToString()+" ";
+            result += info.Split(' ')[i].ToString() + " ";
         }
         return result;
     }

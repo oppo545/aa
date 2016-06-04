@@ -1491,7 +1491,7 @@ namespace SuperSocket.SocketEngine
                             else if (vehicleMode.Equals("2"))
                             {
                                 //088
-                                string cs = Convert.ToString(1, 16).ToString();
+                                string cs = Convert.ToString(1, 16).ToString();  // 00 01 流水号  01是指控制
                                 string yhzfc = string.Format("8F 00 00 02 {0} 00 01 01 {1}", GetFomartSysno(yj), GetFomartZ(cs, 2));
                                 temp = string.Format("7E {0} {1} 7E", yhzfc, GetJy(yhzfc.Split(' ')));
                                 index = "|8F 00";
@@ -1501,10 +1501,13 @@ namespace SuperSocket.SocketEngine
                             {
                                 //地标
                                 string cs = Convert.ToString(1, 16).ToString();
-                                //消息体长度为4 +2(验证发送方)=6
-                                string yhzfc = string.Format("C0 FE {0} 00 00 06 00 01 01 {1}", PublicMethods.GetAsciiToHex(yj), GetFomartZ(cs, 2));
+                                DateTime dtnow = DateTime.Now;
+                                string time = string.Format("{0} {1} {2} {3} {4} {5}", PublicMethods.Get10To16(dtnow.Year.ToString().Substring(2, 2), 1), PublicMethods.Get10To16(dtnow.Month.ToString(), 1), PublicMethods.Get10To16(dtnow.Day.ToString(), 1), PublicMethods.Get10To16(dtnow.Hour.ToString(), 1), PublicMethods.Get10To16(dtnow.Minute.ToString(), 1), PublicMethods.Get10To16(dtnow.Second.ToString(), 1));
+                                //消息体长度为11 +2(验证发送方)=13       //时间+命令id+控制命令+命令时间+流水号      回复 命令+流水号
+                                string yhzfc = string.Format("82 FE {0} 00 00 0D {1} 87 01 {2} 00 01", PublicMethods.GetAsciiToHex(yj), time, GetFomartZ(cs, 2));
                                 temp = string.Format("23 23 {0} {1}", yhzfc, GetJy(yhzfc.Split(' ')));
-                                index = "|C0 FE";
+                                //设置时间,总数,id,参数,id,参数
+                                index = "|82 FE";
                             }
                         }
 
@@ -1540,9 +1543,13 @@ namespace SuperSocket.SocketEngine
                             {
                                 //地标
                                 string cs = Convert.ToString(1, 16).ToString();
-                                string yhzfc = string.Format("C0 FE {0} 00 00 06 00 02 02 {1}", PublicMethods.GetAsciiToHex(yj), GetFomartZ(cs, 2));
+                                DateTime dtnow = DateTime.Now;
+                                string time = string.Format("{0} {1} {2} {3} {4} {5}", PublicMethods.Get10To16(dtnow.Year.ToString().Substring(2, 2), 1), PublicMethods.Get10To16(dtnow.Month.ToString(), 1), PublicMethods.Get10To16(dtnow.Day.ToString(), 1), PublicMethods.Get10To16(dtnow.Hour.ToString(), 1), PublicMethods.Get10To16(dtnow.Minute.ToString(), 1), PublicMethods.Get10To16(dtnow.Second.ToString(), 1));
+                                //消息体长度为11 +2(验证发送方)=13       //时间+命令id+控制命令+命令时间+流水号      回复 命令+流水号
+                                string yhzfc = string.Format("82 FE {0} 00 00 0D {1} 87 02 {2} 00 02", PublicMethods.GetAsciiToHex(yj), time, GetFomartZ(cs, 2));
                                 temp = string.Format("23 23 {0} {1}", yhzfc, GetJy(yhzfc.Split(' ')));
-                                index = "|C0 FE";
+                                //设置时间,总数,id,参数,id,参数
+                                index = "|82 FE";
                             }
                         }
                     }
@@ -1577,9 +1584,13 @@ namespace SuperSocket.SocketEngine
                             {
                                 //地标
                                 string cs = Convert.ToString(1, 16).ToString();
-                                string yhzfc = string.Format("C0 FE {0} 00 00 06 00 03 01 {1}", PublicMethods.GetAsciiToHex(yj), GetFomartZ(cs, 2));
+                                DateTime dtnow = DateTime.Now;
+                                string time = string.Format("{0} {1} {2} {3} {4} {5}", PublicMethods.Get10To16(dtnow.Year.ToString().Substring(2, 2), 1), PublicMethods.Get10To16(dtnow.Month.ToString(), 1), PublicMethods.Get10To16(dtnow.Day.ToString(), 1), PublicMethods.Get10To16(dtnow.Hour.ToString(), 1), PublicMethods.Get10To16(dtnow.Minute.ToString(), 1), PublicMethods.Get10To16(dtnow.Second.ToString(), 1));
+                                //消息体长度为11 +2(验证发送方)=13       //时间+命令id+控制命令+命令时间+流水号      回复 命令+流水号
+                                string yhzfc = string.Format("82 FE {0} 00 00 0D {1} 87 01 {2} 00 03", PublicMethods.GetAsciiToHex(yj), time, GetFomartZ(cs, 2));
                                 temp = string.Format("23 23 {0} {1}", yhzfc, GetJy(yhzfc.Split(' ')));
-                                index = "|C0 FE";
+                                //设置时间,总数,id,参数,id,参数
+                                index = "|82 FE";
                             }
                         }
 
@@ -1614,10 +1625,14 @@ namespace SuperSocket.SocketEngine
                             else if (vehicleMode.Equals("4"))
                             {
                                 //地标
-                                string cs = Convert.ToString(1, 16).ToString();                                                        
-                                string yhzfc = string.Format("C0 FE {0} 00 00 06 00 04 04 {1}", PublicMethods.GetAsciiToHex(yj), GetFomartZ(cs, 2));
+                                 string cs = Convert.ToString(1, 16).ToString();
+                                DateTime dtnow = DateTime.Now;
+                                string time = string.Format("{0} {1} {2} {3} {4} {5}", PublicMethods.Get10To16(dtnow.Year.ToString().Substring(2, 2), 1), PublicMethods.Get10To16(dtnow.Month.ToString(), 1), PublicMethods.Get10To16(dtnow.Day.ToString(), 1), PublicMethods.Get10To16(dtnow.Hour.ToString(), 1), PublicMethods.Get10To16(dtnow.Minute.ToString(), 1), PublicMethods.Get10To16(dtnow.Second.ToString(), 1));
+                                //消息体长度为11 +2(验证发送方)=13       //时间+命令id+控制命令+命令时间+流水号      回复 命令+流水号
+                                string yhzfc = string.Format("82 FE {0} 00 00 0D {1} 87 04 {2} 00 04", PublicMethods.GetAsciiToHex(yj), time,  GetFomartZ(cs, 2));
                                 temp = string.Format("23 23 {0} {1}", yhzfc, GetJy(yhzfc.Split(' ')));
-                                index = "|C0 FE";
+                                //设置时间,总数,id,参数,id,参数
+                                index = "|82 FE";
                             }
                         }
                     }
@@ -2032,7 +2047,7 @@ namespace SuperSocket.SocketEngine
                     case "G170":     //关门
                         {
                             //    temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_" + model.GetModel("data").GetValue("deviceProtocolId");
-                            temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_2";
+                            temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_" + model.GetModel("data").GetValue("deviceProtocolId");
                             break;
                         }
                     //case "G16":

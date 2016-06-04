@@ -157,6 +157,15 @@ namespace ServerCenterLis
             return lisRegister;
         }
 
+        public List<string> lisFault;
+        public List<string> getLisFault()
+        {
+            if (lisFault == null)
+            {
+                lisFault = new List<string>();
+            }
+            return lisFault;
+        }
 
         /// <summary>
         /// 上标 启动时间
@@ -167,7 +176,7 @@ namespace ServerCenterLis
         /// </summary>
         public string TurnOffTime;
 
-            public string Org_RegisterTime; 
+        public string Org_RegisterTime;
         /// <summary>
         /// 存储16原始时间
         /// </summary>
@@ -181,13 +190,13 @@ namespace ServerCenterLis
         public string Org_Motor_Current = "FF FF";
         //public string Org_Latitude;
 
-       
+
 
         public string dcbgs;//电池温度个数1,2
         public string Temp; //最高,最低;最高,最低;
 
-    
-        public string Org_AcceleratorPedalStroke="00";
+
+        public string Org_AcceleratorPedalStroke = "00";
         public string Org_BrakePedalState = "02";//不启用
         public string Org_PowerSystemReady = "00";    //未就绪
         public string Org_EmergencyPowerRequest = "00"; //正常

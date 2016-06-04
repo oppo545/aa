@@ -468,7 +468,7 @@ namespace ServerCenterLis
                         session.AddLisRegister("0,00 " + sbyl.Substring(0, 2)); //有效值范围：0～255,2字节
                         session.AddLisRegister("0," + sbyl.Substring(3, 5));
                         session.AddLisRegister("0," + sbyl.Substring(9, 5));
-                        session.AddLisRegister("1," + session.clsshdb_register.DriveMotorInstallationQuantity);
+                        session.AddLisRegister("1," + (session.clsshdb_register.DriveMotorInstallationQuantity == 0 ? 1 : session.clsshdb_register.DriveMotorInstallationQuantity));
                         session.AddLisRegister("1," + session.clsshdb_register.DriveMotorArrangementType);
                         session.AddLisRegister("1," + session.clsshdb_register.DrivingMotorCoolingMode);
                         session.AddLisRegister("2," + session.clsshdb_register.DrivingRangeElectricVehicle);
@@ -619,31 +619,25 @@ namespace ServerCenterLis
                     //0成功,1失败
                     int result = resulttemp.Equals("01") ? 0 : 1;
 
-                    string setdata = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
-                    int setnum = PublicMethods.Get16To10(desc.Substring(18, 2));
-
-                    // 成功或失败 消息发送给平台
-                    string[] infodesc = { "", "RemoteUpgrade", "TerminalShutdown", "TerminalReset", "RestoreFactorySettings", "DisconnectCommunications", "" };
-
-                    buffer.Clear();
-                    buffer.AppendFormat("\"signalName\":\"{0}\",", infodesc[setnum]);
-                    buffer.AppendFormat("\"time\":\"{0:yyyy-MM-dd HH:mm:ss}\",", DateTime.Now);
-                    buffer.AppendFormat("\"sysnos\":\"{0}\",", session.siCode);
-                    buffer.AppendFormat("\"result\":\"{0}\"", result);
-                    strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, "G24", buffer.ToString());
-                    //指令 设置回执
-                    session.SendToReply(strinfo);
-                }
-                #endregion
-                #region  C0 -分时租赁 回复
-                else if (strindex.Equals("C0"))
-                {
-                    string ydlsh = desc.Substring(0, 5);
-                    //地标中 01 成功,02失败 FE
-                    //部标中 0：成功/确认；1：失败；2：消息有误；3：不支持
-                    string result = session.clsft_bjdb.Ml_yd.Equals("01") ? "00" : "01";
-                    if (!result.Equals("FE"))
+                    // string setdata = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
+                    int setnum = PublicMethods.Get16To10(desc.Substring(0, 2));
+                    if (setnum != 137)
                     {
+                        // 成功或失败 消息发送给平台
+                        string[] infodesc = { "", "RemoteUpgrade", "TerminalShutdown", "TerminalReset", "RestoreFactorySettings", "DisconnectCommunications", "" };
+
+                        buffer.Clear();
+                        buffer.AppendFormat("\"signalName\":\"{0}\",", infodesc[setnum]);
+                        buffer.AppendFormat("\"time\":\"{0:yyyy-MM-dd HH:mm:ss}\",", DateTime.Now);
+                        buffer.AppendFormat("\"sysnos\":\"{0}\",", session.siCode);
+                        buffer.AppendFormat("\"result\":\"{0}\"", result);
+                        strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, "G24", buffer.ToString());
+                        //指令 设置回执
+                        session.SendToReply(strinfo);
+                    }
+                    else
+                    {
+                        string ydlsh = desc.Substring(3, 5);
                         buffer.Clear();
                         buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
                         if (ydlsh.Equals("00 01") || ydlsh.Equals("01 01")) //开门     //01 01   01开头,是Other客户端发送标识
@@ -689,7 +683,64 @@ namespace ServerCenterLis
                             WriteLog.WriteLogZL("retrunRecv:" + strinfo);
                         }
                     }
+
                 }
+                #endregion
+                #region  C0 -分时租赁 回复{废弃_20160603协议修改到控制命令中}
+                //else if (strindex.Equals("C0"))
+                //{
+                //    string ydlsh = desc.Substring(0, 5);
+                //    //地标中 01 成功,02失败 FE
+                //    //部标中 0：成功/确认；1：失败；2：消息有误；3：不支持
+                //    string result = session.clsft_bjdb.Ml_yd.Equals("01") ? "00" : "01";
+                //    if (!result.Equals("FE"))
+                //    {
+                //        buffer.Clear();
+                //        buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
+                //        if (ydlsh.Equals("00 01") || ydlsh.Equals("01 01")) //开门     //01 01   01开头,是Other客户端发送标识
+                //        {
+                //            buffer.Append("\"signalName\":\"takeCarReply\",");
+                //        }
+                //        if (ydlsh.Equals("00 02") || ydlsh.Equals("01 02")) //关门
+                //        {
+                //            buffer.Append("\"signalName\":\"returnCarReply\",");
+                //        }
+                //        if (ydlsh.Equals("00 03") || ydlsh.Equals("01 03")) //开门
+                //        {
+                //            buffer.Append("\"signalName\":\"pushDoorReply\",");
+                //        }
+                //        if (ydlsh.Equals("00 04") || ydlsh.Equals("01 04")) //关门
+                //        {
+                //            buffer.Append("\"signalName\":\"shutDownReply\",");
+                //        }
+                //        buffer.Append("\"value\":\"" + result + "\"");
+                //        strinfo = Telnet_Session.FomatToJosn("client_message_lease", "2", session.siCode, "G18", buffer.ToString());
+
+                //        if (ydlsh.Contains("01 0")) //区别出客户端点击
+                //        {
+                //            //BMK添加其他客户端 2015-10-08
+                //            foreach (var s in session.AppServer.GetAllSessions())
+                //            {
+                //                if (!string.IsNullOrEmpty(s.OtherClient))
+                //                {
+                //                    if (s.OtherClient.Equals("android"))
+                //                    {
+                //                        s.Send(strinfo);
+                //                        WriteLog.WriteLogZLOther(s.OtherClient, strinfo, true);
+                //                    }
+                //                }
+                //            }
+                //        }
+                //        else
+                //        {
+                //            // 开关门 回复
+                //            session.SendToReply(strinfo);
+
+                //            //记录指令回复
+                //            WriteLog.WriteLogZL("retrunRecv:" + strinfo);
+                //        }
+                //    }
+                //}
                 #endregion
                 //todotest    [正式中删除]
                 // session.vlsType = 5;
@@ -1308,7 +1359,10 @@ namespace ServerCenterLis
                                             //过滤为null的值
                                             if (p.GetValue(session.clsri, null) != null)
                                             {
-                                                jeams += string.Format("${0}^{1}", p.Name, p.GetValue(session.clsri, null));
+                                                if (!string.IsNullOrEmpty(p.GetValue(session.clsri, null).ToString()))
+                                                {
+                                                    jeams += string.Format("${0}^{1}", p.Name, p.GetValue(session.clsri, null));
+                                                }
                                             }
                                             else
                                             {
@@ -1360,7 +1414,7 @@ namespace ServerCenterLis
                                 }
                             }
                         }
-                        datetimenow = PublicMethods.GetFormatTme(session.siCode, session.cls_bjdb.Date);
+                        datetimenow = PublicMethods.GetFormatTme(session.siCode, session.cls_bjdb.Date, session.isSupplement);
                         #region  //BMK GPS+CAN+故障 入库ion
                         if (session.cls_ptd != null && !string.IsNullOrEmpty(session.siCode))
                         {
@@ -1491,7 +1545,7 @@ namespace ServerCenterLis
                     // 启动时间数据
                     session.AddLisRegister("0,01");
                     session.AddLisRegister("0," + (!string.IsNullOrEmpty(session.StartupTime) == true ? session.StartupTime : "00 00 00 00 00 00"));
-                    session.AddLisRegister("0," + (!string.IsNullOrEmpty(session.TurnOffTime) == true ? session.TurnOffTime : "00 00 00 00 00 00"));  
+                    session.AddLisRegister("0," + (!string.IsNullOrEmpty(session.TurnOffTime) == true ? session.TurnOffTime : "00 00 00 00 00 00"));
                     if (session.cls_vls != null)
                     {
                         //累计行驶里程
