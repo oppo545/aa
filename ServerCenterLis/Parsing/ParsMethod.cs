@@ -110,7 +110,7 @@ public class ParsMethod
     /// <param name="BitLength">位长度 C</param>
     ///  <param name="StartBytes">起始所在字节标识 E  默认以0开始</param>
     /// <returns></returns>
-    public static int GetValuebyBinary(string data, int StartBit, int BitLength, int StartBytes=0)
+    public static int GetValuebyBinary(string data, int StartBit, int BitLength, int StartBytes = 0)
     {
         //7 6 5 4 3 2 1 0   //bit顺序
         //0 0 0 0 0 0 0 0   //二进制
@@ -124,7 +124,7 @@ public class ParsMethod
     /// <param name="Datas"></param>
     /// <param name="Offset"></param>
     /// <returns>int</returns>
-    public static int GetParsWholeByte(string Datas,int Resolution=1, int Offset = 0)
+    public static int GetParsWholeByte(string Datas, int Resolution = 1, int Offset = 0)
     {
         return PublicMethods.Get16To10(PublicMethods.GetZeroSuppression(Datas)) * Resolution + Offset;
     }
@@ -138,7 +138,7 @@ public class ParsMethod
     public static double GetParsWholeByte(string Datas, double Resolution, int Offset = 0)
     {
         decimal d = (decimal)(PublicMethods.Get16To10(PublicMethods.GetZeroSuppression(Datas)) * Resolution) + Offset;
-        return (double)Math.Round(d, 2, MidpointRounding.AwayFromZero) ;
+        return (double)Math.Round(d, 2, MidpointRounding.AwayFromZero);
     }
     /// <summary>
     ///          获取小端模式解释
@@ -274,7 +274,7 @@ public class ParsMethod
         return resultinfo;
     }
 
-    static ArrayList strsignal = new ArrayList() {"00 10", "00 11", "00 15" };
+    static ArrayList strsignal = new ArrayList() { "00 10", "00 11", "00 15" };
     static int[] signallength = new int[5] { 1, 1, 2, 3, 4 };
     public static int GetNumberbyId(string id)
     {
@@ -287,8 +287,8 @@ public class ParsMethod
     #endregion
 
     #region 封装 上标数据格式
-    
-   
+
+
     /// <summary>
     ///  封装 上标数据格式
     /// </summary>
@@ -310,18 +310,19 @@ public class ParsMethod
 
     public static string GetFormatByRegister(List<string> lisRegister)
     {
-        string result = "",info="";
+        string result = "", info = "";
         int num = 0;
         for (int i = 0; i < lisRegister.Count(); i++)
         {
             num = int.Parse(lisRegister[i].Split(',')[0].ToString());
             info = lisRegister[i].Split(',')[1];
-            
+
             if (num == 0)
             {
-                info = string.IsNullOrEmpty(info) ? GetFomateSHDB(info, num) : info;
+                // num为0时,参数值需初始化好默认值 FF,FFFF,00
+                // info = string.IsNullOrEmpty(info) ? GetFomateSHDB(info, num) : info;
                 //原始数据
-                result += info+" ";
+                result += info + " ";
             }
             else
             {
@@ -333,6 +334,76 @@ public class ParsMethod
         return result.Trim();
     }
 
+    /// <summary>
+    ///  报警信息和异常
+    /// </summary>
+    /// <param name="time">10 06 03 01 02 3</param>
+    /// <param name="lisFault">01,05,1,0->MCU_DCDC状态_报警等级_无报警(0,1有报警)</param>
+    /// <returns></returns>
+    public static string GetFormatByFault(string time,List<string> lisFault)
+    {
+        string result = "", info = "", info1 = "", info2 = "";
+        int num=0,num1 = 0,num2=0,num3=0,num4=0;
+        List<string> list1 = new List<string>();
+        List<string> list2 = new List<string>();
+        List<string> list3 = new List<string>();
+        List<string> list4 = new List<string>();
+        for (int i = 0; i < lisFault.Count(); i++)
+        {
+            if (info.Equals("01")) list1.Add(lisFault[i].Substring(3));
+            if (info.Equals("02")) list2.Add(lisFault[i].Substring(3));
+            if (info.Equals("03")) list3.Add(lisFault[i].Substring(3));
+            if (info.Equals("04")) list4.Add(lisFault[i].Substring(3));
+        }
+        #region MyRegion
+        result += time + " ";
+        result += "01" + " " + PublicMethods.Get10To16(list1.Count().ToString(),1) + " ";
+        for (int i = 0; i < list1.Count(); i++)
+        {
+            info = list1[i].Split(',')[0].ToString();
+            info1 = list1[i].Split(',')[1].ToString(); // 报警等级
+            info2 = list1[i].Split(',')[2].ToString();
+            result += info + " ";      //编号
+            result +="04 ";      //信号值 +报警级别
+            result += "0" + info2; 
+        }
+
+        result += "02" + " " + PublicMethods.Get10To16(list2.Count().ToString(),1) + " ";
+        for (int i = 0; i < list2.Count(); i++)
+        {
+            info = list2[i].Split(',')[0].ToString();
+            info1 = list2[i].Split(',')[1].ToString();
+            info2 = list2[i].Split(',')[2].ToString();
+            result += info + " ";      //编号
+            result += "04 ";      //信号值 +报警级别
+            result += "0" + info2; 
+        }
+
+        result += "03" + " " + PublicMethods.Get10To16(list3.Count().ToString(),1) + " ";
+        for (int i = 0; i < list3.Count(); i++)
+        {
+            info = list3[i].Split(',')[0].ToString();
+            info1 = list3[i].Split(',')[1].ToString();
+            info2 = list3[i].Split(',')[2].ToString();
+            result += info + " ";      //编号
+            result += "04 ";      //信号值 +报警级别
+            result += "0" + info2; 
+        }
+
+        result += "04" + " " + PublicMethods.Get10To16(list4.Count().ToString(), 1) + " ";
+        for (int i = 0; i < list4.Count(); i++)
+        {
+            info = list4[i].Split(',')[0].ToString();
+            info1 = list4[i].Split(',')[1].ToString();
+            info2 = list4[i].Split(',')[2].ToString();
+            result += info + " ";      //编号
+            result += "04 ";      //信号值 +报警级别
+            result += "0" + info2; 
+        }
+        #endregion
+        lisFault.Clear();
+        return result.Trim();
+    }
     public static string GetFomateSHDB(string info, int number)
     {
         string result = "";
@@ -351,107 +422,6 @@ public class ParsMethod
                 }
             }
         }
-        return result;
-    }
-
-    /// <summary>
-    ///    点火与熄火时间
-    /// </summary>
-    /// <param name="StartupTime">启动时间</param>
-    /// <param name="TurnOffTime">熄火时间</param>
-    /// <returns></returns>
-    public string GetFormatByUpdate1(string StartupTime, string TurnOffTime)
-    {
-        string result = "7E ";
-
-        return result;
-    }
-    /// <summary>
-    /// 累计行驶里程
-    /// </summary>
-    /// <param name="AccumulatedMileage">累计行驶里程</param>
-    /// <returns></returns>
-    public string GetFormatByUpdate2(string AccumulatedMileage)
-    {
-        string result = "7E ";
-
-        return result;
-    }
-    /// <summary>
-    /// 定位数据
-    /// </summary>
-    /// <param name="LocationState">定位状态</param>
-    /// <param name="Longitude">经度</param>
-    /// <param name="Latitude">纬度</param>
-    /// <param name="Speed">速度</param>
-    /// <param name="Direction">方向</param>
-    /// <returns></returns>
-    public string GetFormatByUpdate3(string LocationState, string Longitude, string Latitude, string Speed, string Direction)
-    {
-        string result = "7E ";
-
-        return result;
-    }
-    /// <summary>
-    /// 驱动电机数据
-    /// </summary>
-    /// <param name="Motor_ControllerTemp">电机控制器温度</param>
-    /// <param name="Motor_Revolution">驱动电机转速</param>
-    /// <param name="Motor_Temperature">驱动电机温度</param>
-    /// <param name="Motor_DCCurrent">电机母线电流</param>
-    /// <returns></returns>
-    public string GetFormatByUpdate4(string Motor_ControllerTemp, string Motor_Revolution, string Motor_Temperature, string Motor_DCCurrent)
-    {
-        string result = "7E ";
-
-        return result;
-    }
-    /// <summary>
-    /// 车辆状态
-    /// </summary>
-    /// <param name="AcceleratorPedalStroke">加速踏板行程</param>
-    /// <param name="BrakePedalState">制动踏板状态</param>
-    /// <param name="PowerSystemReady">动力系统就绪</param>
-    /// <param name="EmergencyPowerRequest">紧急下电请求</param>
-    /// <param name="VehicleCurrentStatus">车辆当前状态</param>
-    /// <returns></returns>
-    public string GetFormatByUpdate5(string AcceleratorPedalStroke, string BrakePedalState, string PowerSystemReady, string EmergencyPowerRequest, string VehicleCurrentStatus)
-    {
-        string result = "7E ";
-
-        return result;
-    }
-    /// <summary>
-    /// 动力蓄电池包高低温数据
-    /// </summary>
-    /// <param name="PowerBatteryPackTotalN">动力蓄电池包总数N</param>
-    /// <param name="TemperatureValuesList"></param>
-    /// <returns></returns>
-    public string GetFormatByUpdate6(string PowerBatteryPackTotalN, string TemperatureValuesList)
-    {
-        string result = "7E ";
-
-        return result;
-    }
-    /// <summary>
-    /// 电池包总体数据
-    /// </summary>
-    /// <param name="HighVoltageBatteryCurrent">高压电池电流</param>
-    /// <param name="BMS_SOC">电池电量(SOC)</param>
-    /// <param name="ResidualCapacity">剩余能量</param>
-    /// <param name="BMS_Voltage">电池总电压</param>
-    /// <param name="BMS_CellBattTemp_Max">单体最高温度</param>
-    /// <param name="BMS_CellBattTemp_Min">单体最低温度</param>
-    /// <param name="BMS_CellBattVoltage_Max">单体最高电压</param>
-    /// <param name="BMS_CellBattVoltage_Min">单体最低电压</param>
-    /// <param name="InsulationResistance">绝缘电阻值</param>
-    /// <param name="BatteryBalancedActivation">电池均衡激活</param>
-    /// <param name="LiquidFuelConsumption">液体燃料消耗量</param>
-    /// <returns></returns>
-    public string GetFormatByUpdate7(string HighVoltageBatteryCurrent, string BMS_SOC, string ResidualCapacity, string BMS_Voltage, string BMS_CellBattTemp_Max, string BMS_CellBattTemp_Min, string BMS_CellBattVoltage_Max, string BMS_CellBattVoltage_Min, string InsulationResistance, string BatteryBalancedActivation, string LiquidFuelConsumption)
-    {
-        string result = "7E ";
-
         return result;
     }
     #endregion

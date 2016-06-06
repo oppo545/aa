@@ -64,7 +64,7 @@ namespace ServerCenterLis
                             faultint = session.cls_hme.DCDC_Fault;
                             if (faultint > 0)
                                 canfault += string.Format("${0}::{1}:{2}", "DCDC_Fault", faultlever, faultint);
-
+                            session.AddLisFault("01,05," + faultlever + "," + faultint);
                             //byte[7]
                             //剩余行驶里程
                             session.cls_hme.VCU_CruisingRange = PublicMethods.Get16To10(byte0[7]);
@@ -419,13 +419,14 @@ namespace ServerCenterLis
                             faultint = session.cls_hme.DCDC_Output_Inversed_Fault;
                             if (faultint > 0)
                                 canfault += string.Format("$DCDC_Output_Inversed_Fault::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("01,05," + faultlever + "," + faultint);
                             //DCDC硬件故障
                             session.cls_hme.DCDC_Hardware_Fault = PublicMethods.Get2To10(bit.Substring(2, 1));
                             faultlever = 1;
                             faultint = session.cls_hme.DCDC_Hardware_Fault;
                             if (faultint > 0)
                                 canfault += string.Format("$DCDC_Hardware_Fault::{0}:{1}", faultlever, faultint);
+                            session.AddLisFault("01,05," + faultlever + "," + faultint);
 
                             //DCDC过温故障
                             session.cls_hme.DCDC_OverTemp_Fault = PublicMethods.Get2To10(bit.Substring(3, 1));
@@ -433,21 +434,21 @@ namespace ServerCenterLis
                             faultint = session.cls_hme.DCDC_OverTemp_Fault;
                             if (faultint > 0)
                                 canfault += string.Format("$DCDC_OverTemp_Fault::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("01,04," + faultlever + "," + faultint);
                             //DCDC输入故障
                             session.cls_hme.DCDC_Input_Fault = PublicMethods.Get2To10(bit.Substring(4, 2));
                             faultlever = 1;
                             faultint = session.cls_hme.DCDC_Input_Fault;
                             if (faultint > 0)
                                 canfault += string.Format("$DCDC_Input_Fault::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("01,05," + faultlever + "," + faultint);
                             //DCDC输出故障
                             session.cls_hme.DCDC_Output_Fault = PublicMethods.Get2To10(bit.Substring(6, 2));
                             faultlever = 1;
                             faultint = session.cls_hme.DCDC_Output_Fault;
                             if (faultint > 0)
                                 canfault += string.Format("$DCDC_Output_Fault::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("01,05," + faultlever + "," + faultint);
                             //byte[1]
                             //DCDC输出电流
                             session.cls_hme.DCDC_OutputCurrent = PublicMethods.Get16To10(byte0[1]);
@@ -547,6 +548,7 @@ namespace ServerCenterLis
                             faultint = session.cls_hme.PCTL_12V_L;
                             if (faultint > 0)
                                 canfault += string.Format("$PCTL_12V_L::{0}:{1}", faultlever, faultint);
+                            session.AddLisFault("01,01," + faultlever + "," + faultint);
 
                             //12V蓄电池电压过高
                             session.cls_hme.PCTL_12V_H = PublicMethods.Get2To10(bit.Substring(3, 1));
@@ -554,7 +556,7 @@ namespace ServerCenterLis
                             faultint = session.cls_hme.PCTL_12V_H;
                             if (faultint > 0)
                                 canfault += string.Format("$PCTL_12V_H::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("01,01," + faultlever + "," + faultint);
                             //P档系统当前状态
                             session.cls_hme.PCTL_State = PublicMethods.Get2To10(bit.Substring(4, 3));
                             //P档控制器初始化状态
@@ -568,14 +570,14 @@ namespace ServerCenterLis
                             faultint = session.cls_hme.PCTL_Motor_Open_Circuit;
                             if (faultint > 0)
                                 canfault += string.Format("$PCTL_Motor_Open_Circuit::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("01,03," + faultlever + "," + faultint);
                             //执行电机对电源短路故障
                             session.cls_hme.PCTL_Motor_Power_Short_Circuit = PublicMethods.Get2To10(bit.Substring(1, 1));
                             faultlever = 1;
                             faultint = session.cls_hme.PCTL_Motor_Power_Short_Circuit;
                             if (faultint > 0)
                                 canfault += string.Format("$PCTL_Motor_Power_Short_Circuit::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("01,03," + faultlever + "," + faultint);
 
                             //执行电机对地短路故障
                             session.cls_hme.PCTL_Motor_Ground_Short_Circuit = PublicMethods.Get2To10(bit.Substring(2, 1));
@@ -583,35 +585,35 @@ namespace ServerCenterLis
                             faultint = session.cls_hme.PCTL_Motor_Ground_Short_Circuit;
                             if (faultint > 0)
                                 canfault += string.Format("$PCTL_Motor_Ground_Short_Circuit::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("01,03," + faultlever + "," + faultint);
                             //P档退档超时故障
                             session.cls_hme.PCTL_P_Back_Timeout = PublicMethods.Get2To10(bit.Substring(3, 1));
                             faultlever = 1;
                             faultint = session.cls_hme.PCTL_P_Back_Timeout;
                             if (faultint > 0)
                                 canfault += string.Format("$PCTL_P_Back_Timeout::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("04,0F," + faultlever + "," + faultint);
                             //P档进档超时故障
                             session.cls_hme.PCTL_P_Into_Timeout = PublicMethods.Get2To10(bit.Substring(4, 1));
                             faultlever = 1;
                             faultint = session.cls_hme.PCTL_P_Into_Timeout;
                             if (faultint > 0)
                                 canfault += string.Format("$PCTL_P_Into_Timeout::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("04,0F," + faultlever + "," + faultint);
                             //P档位置传感器短路故障
                             session.cls_hme.PCTL_P_Sensor_Short_Circuit = PublicMethods.Get2To10(bit.Substring(5, 1));
                             faultlever = 1;
                             faultint = session.cls_hme.PCTL_P_Sensor_Short_Circuit;
                             if (faultint > 0)
                                 canfault += string.Format("$PCTL_P_Sensor_Short_Circuit::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("04,0F," + faultlever + "," + faultint);
                             //P档位置传感器开路故障
                             session.cls_hme.PCTL_P_Sensor_Open_Circuit = PublicMethods.Get2To10(bit.Substring(6, 1));
                             faultlever = 1;
                             faultint = session.cls_hme.PCTL_P_Sensor_Open_Circuit;
                             if (faultint > 0)
                                 canfault += string.Format("$PCTL_P_Sensor_Open_Circuit::{0}:{1}", faultlever, faultint);
-
+                            session.AddLisFault("04,0F," + faultlever + "," + faultint);
                             //CAN通讯故障
                             session.cls_hme.PCTL_Can_Fault = PublicMethods.Get2To10(bit.Substring(7, 1));
                             faultlever = 1;

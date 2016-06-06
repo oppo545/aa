@@ -1511,6 +1511,20 @@ namespace ServerCenterLis
             lisRegister.Add(info);
         }
 
+        /// <summary>
+        /// 添加报警
+        /// 1,5,1,0->MCU_DCDC状态_报警等级_无报警(0,1有报警)
+        /// </summary>
+        /// <param name="info"></param>
+        public void AddLisFault(string info)
+        {
+            if (lisFault == null)
+            {
+                lisFault = new List<string>();
+            }
+            lisFault.Add(info);
+        }
+
     }
 }
 

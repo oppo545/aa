@@ -621,7 +621,7 @@ namespace ServerCenterLis
 
                     // string setdata = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
                     int setnum = PublicMethods.Get16To10(desc.Substring(0, 2));
-                    if (setnum != 137)
+                    if (setnum != 135)     //135-87是指开关门
                     {
                         // 成功或失败 消息发送给平台
                         string[] infodesc = { "", "RemoteUpgrade", "TerminalShutdown", "TerminalReset", "RestoreFactorySettings", "DisconnectCommunications", "" };
@@ -1531,6 +1531,7 @@ namespace ServerCenterLis
                 #region 上标封装
                 if (session.isMarkedVehicles && (strindex.Equals("02") || strindex.Equals("05")))
                 {
+                    session.lisFault=new List<string>();
                     //实时上传
                     session.AddLisRegister("0," + session.Org_NowTime);
                     int Keypos = session.cd_evt.VCU_Keyposition.Value;
@@ -1615,6 +1616,12 @@ namespace ServerCenterLis
                     string result = ParsMethod.GetFormatByMarkedVehicles("02", desc.Substring(18, 5), PublicMethods.GetFomartZK(Simno, 17), ParsMethod.GetFormatByRegister(session.lisRegister));
                     session.SendAsToServersByForwardToSHDB(result);
 
+                    //报警
+                    //if (session.lisFault.Count > 0)
+                    //{
+                        result = ParsMethod.GetFormatByMarkedVehicles("03", desc.Substring(18, 5), PublicMethods.GetFomartZK(Simno, 17), ParsMethod.GetFormatByFault(session.Org_NowTime,session.lisFault));
+                        session.SendAsToServersByForwardToSHDB(result);
+                    //}
                 }
                 #endregion
 

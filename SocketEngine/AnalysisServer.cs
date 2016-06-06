@@ -2047,7 +2047,7 @@ namespace SuperSocket.SocketEngine
                     case "G170":     //关门
                         {
                             //    temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_" + model.GetModel("data").GetValue("deviceProtocolId");
-                            temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_" + model.GetModel("data").GetValue("deviceProtocolId");
+                            temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_4";
                             break;
                         }
                     //case "G16":
