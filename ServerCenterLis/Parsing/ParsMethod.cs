@@ -340,65 +340,77 @@ public class ParsMethod
     /// <param name="time">10 06 03 01 02 3</param>
     /// <param name="lisFault">01,05,1,0->MCU_DCDC状态_报警等级_无报警(0,1有报警)</param>
     /// <returns></returns>
-    public static string GetFormatByFault(string time,List<string> lisFault)
+    public static string GetFormatByFault(string time, List<string> lisFault)
     {
         string result = "", info = "", info1 = "", info2 = "";
-        int num=0,num1 = 0,num2=0,num3=0,num4=0;
+        int num = 0, num1 = 0, num2 = 0, num3 = 0, num4 = 0;
         List<string> list1 = new List<string>();
         List<string> list2 = new List<string>();
         List<string> list3 = new List<string>();
         List<string> list4 = new List<string>();
         for (int i = 0; i < lisFault.Count(); i++)
         {
+            info = lisFault[i].Split(',')[0].ToString();
             if (info.Equals("01")) list1.Add(lisFault[i].Substring(3));
             if (info.Equals("02")) list2.Add(lisFault[i].Substring(3));
             if (info.Equals("03")) list3.Add(lisFault[i].Substring(3));
             if (info.Equals("04")) list4.Add(lisFault[i].Substring(3));
         }
         #region MyRegion
-        result += time + " ";
-        result += "01" + " " + PublicMethods.Get10To16(list1.Count().ToString(),1) + " ";
-        for (int i = 0; i < list1.Count(); i++)
+        if (list1.Count() > 0)
         {
-            info = list1[i].Split(',')[0].ToString();
-            info1 = list1[i].Split(',')[1].ToString(); // 报警等级
-            info2 = list1[i].Split(',')[2].ToString();
-            result += info + " ";      //编号
-            result +="04 ";      //信号值 +报警级别
-            result += "0" + info2; 
+            result += time + " ";
+            result += "01" + " " + PublicMethods.Get10To16(list1.Count().ToString(), 1) + " ";
+            for (int i = 0; i < list1.Count(); i++)
+            {
+                info = list1[i].Split(',')[0].ToString();
+                info1 = list1[i].Split(',')[1].ToString(); // 报警等级
+                info2 = list1[i].Split(',')[2].ToString();
+                result += info + " ";      //编号
+                result += "0" + info2 + " ";     //报警信号值
+                result += "04 ";      //报警级别
+            }
         }
-
-        result += "02" + " " + PublicMethods.Get10To16(list2.Count().ToString(),1) + " ";
-        for (int i = 0; i < list2.Count(); i++)
+        if (list2.Count() > 0)
         {
-            info = list2[i].Split(',')[0].ToString();
-            info1 = list2[i].Split(',')[1].ToString();
-            info2 = list2[i].Split(',')[2].ToString();
-            result += info + " ";      //编号
-            result += "04 ";      //信号值 +报警级别
-            result += "0" + info2; 
+            result += "02" + " " + PublicMethods.Get10To16(list2.Count().ToString(), 1) + " ";
+            for (int i = 0; i < list2.Count(); i++)
+            {
+                info = list2[i].Split(',')[0].ToString();
+                info1 = list2[i].Split(',')[1].ToString();
+                info2 = list2[i].Split(',')[2].ToString();
+                result += info + " ";      //编号
+                result += "0" + info2 + " ";     //报警信号值
+                result += "04 ";      //报警级别
+            }
         }
-
-        result += "03" + " " + PublicMethods.Get10To16(list3.Count().ToString(),1) + " ";
-        for (int i = 0; i < list3.Count(); i++)
+        if (list3.Count() > 0)
         {
-            info = list3[i].Split(',')[0].ToString();
-            info1 = list3[i].Split(',')[1].ToString();
-            info2 = list3[i].Split(',')[2].ToString();
-            result += info + " ";      //编号
-            result += "04 ";      //信号值 +报警级别
-            result += "0" + info2; 
+
+            result += "03" + " " + PublicMethods.Get10To16(list3.Count().ToString(), 1) + " ";
+            for (int i = 0; i < list3.Count(); i++)
+            {
+                info = list3[i].Split(',')[0].ToString();
+                info1 = list3[i].Split(',')[1].ToString();
+                info2 = list3[i].Split(',')[2].ToString();
+                result += info + " ";      //编号
+                result += "0" + info2 + " ";     //报警信号值
+                result += "04 ";      //报警级别
+            }
         }
-
-        result += "04" + " " + PublicMethods.Get10To16(list4.Count().ToString(), 1) + " ";
-        for (int i = 0; i < list4.Count(); i++)
+        if (list4.Count() > 0)
         {
-            info = list4[i].Split(',')[0].ToString();
-            info1 = list4[i].Split(',')[1].ToString();
-            info2 = list4[i].Split(',')[2].ToString();
-            result += info + " ";      //编号
-            result += "04 ";      //信号值 +报警级别
-            result += "0" + info2; 
+            result += "04" + " " + PublicMethods.Get10To16(list4.Count().ToString(), 1) + " ";
+            for (int i = 0; i < list4.Count(); i++)
+            {
+                info = list4[i].Split(',')[0].ToString();
+                info1 = list4[i].Split(',')[1].ToString();
+                info2 = list4[i].Split(',')[2].ToString();
+                result += info + " ";      //编号
+                result += "0" + info2 + " ";     //报警信号值
+                result += "04 ";      //报警级别
+             
+            }
         }
         #endregion
         lisFault.Clear();

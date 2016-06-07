@@ -81,8 +81,8 @@ namespace ServerCenterLis
                 string strindex = se.Substring(0, 2);
 
                 //接受的指令 直接 发送给车机(中转)
-                //81 参数设置 ; 82  车载终端控制命令 ; 80 查询     ;C0 分时租赁开关门
-                string[] orderstr = { "81", "82", "80", "C0" };
+                //81 参数设置 ; 82  车载终端控制命令 ; 80 查询     ;C0 分时租赁开关门;   A7 充电桩终端控制命令;A8平台回复
+                string[] orderstr = { "81", "82", "80", "C0", "A7", "A8" };
                 if (orderstr.Contains(strindex))
                 {
                     string MiddleIndex = se.Substring(se.Length - 8, 5);
@@ -362,6 +362,8 @@ namespace ServerCenterLis
                             {
                                 string dcyl = onecode.Substring(45, 14);
                                 session.clsshdb_register.DriveMotorInstallationQuantity = ParsMethod.GetParsWholeByte(dcyl.Substring(0, 2));
+                                session.clsshdb_register.VehicleType1 = ParsMethod.GetParsWholeByte(dcyl.Substring(3, 2));
+                                session.clsshdb_register.VehicleUsage = ParsMethod.GetParsWholeByte(dcyl.Substring(6, 2));
                             }
 
                             // 59 长度+1 +起始
@@ -473,7 +475,9 @@ namespace ServerCenterLis
                         session.AddLisRegister("1," + session.clsshdb_register.DrivingMotorCoolingMode);
                         session.AddLisRegister("2," + session.clsshdb_register.DrivingRangeElectricVehicle);
                         session.AddLisRegister("1," + session.clsshdb_register.MaxSpeedElectricVehicle);
-                        session.AddLisRegister("11,0");
+                        session.AddLisRegister("1," + session.clsshdb_register.VehicleType1);
+                        session.AddLisRegister("1," + session.clsshdb_register.VehicleUsage);
+                        session.AddLisRegister("9,0");
 
                         //发送给上海平台
                         string result = ParsMethod.GetFormatByMarkedVehicles("01", desc.Substring(18, 5), PublicMethods.GetFomartZK(Simno, 17), ParsMethod.GetFormatByRegister(session.lisRegister));
@@ -540,7 +544,6 @@ namespace ServerCenterLis
                     //}
                 }
                 #endregion
-
                 #region  查询命令回复 80, 参数设置命令回复 81
                 if (strindex.Equals("80") || strindex.Equals("81"))
                 {
@@ -741,6 +744,95 @@ namespace ServerCenterLis
                 //        }
                 //    }
                 //}
+                #endregion
+                #region A7-充电桩终端控制命令回复
+                else if (strindex.Equals("A7"))
+                {
+                    string mlid = desc.Substring(0, 2);
+                    string result = session.clsft_bjdb.Ml_yd.Equals("01") ? "0" : "1";
+                    buffer.Clear();
+                    buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
+                    if (mlid.Equals("01"))
+                    {
+                        buffer.Append("\"signalName\":\"LockReply\",");
+                    }
+                    if (mlid.Equals("02"))
+                    {
+                        buffer.Append("\"signalName\":\"UnlockReply\",");
+                    }
+                    if (mlid.Equals("03"))
+                    {
+                        buffer.Append("\"signalName\":\"StartChargReply\",");
+                    }
+                    if (mlid.Equals("04"))
+                    {
+                        buffer.Append("\"signalName\":\"EndChargReply\",");
+                    }
+                    buffer.Append("\"Time\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"");
+                    buffer.Append("\"value\":\"" + result + "\"");
+                    strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, "G31", buffer.ToString());
+
+                    session.SendToReply(strinfo);
+                    //记录指令回复
+                    WriteLog.WriteLogZL("retrunRecv:" + strinfo);
+                }
+                #endregion
+                #region A8-刷卡信息上传 上传信息
+                else if (strindex.Equals("A8"))
+                {
+                    string time = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
+                    string idcard = PublicMethods.GetHexToAscii(desc.Substring(18, 23));
+                    buffer.Clear();
+                    buffer.Append("{\"key\":\"client_message_self\",");
+                    buffer.Append("\"identifying\":\"" + "G36" + "\",");
+                    buffer.Append("\"data\":{");
+                    buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
+                    buffer.Append("\"idCard\":\"" + idcard + "\",");
+                    buffer.Append("\"Time\":\"" + time + "\"");
+                    buffer.Append("}");
+                    buffer.Append("}");
+
+                    session.SendToReply(buffer.ToString());
+                    //记录指令回复
+                    WriteLog.WriteLogZL("retrunRecv:" + buffer.ToString());
+                }
+                #endregion
+                #region B1-充电完成信息 上传信息
+                else if (strindex.Equals("B1"))
+                {
+                    string time = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
+                    double ChargeAmount = ParsMethod.GetParsWholeByte(desc.Substring(18, 11), 0.1);
+                    double value = ParsMethod.GetParsWholeByte(desc.Substring(30, 11), 0.1);
+
+                    buffer.Clear();
+                    buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
+                    buffer.Append("\"signalName\":\"ChargingCompleted\",");
+                    buffer.Append("\"Time\":\"" + time + "\"");
+                    buffer.Append("\"ChargeAmount\":\"" + ChargeAmount + "\"");
+                    buffer.Append("\"value\":\"" + value + "\"");
+                    strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, "G35", buffer.ToString());
+
+                    session.SendToReply(strinfo);
+                    //记录指令回复
+                    WriteLog.WriteLogZL("retrunRecv:" + strinfo);
+                }
+                #endregion
+                #region B2-充电枪状态信息 上传信息
+                else if (strindex.Equals("B2"))
+                {
+                    string time = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
+                    string mlid = desc.Substring(18, 2);
+                    buffer.Clear();
+                    buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
+                    buffer.Append("\"signalName\":\"ChargeGun\",");
+                    buffer.Append("\"Time\":\"" + time + "\"");
+                    buffer.Append("\"value\":\"" + int.Parse(mlid) + "\"");
+                    strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, "G33", buffer.ToString());
+
+                    session.SendToReply(strinfo);
+                    //记录指令回复
+                    WriteLog.WriteLogZL("retrunRecv:" + strinfo);
+                }
                 #endregion
                 //todotest    [正式中删除]
                 // session.vlsType = 5;
@@ -1531,16 +1623,25 @@ namespace ServerCenterLis
                 #region 上标封装
                 if (session.isMarkedVehicles && (strindex.Equals("02") || strindex.Equals("05")))
                 {
-                    session.lisFault=new List<string>();
+                    session.lisFault = new List<string>();
                     //实时上传
                     session.AddLisRegister("0," + session.Org_NowTime);
-                    int Keypos = session.cd_evt.VCU_Keyposition.Value;
-                    if (Keypos == 0)
+                    if (session.cd_evt != null)
                     {
-                        session.TurnOffTime = session.Org_NowTime;
+                        int Keypos = session.cd_evt.VCU_Keyposition.Value;
+                        if (Keypos == 0)
+                        {
+                            session.TurnOffTime = session.Org_NowTime;
+                        }
+                        else
+                        {
+                            //启动时间
+                            session.StartupTime = session.Org_NowTime;
+                        }
                     }
                     else
-                    {     //启动时间
+                    {
+                        //启动时间
                         session.StartupTime = session.Org_NowTime;
                     }
                     // 启动时间数据
@@ -1617,11 +1718,11 @@ namespace ServerCenterLis
                     session.SendAsToServersByForwardToSHDB(result);
 
                     //报警
-                    //if (session.lisFault.Count > 0)
-                    //{
-                        result = ParsMethod.GetFormatByMarkedVehicles("03", desc.Substring(18, 5), PublicMethods.GetFomartZK(Simno, 17), ParsMethod.GetFormatByFault(session.Org_NowTime,session.lisFault));
+                    if (session.lisFault.Count > 0)
+                    {
+                        result = ParsMethod.GetFormatByMarkedVehicles("03", desc.Substring(18, 5), PublicMethods.GetFomartZK(Simno, 17), ParsMethod.GetFormatByFault(session.Org_NowTime, session.lisFault));
                         session.SendAsToServersByForwardToSHDB(result);
-                    //}
+                    }
                 }
                 #endregion
 

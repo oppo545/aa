@@ -25,6 +25,9 @@ using System.Text;
         public int? DrivingMotorCoolingMode { get; set; }
         public int? DrivingRangeElectricVehicle { get; set; }
         public int? MaxSpeedElectricVehicle { get; set; }
+        public int? VehicleType1 { get; set; }
+        public int? VehicleUsage { get; set; }
+
         public string dldcgs { get; set; }
         public string Id { get; set; }
         public string ProductionCode { get; set; }

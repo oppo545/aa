@@ -290,8 +290,8 @@ namespace SuperSocket.SocketEngine
         /// <param name="e">The <see cref="ReceiveCompletedEventArgs" /> instance containing the event data.</param>
         static void mq_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
         {
-            MessageQueue mq = (MessageQueue)sender; 
-            System.Messaging.Message m= mq.EndReceive(e.AsyncResult);
+            MessageQueue mq = (MessageQueue)sender;
+            System.Messaging.Message m = mq.EndReceive(e.AsyncResult);
             try
             {
                 //throw new NotImplementedException();
@@ -435,7 +435,7 @@ namespace SuperSocket.SocketEngine
         public static Thread threadClientB = null;//负责 监听 服务端B发送来的消息的线程
 
 
- 
+
         //public static Thread threadheartbeat = null;//发送心跳
 
 
@@ -469,7 +469,7 @@ namespace SuperSocket.SocketEngine
                         st.Bind(localIPE);
                     }
                     st.Connect(ipe);
-                    WriteLog.WriteSendLog(string.Format("OpenA:{0}:{1}", ipe.Address,ipe.Port), true);
+                    WriteLog.WriteSendLog(string.Format("OpenA:{0}:{1}", ipe.Address, ipe.Port), true);
 
                     index = 1;
 
@@ -738,7 +738,7 @@ namespace SuperSocket.SocketEngine
                 //}
 
             }
-         
+
             catch (Exception exc)
             {
                 IsStConnect = false;
@@ -841,7 +841,7 @@ namespace SuperSocket.SocketEngine
                     int bytes;
                     bytes = st.Receive(recvBytes, recvBytes.Length, 0);
 
-                    
+
                     recvStr += Encoding.UTF8.GetString(recvBytes, 0, bytes);
                     //重连
                     if (bytes == 0)
@@ -851,7 +851,7 @@ namespace SuperSocket.SocketEngine
                         RunRewiring();
                         return;
                     }
-                    
+
                     WriteLog.WriteLogrecvStr("recvStrA:" + recvStr);
                     //组包
                     recvStr = lastReceiveMsg + recvStr;
@@ -910,7 +910,7 @@ namespace SuperSocket.SocketEngine
             }
             return lis;
         }
-      
+
         //private static void SendHeartbeat()
         //{
         //    //空闲时（无任务） 发送心跳
@@ -962,7 +962,7 @@ namespace SuperSocket.SocketEngine
                     CreateSocket(2);
                 }
 
-              //  string smsg = msg + "\b";
+                //  string smsg = msg + "\b";
                 string smsg = msg;
 
                 //按长度发送
@@ -1625,11 +1625,11 @@ namespace SuperSocket.SocketEngine
                             else if (vehicleMode.Equals("4"))
                             {
                                 //地标
-                                 string cs = Convert.ToString(1, 16).ToString();
+                                string cs = Convert.ToString(1, 16).ToString();
                                 DateTime dtnow = DateTime.Now;
                                 string time = string.Format("{0} {1} {2} {3} {4} {5}", PublicMethods.Get10To16(dtnow.Year.ToString().Substring(2, 2), 1), PublicMethods.Get10To16(dtnow.Month.ToString(), 1), PublicMethods.Get10To16(dtnow.Day.ToString(), 1), PublicMethods.Get10To16(dtnow.Hour.ToString(), 1), PublicMethods.Get10To16(dtnow.Minute.ToString(), 1), PublicMethods.Get10To16(dtnow.Second.ToString(), 1));
                                 //消息体长度为11 +2(验证发送方)=13       //时间+命令id+控制命令+命令时间+流水号      回复 命令+流水号
-                                string yhzfc = string.Format("82 FE {0} 00 00 0D {1} 87 04 {2} 00 04", PublicMethods.GetAsciiToHex(yj), time,  GetFomartZ(cs, 2));
+                                string yhzfc = string.Format("82 FE {0} 00 00 0D {1} 87 04 {2} 00 04", PublicMethods.GetAsciiToHex(yj), time, GetFomartZ(cs, 2));
                                 temp = string.Format("23 23 {0} {1}", yhzfc, GetJy(yhzfc.Split(' ')));
                                 //设置时间,总数,id,参数,id,参数
                                 index = "|82 FE";
@@ -1962,14 +1962,64 @@ namespace SuperSocket.SocketEngine
                         }
                     }
                     #endregion
-
+                    #region G31-G32 充电桩
+                    else if (qqzl.Equals("G31") || qqzl.Equals("G32"))
+                    {
+                        string[] sendstr = yj.Split(','); //systemno,value
+                        string[] sysnos = sendstr[0].Split('-');
+                        vehicleMode = qqstr.Split('_')[2].ToString();
+                        if (vehicleMode.Equals("4"))
+                        {
+                            string order = "";
+                            if (qqzl.Equals("G31"))
+                            {
+                                if (sendstr[1].Equals("0"))
+                                {
+                                    order = "01";
+                                }
+                                else
+                                {
+                                    order = "02";
+                                }
+                            }
+                            else
+                            {
+                                if (sendstr[1].Equals("0"))
+                                {
+                                    order = "03";
+                                }
+                                else
+                                {
+                                    order = "04";
+                                }
+                            }
+                            DateTime dtnow = DateTime.Now;
+                            string time = string.Format("{0} {1} {2} {3} {4} {5}", PublicMethods.Get10To16(dtnow.Year.ToString().Substring(2, 2), 1), PublicMethods.Get10To16(dtnow.Month.ToString(), 1), PublicMethods.Get10To16(dtnow.Day.ToString(), 1), PublicMethods.Get10To16(dtnow.Hour.ToString(), 1), PublicMethods.Get10To16(dtnow.Minute.ToString(), 1), PublicMethods.Get10To16(dtnow.Second.ToString(), 1));
+                            //7+2(验证)
+                            string yhzfc = string.Format("A7 FE {0} 00 00 09 {1} {2}", PublicMethods.GetAsciiToHex(sysnos[0].ToString()), time, order);
+                            temp = string.Format("23 23 {0} {1}", yhzfc, GetJy(yhzfc.Split(' ')));
+                        }
+                    }
+                    #endregion
+                    #region G36 充电卡_平台回复
+                    else if (qqzl.Equals("G36"))
+                    {
+                        string[] sendstr = yj.Split(','); //systemno,value
+                        string[] sysnos = sendstr[0].Split('-');
+                        vehicleMode = qqstr.Split('_')[2].ToString();
+                        if (vehicleMode.Equals("4"))
+                        {
+                            //5+2(验证)
+                            string yhzfc = string.Format("A8 FE {0} 00 00 07 {1} {2}", PublicMethods.GetAsciiToHex(sysnos[0].ToString()), PublicMethods.Get10To16(sendstr[1], 1), PublicMethods.Get10To16((int.Parse(sendstr[2])*100).ToString(), 4));
+                            temp = string.Format("23 23 {0} {1}", yhzfc, GetJy(yhzfc.Split(' ')));
+                        }
+                    }
+                    #endregion
                     if (!string.IsNullOrEmpty(temp))
                     {
                         //按照协议发送到 不同Telnet_Session 
                         ST_SendToServers(vehicleMode, temp);
                     }
-
-
                 }
                 catch (Exception ex)
                 {
@@ -2050,32 +2100,6 @@ namespace SuperSocket.SocketEngine
                             temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_4";
                             break;
                         }
-                    //case "G16":
-                    //    {
-                    //        //开门  油路控制
-                    //        //    temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_" + model.GetModel("data").GetValue("deviceProtocolId");
-                    //        temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_4";
-                    //        break;
-                    //    }
-                    //case "G17":
-                    //    {
-                    //        //关门  油路控制
-                    //        // temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_" + model.GetModel("data").GetValue("deviceProtocolId");
-                    //        temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_4";
-                    //        break;
-                    //    }
-                    //case "G160":
-                    //    {
-                    //        //开门
-                    //        temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_4";
-                    //        break;
-                    //    }
-                    //case "G170":
-                    //    {
-                    //        //关门
-                    //        temp = identifying + "_" + model.GetModel("data").GetValue("systemNo") + "_4";
-                    //        break;
-                    //    }
                     case "G19":
                         {
                             //GPS上传时间间隔设置
@@ -2106,6 +2130,17 @@ namespace SuperSocket.SocketEngine
                     case "G26": //参数查询 (车载终端本地存储时间周期 1,正常时信息上报时间周期 2,出现报警时信息上报时间周期 3, 硬件版本 6, 固件版本 7, 车载终端心跳发送周期 8 ,终端应答超时时间 9 ,平台应答超时时间 A)
                         {
                             temp = string.Format("{0}_{1}_{2}", identifying, string.Format("{0},{1}", model.GetModel("data").GetValue("sysnos").Replace('_', '-'), model.GetModel("data").GetValue("numerical").Replace('_', '-')), model.GetModel("data").GetValue("deviceProtocolId").Replace('_', '-'));
+                            break;
+                        }
+                    case "G31"://App锁桩/App解锁 //G31-G37 充电桩指令
+                    case "G32": //开始充电/结束充电
+                        {
+                            temp = string.Format("{0}_{1}_{2}", identifying, string.Format("{0},{1}", model.GetModel("data").GetValue("systemNo"), model.GetModel("data").GetValue("value")), 4);
+                            break;
+                        }
+                    case "G36": //平台回复
+                        {
+                            temp = string.Format("{0}_{1}_{2}", identifying, string.Format("{0},{1},{2}", model.GetModel("data").GetValue("systemNo"), model.GetModel("data").GetValue("Fitness"), model.GetModel("data").GetValue("Balance")), 4);
                             break;
                         }
                     default:
