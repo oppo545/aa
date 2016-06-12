@@ -750,27 +750,32 @@ namespace ServerCenterLis
                 {
                     string mlid = desc.Substring(0, 2);
                     string result = session.clsft_bjdb.Ml_yd.Equals("01") ? "0" : "1";
+                    string identifying = "";
                     buffer.Clear();
                     buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
                     if (mlid.Equals("01"))
                     {
-                        buffer.Append("\"signalName\":\"LockReply\",");
+                        buffer.Append("\"signalName\":\"lockPipeReply\",");
+                        identifying = "G31";
                     }
                     if (mlid.Equals("02"))
                     {
-                        buffer.Append("\"signalName\":\"UnlockReply\",");
+                        buffer.Append("\"signalName\":\"unlockPipeReply\",");
+                        identifying = "G31";
                     }
                     if (mlid.Equals("03"))
                     {
-                        buffer.Append("\"signalName\":\"StartChargReply\",");
+                        buffer.Append("\"signalName\":\"startChargReply\",");
+                        identifying = "G32";
                     }
                     if (mlid.Equals("04"))
                     {
-                        buffer.Append("\"signalName\":\"EndChargReply\",");
+                        buffer.Append("\"signalName\":\"endChargeReply\",");
+                        identifying = "G32";
                     }
-                    buffer.Append("\"Time\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"");
+                    buffer.Append("\"time\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\",");
                     buffer.Append("\"value\":\"" + result + "\"");
-                    strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, "G31", buffer.ToString());
+                    strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, identifying, buffer.ToString());
 
                     session.SendToReply(strinfo);
                     //记录指令回复
@@ -783,12 +788,30 @@ namespace ServerCenterLis
                     string time = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
                     string idcard = PublicMethods.GetHexToAscii(desc.Substring(18, 23));
                     buffer.Clear();
-                    buffer.Append("{\"key\":\"client_message_self\",");
+                    buffer.Append("{\"key\":\"client_message_charge_self\",");
                     buffer.Append("\"identifying\":\"" + "G36" + "\",");
                     buffer.Append("\"data\":{");
                     buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
                     buffer.Append("\"idCard\":\"" + idcard + "\",");
-                    buffer.Append("\"Time\":\"" + time + "\"");
+                    buffer.Append("\"time\":\"" + time + "\"");
+                    buffer.Append("}");
+                    buffer.Append("}");
+
+                    session.SendToReply(buffer.ToString());
+                    //记录指令回复
+                    WriteLog.WriteLogZL("retrunRecv:" + buffer.ToString());
+                }
+                #endregion
+                #region A9-刷卡充电开始 上传信息
+                else if (strindex.Equals("A9"))
+                {
+                    string time = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
+                    buffer.Clear();
+                    buffer.Append("{\"key\":\"client_message_charge_self\",");
+                    buffer.Append("\"identifying\":\"" + "G37" + "\",");
+                    buffer.Append("\"data\":{");
+                    buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
+                    buffer.Append("\"time\":\"" + time + "\"");
                     buffer.Append("}");
                     buffer.Append("}");
 
@@ -806,11 +829,11 @@ namespace ServerCenterLis
 
                     buffer.Clear();
                     buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
-                    buffer.Append("\"signalName\":\"ChargingCompleted\",");
-                    buffer.Append("\"Time\":\"" + time + "\"");
-                    buffer.Append("\"ChargeAmount\":\"" + ChargeAmount + "\"");
+                    buffer.Append("\"signalName\":\"chargingCompleted\",");
+                    buffer.Append("\"time\":\"" + time + "\",");
+                    buffer.Append("\"chargeAmount\":\"" + ChargeAmount + "\",");
                     buffer.Append("\"value\":\"" + value + "\"");
-                    strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, "G35", buffer.ToString());
+                    strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, "G35", buffer.ToString());
 
                     session.SendToReply(strinfo);
                     //记录指令回复
@@ -824,14 +847,130 @@ namespace ServerCenterLis
                     string mlid = desc.Substring(18, 2);
                     buffer.Clear();
                     buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
-                    buffer.Append("\"signalName\":\"ChargeGun\",");
-                    buffer.Append("\"Time\":\"" + time + "\"");
+                    buffer.Append("\"signalName\":\"chargeGun\",");
+                    buffer.Append("\"time\":\"" + time + "\",");
                     buffer.Append("\"value\":\"" + int.Parse(mlid) + "\"");
-                    strinfo = Telnet_Session.FomatToJosn("client_message", "2", session.siCode, "G33", buffer.ToString());
+                    strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, "G33", buffer.ToString());
 
                     session.SendToReply(strinfo);
                     //记录指令回复
                     WriteLog.WriteLogZL("retrunRecv:" + strinfo);
+                }
+                #endregion
+                #region A2-充电桩实时数据上传信息
+                else if (strindex.Equals("A2"))
+                {
+                    try
+                    {
+                        session.cls_charg = session.getCharg();
+                        session.cls_charg.Date = PublicMethods.GetGMT8Data(desc.Substring(0, 17), 1);
+                        if (desc.Length < 18) { return; }
+                        //信息
+                        string reportinfos = desc.Substring(18, desc.Length - 18);
+                        if (session.vlsType != -1) //系统不支持此车型
+                        {
+                            //标识位
+                            string bsw, info = reportinfos, zcinfo;
+                            bool flagJump = false;
+                            ///      平台是否支持此车型
+                            bool flagvlsType;//平台是否支持此车型
+                            while (info.Length != 0)
+                            {
+                                flagvlsType = true;
+                                if (flagJump) break;
+                                bsw = info.Substring(0, 2);
+                                zcinfo = info.Substring(3, info.Length - 3);
+                                //此协议 无信息长度
+                                // num = nu * 3 - 1;
+                                switch (bsw)
+                                {
+                                    #region 01-交流充电桩充电数据
+                                    case "01":
+                                        {
+                                            session.cls_charg.Charg_TerminalNumber = PublicMethods.GetHexToAscii(zcinfo.Substring(0, 23));
+                                            session.cls_charg.Charg_PortIdentification = ParsMethod.GetParsWholeByte(zcinfo.Substring(0, 23));
+                                            session.cls_charg.ConnectSwitchConfirm = ParsMethod.GetParsWholeByte(zcinfo.Substring(36, 2));
+                                            session.cls_charg.WorkState = ParsMethod.GetParsWholeByte(zcinfo.Substring(60, 5));
+                                            session.cls_charg.ACInputOverVoltageAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(36, 2));
+                                            session.cls_charg.ACInputUnderVoltageAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(36, 2));
+                                            session.cls_charg.ChargingCurrentOverloadAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(36, 2));
+                                            session.cls_charg.ChargingOutputVoltage = ParsMethod.GetParsWholeByte(zcinfo.Substring(24, 5), 0.1);
+                                            session.cls_charg.ChargingOutputCurrent = ParsMethod.GetParsWholeByte(zcinfo.Substring(30, 5), 0.01);
+                                            session.cls_charg.OutputRelayStatus = ParsMethod.GetParsWholeByte(zcinfo.Substring(42, 2));
+                                            session.cls_charg.TotalActivePower = ParsMethod.GetParsWholeByte(zcinfo.Substring(48, 11), 0.1);
+                                            session.cls_charg.TotalChargeTime = ParsMethod.GetParsWholeByte(zcinfo.Substring(54, 5));
+                                            break;
+                                        }
+                                    #endregion
+                                    #region 02-非车载直流充电机充电数据
+                                    case "02":
+                                        {
+                                            session.cls_charg.Charg_TerminalNumber = PublicMethods.GetHexToAscii(zcinfo.Substring(0, 23));
+                                            session.cls_charg.ChargingOutputVoltage = ParsMethod.GetParsWholeByte(zcinfo.Substring(24, 5), 0.1);
+                                            session.cls_charg.ChargingOutputCurrent = ParsMethod.GetParsWholeByte(zcinfo.Substring(30, 5), 0.01);
+                                            session.cls_charg.BMS_SOC = ParsMethod.GetParsWholeByte(zcinfo.Substring(36, 5));
+                                            session.cls_charg.BatteryPackMinTemp = ParsMethod.GetParsWholeByte(zcinfo.Substring(42, 5), 0.1);
+                                            session.cls_charg.BatteryPackMaxTemp = ParsMethod.GetParsWholeByte(zcinfo.Substring(48, 5), 0.1);
+                                            session.cls_charg.TotalChargeTime = ParsMethod.GetParsWholeByte(zcinfo.Substring(54, 5));
+                                            session.cls_charg.WorkState = ParsMethod.GetParsWholeByte(zcinfo.Substring(60, 5));
+                                            session.cls_charg.BMS_CommunicationFault = ParsMethod.GetParsWholeByte(zcinfo.Substring(66, 2));
+                                            session.cls_charg.DCBusOutputOvervoltageAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(69, 2));
+                                            session.cls_charg.DCBusOutputUndervoltageAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(72, 2));
+                                            session.cls_charg.BatteryChargingOverCurrentAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(75, 2));
+                                            session.cls_charg.BatteryModuleSamplingPointOverTempAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(78, 2));
+                                            session.cls_charg.TotalActivePower = ParsMethod.GetParsWholeByte(zcinfo.Substring(80, 11), 0.1);
+                                            session.cls_charg.BatteryConnectStatue = ParsMethod.GetParsWholeByte(zcinfo.Substring(92, 2));
+                                            session.cls_charg.BatteryMaxVoltage = ParsMethod.GetParsWholeByte(zcinfo.Substring(95, 5), 0.001);
+                                            session.cls_charg.BatteryMinVoltage = ParsMethod.GetParsWholeByte(zcinfo.Substring(101, 5), 0.001);
+                                            session.cls_charg.EmergencyStopButtonActionFault = ParsMethod.GetParsWholeByte(zcinfo.Substring(107, 2));
+                                            session.cls_charg.CardReaderCommunicationFault = ParsMethod.GetParsWholeByte(zcinfo.Substring(110, 2));
+                                            session.cls_charg.DCMeterExceptionFault = ParsMethod.GetParsWholeByte(zcinfo.Substring(113, 2));
+                                            session.cls_charg.InsulationMonitoringFault = ParsMethod.GetParsWholeByte(zcinfo.Substring(116, 2));
+                                            session.cls_charg.BatteryReverseFault = ParsMethod.GetParsWholeByte(zcinfo.Substring(119, 2));
+                                            session.cls_charg.ArresterFault = ParsMethod.GetParsWholeByte(zcinfo.Substring(121, 2));
+                                            session.cls_charg.ChargingGunNotConnectedAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(124, 2));
+                                            session.cls_charg.ChargerOverTempFault = ParsMethod.GetParsWholeByte(zcinfo.Substring(127, 2));
+                                            session.cls_charg.SmokeAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(130, 2));
+                                            session.cls_charg.TransactionRecordFullAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(133, 2));
+                                            break;
+                                        }
+                                    #endregion
+                                    #region 03-充电信息
+                                    case "03":
+                                        {
+                                            session.cls_charg.ChargeNumber = ParsMethod.GetParsWholeByte(zcinfo.Substring(0, 11), 0.1);
+                                            buffer.Clear();
+                                            buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
+                                            buffer.Append("\"signalName\":\"chargeNumber\",");
+                                            buffer.Append("\"value\":\"" + session.cls_charg.ChargeNumber + "\"");
+                                            strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, "G34", buffer.ToString());
+
+                                            session.SendToReply(strinfo);
+                                            //记录指令回复
+                                            WriteLog.WriteLogZL("retrunRecv:" + strinfo);
+                                            break;
+                                        }
+                                    #endregion
+                                    default:
+                                        {
+                                            flagJump = true;
+                                            info = "";
+                                            break;
+                                        }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //没有车型
+                            WriteLog.WriteTestLog("Online", string.Format("error-{0}-{1:yyyy-MM-dd HH:mm:ss}", session.siCode, DateTime.Now), true);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        WriteLog.WriteErrorLog("Error", "______02:" + ex.ToString(), true);
+                        WriteLog.WriteErrorLog("Error", "_____原始码:" + sendCommand, true);
+                    }
                 }
                 #endregion
                 //todotest    [正式中删除]
@@ -1717,6 +1856,7 @@ namespace ServerCenterLis
                     string result = ParsMethod.GetFormatByMarkedVehicles("02", desc.Substring(18, 5), PublicMethods.GetFomartZK(Simno, 17), ParsMethod.GetFormatByRegister(session.lisRegister));
                     session.SendAsToServersByForwardToSHDB(result);
 
+                    //session.AddLisFault("01,05,2,1");
                     //报警
                     if (session.lisFault.Count > 0)
                     {

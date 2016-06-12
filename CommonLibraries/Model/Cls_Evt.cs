@@ -50,7 +50,7 @@ public class Cls_Evt : Cls_RealInformation
     /// <summary>
     /// 母线电压
     /// </summary>
-    public double BusVoltage { get; set; }
+    public double? BusVoltage { get; set; }
     [Description("IPM散热器温度（分辨率1℃)")]
     /// <summary>
     /// IPM散热器温度（分辨率1℃)
@@ -65,7 +65,7 @@ public class Cls_Evt : Cls_RealInformation
     /// <summary>
     /// 动力电机母线电压
     /// </summary>
-    public double Motor_PowerBusVoltage { get; set; }
+    public double? Motor_PowerBusVoltage { get; set; }
     [Description("冷却液温度")]
     /// <summary>
     /// 冷却液温度
@@ -93,12 +93,12 @@ public class Cls_Evt : Cls_RealInformation
     public int? PowerSteeringOilPumpState { get; set; }
 
     [Description("小计里程")]
-    public double IC_Odmeter { get; set; }
+    public double? IC_Odmeter { get; set; }
 
     [Description("漏电检测")]
-    public double BMS_CreepageMonitor { get; set; }
+    public double? BMS_CreepageMonitor { get; set; }
     [Description("SOC经过计算")]
-    public double BMS_SOCCalculate { get; set; }
+    public double? BMS_SOCCalculate { get; set; }
     [Description("外部充电信号")]
     public int? BMS_OutsideChargeSignal { get; set; }
     [Description("非车载充电连接指示信号")]
@@ -106,7 +106,7 @@ public class Cls_Evt : Cls_RealInformation
     [Description("制动开关状")]
     public int? VCU_BrakePedalSt { get; set; }
     [Description("制动踏板电压信号")]
-    public double BrakeVoltageSignal { get; set; }
+    public double? BrakeVoltageSignal { get; set; }
     [Description("制动信号")]
     public int? ABS_BrakeSignal { get; set; }
     [Description("制动开关有效信号")]
@@ -124,12 +124,12 @@ public class Cls_Evt : Cls_RealInformation
     [Description("充电口连接状态")]
     public int? ChargePortConnect_VCU { get; set; }
     [Description("CP电压值")]
-    public double CP_Voltage { get; set; }
+    public double? CP_Voltage { get; set; }
     [Description("供电设备最大供电电流")]
-    public double ACCharger_Max_Cur { get; set; }
+    public double? ACCharger_Max_Cur { get; set; }
     [Description("充电电缆容量")]
 
-    public double charge_cable_capacity { get; set; }
+    public double? charge_cable_capacity { get; set; }
     [Description("动力电池亏电")]
     public string PowerBattLV { get; set; }
     [Description("动力电池故障")]
@@ -190,32 +190,32 @@ public class Cls_Evt : Cls_RealInformation
     [Description("仪表提示内容8")]
     public string state_Information8 { get; set; }
     [Description("百公里电耗")]
-    public double PowerCons { get; set; }
+    public double? PowerCons { get; set; }
     [Description("整车功率")]
-    public double VehPowerPercent { get; set; }
+    public double? VehPowerPercent { get; set; }
     [Description("电耗计算重置")]
     public int? req_PowerCostReset { get; set; }
     [Description("状态指示灯")]
     public int? flg_EPB_State { get; set; }
 
     [Description("左前轮速")]
-    public double LeftFrontWheelSpeed { get; set; }
+    public double? LeftFrontWheelSpeed { get; set; }
     [Description("右前轮速")]
-    public double RightFrontWheelSpeed { get; set; }
+    public double? RightFrontWheelSpeed { get; set; }
     [Description("左后轮速")]
-    public double LeftRearWheelSpeed { get; set; }
+    public double? LeftRearWheelSpeed { get; set; }
     [Description("右后轮速")]
-    public double RightRearWheelSpeed { get; set; }
+    public double? RightRearWheelSpeed { get; set; }
     [Description("电机扭矩")]
     /// <summary>
     /// 电机扭矩
     /// </summary>
-    public double Motor_OutputTorque { get; set; }
+    public double? Motor_OutputTorque { get; set; }
     [Description("电机目标扭矩")]
     /// <summary>
     /// 电机目标扭矩
     /// </summary>
-    public double VCU_Motor_Target_tq { get; set; }
+    public double? VCU_Motor_Target_tq { get; set; }
     [Description("电机控制器请求")]
     /// <summary>
     /// 电机控制器请求
@@ -241,19 +241,19 @@ public class Cls_Evt : Cls_RealInformation
     [Description("电机状态")]
     public int? Motor_State { get; set; }
     [Description("电机反馈扭矩")]
-    public double Motor_TorqueFeedback { get; set; }
+    public double? Motor_TorqueFeedback { get; set; }
     [Description("电机最大允许扭矩")]
-    public double Motor_AllowMaxTorque { get; set; }
+    public double? Motor_AllowMaxTorque { get; set; }
     [Description("电机功率")]
-    public double Motor_OutputPower { get; set; }
+    public double? Motor_OutputPower { get; set; }
     [Description("转向电机转速请求")]
     public int? EpsMotSpeed { get; set; }
     [Description("电机U相电流")]
-    public double U_MotCurrent { get; set; }
+    public double? U_MotCurrent { get; set; }
     [Description("电机V相电流")]
-    public double V_MotCurrent { get; set; }
+    public double? V_MotCurrent { get; set; }
     [Description("电机W相电流")]
-    public double W_MotCurrent { get; set; }
+    public double? W_MotCurrent { get; set; }
     [Description("电机当前工作模式")]
     public int? MCU_MotRunMode { get; set; }
     [Description("电机当前回馈模式")]
@@ -305,11 +305,11 @@ public class Cls_Evt : Cls_RealInformation
     [Description("电机失速")]   
     public string MotLoseSpeed { get; set; }
     [Description("电机最大输出转矩")]
-    public double MotMaxTorque { get; set; }
+    public double? MotMaxTorque { get; set; }
     [Description("充电机输出的充电电压")]
-    public double ONC_OutputVoltage { get; set; }
+    public double? ONC_OutputVoltage { get; set; }
     [Description("充电机输出的充电电流")]
-    public double ONC_OutputCurrent { get; set; }
+    public double? ONC_OutputCurrent { get; set; }
     [Description("充电机输入电压状态")]
     public int? ONC_InputVoltageSt { get; set; }
     [Description("充电机通信状态")]
@@ -320,9 +320,9 @@ public class Cls_Evt : Cls_RealInformation
     public int? BMS_ChargerACInput { get; set; }
 
     [Description("充电机当前输入电压")]
-    public double InChargingVolt { get; set; }
+    public double? InChargingVolt { get; set; }
     [Description("充电机当前输入电流")]
-    public double InChargingCurr { get; set; }
+    public double? InChargingCurr { get; set; }
     [Description("电池放电电流限值")]
     public int? HVDischargeLimit { get; set; }
     [Description("电池充电电流限值")]
@@ -340,20 +340,20 @@ public class Cls_Evt : Cls_RealInformation
     [Description("充电电流请求")]
     public int? req_ChargeCurrent { get; set; }
     [Description("输入电流功率因数")]
-    public double InputPowerFactor { get; set; }
+    public double? InputPowerFactor { get; set; }
     [Description("充电机效率")]
-    public double ChargerEfficiency { get; set; }
+    public double? ChargerEfficiency { get; set; }
     [Description("充电机温度")]
     public int? ChargerTemp { get; set; }
     [Description("当前充电状态")]
     public int? state_Charging { get; set; }
     [Description("高精度充电机输出的充电电流")]
-    public double ONC_HighPreOutputCurrent { get; set; }
+    public double? ONC_HighPreOutputCurrent { get; set; }
 
     [Description("最高允许充电端电流")]
-    public double MaxAllowChargingCurrent { get; set; }
+    public double? MaxAllowChargingCurrent { get; set; }
     [Description("最高允许充电端电压")]
-    public double MaxAllowChargingVoltage { get; set; }
+    public double? MaxAllowChargingVoltage { get; set; }
     [Description("充电控制指令")]
     public int? ChargeControlCommand { get; set; }
     [Description("慢充充电连接状态")]
@@ -365,9 +365,9 @@ public class Cls_Evt : Cls_RealInformation
     [Description("启动状态")]
     public int? StartState { get; set; }
     [Description("充电机最大充电电流")]
-    public double ONC_Charge_Maxallow_A { get; set; }
+    public double? ONC_Charge_Maxallow_A { get; set; }
     [Description("高精度充电电流")]
-    public double HighPreChargingCurrent { get; set; }
+    public double? HighPreChargingCurrent { get; set; }
 
     [Description("DCDC状态")]
     /// <summary>
@@ -376,27 +376,27 @@ public class Cls_Evt : Cls_RealInformation
     public int? DCDC_Work_State { get; set; }
 
     [Description("直流母线电压")]
-    public double Motor_DCVolt { get; set; }
+    public double? Motor_DCVolt { get; set; }
 
     [Description("直流母线电流")]
     public int? Motor_DCCurrent { get; set; }
     [Description("DCDC温度")]
     public int? DCDC_Temperature { get; set; }
     [Description("DC-DC输出电压")]
-    public double DCDC_OutputVoltage { get; set; }
+    public double? DCDC_OutputVoltage { get; set; }
     [Description("DC-DC输出电流")]
-    public double DCDC_OutputCurrent { get; set; }
+    public double? DCDC_OutputCurrent { get; set; }
     [Description("DC-DC使能应答")]
     public int? DCDC_EnableResponse { get; set; }
     [Description("DC-DC输入电压")]
-    public double DCDC_InputVoltage { get; set; }
+    public double? DCDC_InputVoltage { get; set; }
     [Description("DC-DC输入电流")]
-    public double DCDC_InputCurrent { get; set; }
+    public double? DCDC_InputCurrent { get; set; }
 
     [Description("DCDC效率")]
-    public double DCDC_Efficiency { get; set; }
+    public double? DCDC_Efficiency { get; set; }
     [Description("DCDC温度")]
-    public double DCDC_Temp { get; set; }
+    public double? DCDC_Temp { get; set; }
 
     [Description("ABS故障")]
     /// <summary>
@@ -574,7 +574,7 @@ public class Cls_Evt : Cls_RealInformation
      [Description("电机转速请求")]
     public int? MotorSpeed_req { get; set; }
      [Description("电机转矩请求")]
-    public double MotorTq_req { get; set; }
+    public double? MotorTq_req { get; set; }
      [Description("DCDC最大允许输出功率")]
     public int? DCDCMaxOtptPower { get; set; }
      [Description("充电机硬件故障")]
@@ -584,7 +584,7 @@ public class Cls_Evt : Cls_RealInformation
      [Description("充电机输入电压状态")]
      public int? ONC_InputVoltage { get; set; }
      [Description("充电机输入欠压报警")]
-     public double ONC_HighPreInputCurrent { get; set; }
+     public double? ONC_HighPreInputCurrent { get; set; }
 
      [Description("充电机输入欠压报警")]
     public string ChargerInputUnderVolt { get; set; }
@@ -692,7 +692,7 @@ public class Cls_Evt : Cls_RealInformation
     /// <summary>
     /// 电池平均温度
     /// </summary>
-    public double BMS_Temp_Ave { get; set; }
+    public double? BMS_Temp_Ave { get; set; }
     [Description("电池组当前容量指数")]
     /// <summary>
     /// 电池组当前容量指数 (分辨率1%) 
@@ -708,17 +708,17 @@ public class Cls_Evt : Cls_RealInformation
     /// <summary>
     /// 续驶里程
     /// </summary>
-    public double VCU_CruisingRange { get; set; }
+    public double? VCU_CruisingRange { get; set; }
     [Description("电池包能量")]
     /// <summary>
     /// 电池包能量
     /// </summary>
-    public double BatteryPackEnergy { get; set; }
+    public double? BatteryPackEnergy { get; set; }
     [Description("剩余动力电池电量")]
     /// <summary>
     /// 剩余动力电池电量
     /// </summary>
-    public double BMS_RemainingBattPower { get; set; }
+    public double? BMS_RemainingBattPower { get; set; }
 
     [Description("BMS当前工作模式")]
     public int? BMSMode { get; set; }
@@ -729,37 +729,37 @@ public class Cls_Evt : Cls_RealInformation
     [Description("电池单体最高电压编号1")]
     public int? HVMaxVoltage1_Num { get; set; }
     [Description("电池单体最高电压1")]
-    public double HVMaxVoltage1 { get; set; }
+    public double? HVMaxVoltage1 { get; set; }
     [Description("电池单体最高电压编号2")]
     public int? HVMaxVoltage2_Num { get; set; }
     [Description("电池单体最高电压2")]
-    public double HVMaxVoltage2 { get; set; }
+    public double? HVMaxVoltage2 { get; set; }
     [Description("电池单体最高电压编号3")]
     public int? HVMaxVoltage3_Num { get; set; }
     [Description("电池单体最高电压3")]
-    public double HVMaxVoltage3 { get; set; }
+    public double? HVMaxVoltage3 { get; set; }
     [Description("电池单体最高电压编号4")]
     public int? HVMaxVoltage4_Num { get; set; }
     [Description("电池单体最高电压4")]
-    public double HVMaxVoltage4 { get; set; }
+    public double? HVMaxVoltage4 { get; set; }
     [Description("电池单体最高电压编号1")]
     public int? HVMinVoltage1_Num { get; set; }
     [Description("电池单体最低电压1")]
-    public double HVMinVoltage1 { get; set; }
+    public double? HVMinVoltage1 { get; set; }
     [Description("电池单体最低电压2")]
     public int? HVMinVoltage2_Num { get; set; }
     [Description("电池单体最低电压2")]
-    public double HVMinVoltage2 { get; set; }
+    public double? HVMinVoltage2 { get; set; }
     [Description("电池单体最低电压3")]
     public int? HVMinVoltage3_Num { get; set; }
     [Description("电池单体最低电压3")]
-    public double HVMinVoltage3 { get; set; }
+    public double? HVMinVoltage3 { get; set; }
     [Description("电池单体最低电压4")]
     public int? HVMinVoltage4_Num { get; set; }
     [Description("电池单体最低电压4")]
-    public double HVMinVoltage4 { get; set; }
+    public double? HVMinVoltage4 { get; set; }
     [Description("高精度电池平均温度")]
-    public double BMS_TempHighPreAve { get; set; }
+    public double? BMS_TempHighPreAve { get; set; }
     [Description("电池健康状态SOH")]
     /// <summary>
     /// 电池健康状态SOH
@@ -774,12 +774,12 @@ public class Cls_Evt : Cls_RealInformation
     /// <summary>
     /// 电池最大允许放电功率
     /// </summary>
-    public double BMS_Battery_Discharge_KW_MA { get; set; }
+    public double? BMS_Battery_Discharge_KW_MA { get; set; }
     [Description("电池最大允许充电功率")]
     /// <summary>
     /// 电池最大允许充电功率
     /// </summary>
-    public double BMS_Battery_Charge_KW_MAX { get; set; }
+    public double? BMS_Battery_Charge_KW_MAX { get; set; }
     [Description("电池正极继电器状态")]
     /// <summary>
     /// 电池正极继电器状态
@@ -845,11 +845,11 @@ public class Cls_Evt : Cls_RealInformation
     [Description("压缩机转速请求")]
     public int? CMCMotSpeed { get; set; }
     [Description("压缩机高压输入")]
-    public double CMCHVVolt { get; set; }
+    public double? CMCHVVolt { get; set; }
     [Description("压缩机当前功率")]
-    public double CMCPower { get; set; }
+    public double? CMCPower { get; set; }
     [Description("压缩机当前转速")]
-    public double CompSpeed { get; set; }
+    public double? CompSpeed { get; set; }
     [Description("压缩机控制器状态")]
     public int? CMCWork { get; set; }
     [Description("压缩机控制器自检故障")]

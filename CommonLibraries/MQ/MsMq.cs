@@ -215,5 +215,12 @@ public class MsMq : Mq
 
     }
 
+    public void SendMsgByFSZL(string info)
+    {
 
+    }
+    public void SendMsgByCharge(string info)
+    {
+
+    }
 }

@@ -789,6 +789,7 @@ namespace ServerCenterLis
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.ABS_Fault = ParsMethod.GetParsWholeByte(str_data1);
                             canfault += PublicMethods.GetCanFaultStr("ABS_Fault", "0X" + packageNumber, faultlever, session.cd_evt.ABS_Fault);
+                            session.AddLisFault("04,0F," + faultlever + "," + session.cd_evt.ABS_Fault);
                             break;
                         case "0602":          /// 空压机故障
                             num = 1;
@@ -824,10 +825,12 @@ namespace ServerCenterLis
                             if (str_data1.Contains("1"))
                             {
                                 session.cd_evt.DCDC_Fault = 1;
+                                session.AddLisFault("01,05," + 3 + "," + 1);
                             }
                             else
                             {
                                 session.cd_evt.DCDC_Fault = 0;
+                                session.AddLisFault("01,05," + 3 + "," + 0);
                             }
                             break;
                         case "0604":    /// 助力转向故障
@@ -935,6 +938,7 @@ namespace ServerCenterLis
                             }
                             if (faultint > 0)
                                 canfault += string.Format("${0}:{1}:{2}:{3}", "MCU_ElecMachineFault", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("01,03," + faultlever + "," + faultint);
                             break;
                         case "0610":    /// CAN网络故障
                             num = 1;
@@ -965,32 +969,37 @@ namespace ServerCenterLis
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.DCDC_InternalFault = ParsMethod.GetParsWholeByte(str_data1);
                             faultint = session.cd_evt.DCDC_InternalFault;
+                            faultlever = 1;
                             if (faultint > 0)
                                 canfault += string.Format("${0}:{1}:{2}:{3}", "DCDC_InternalFault", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("01,05," + faultlever + "," + faultint);
                             break;
                         case "0614":    /// DC/DC输出短路故障
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.DCDC_OutputCircuitFault = ParsMethod.GetParsWholeByte(str_data1);
-                            faultint = session.cd_evt.DCDC_OutputCircuitFault;
+                            faultint = session.cd_evt.DCDC_OutputCircuitFault; faultlever = 1;
                             if (faultint > 0)
                                 canfault += string.Format("${0}:{1}:{2}:{3}", "DCDC_OutputCircuitFault", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("01,05," + faultlever + "," + faultint);
                             break;
                         case "0615":     /// DCDC故障类型
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.DCDC_ElecMachineFault = ParsMethod.GetParsWholeByte(str_data1);
-                            faultint = session.cd_evt.DCDC_ElecMachineFault;
+                            faultint = session.cd_evt.DCDC_ElecMachineFault; faultlever = 1;
                             if (faultint > 0)
                                 canfault += string.Format("${0}:{1}:{2}:{3}", "DCDC_ElecMachineFault", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("01,05," + faultlever + "," + faultint);
                             break;
                         case "0616":    /// DC/DC输出过压故障
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.DCDC_OutputOverVoltageFault = ParsMethod.GetParsWholeByte(str_data1);
-                            faultint = session.cd_evt.DCDC_OutputOverVoltageFault;
+                            faultint = session.cd_evt.DCDC_OutputOverVoltageFault; faultlever = 1;
                             if (faultint > 0)
                                 canfault += string.Format("${0}:{1}:{2}:{3}", "DCDC_OutputOverVoltageFault", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("01,05," + faultlever + "," + faultint);
                             break;
                         case "0617":    /// TCU故障码
                             num = 1;
@@ -1013,6 +1022,7 @@ namespace ServerCenterLis
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.EPS_FaultWarning = ParsMethod.GetParsWholeByte(str_data1);
                             canfault += PublicMethods.GetCanFaultStr("EPS_FaultWarning", "0X" + packageNumber, faultlever, session.cd_evt.EPS_FaultWarning);
+                            session.AddLisFault("04,0F," + faultlever + "," + faultint);
                             break;
                         case "061A":    ///电机控制器预充故障
                             num = 1;
@@ -1097,6 +1107,7 @@ namespace ServerCenterLis
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.MotorInsulationTest = int.Parse(str_data1.Substring(1, 1));
                             canfault += PublicMethods.GetCanFaultStr("MotorInsulationTest", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.MotorInsulationTest);
+                            session.AddLisFault("03,0C," + ParsMethod.GetFaultlever(str_data1) + "," + session.cd_evt.MotorInsulationTest);
                             break;
                         case "0628":    /// 断路/开路（高压）
                             num = 1;
@@ -1109,30 +1120,35 @@ namespace ServerCenterLis
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.Motor_VoltageOver = int.Parse(str_data1.Substring(1, 1));
                             canfault += PublicMethods.GetCanFaultStr("Motor_VoltageOver", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.Motor_VoltageOver);
+                            session.AddLisFault("01,03," + ParsMethod.GetFaultlever(str_data1) + "," + session.cd_evt.Motor_VoltageOver);
                             break;
                         case "062A":
                             num = 1;        //驱动电机控制器温度过高
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.Motor_ControllerTemperatureOver = int.Parse(str_data1.Substring(1, 1));
                             canfault += PublicMethods.GetCanFaultStr("Motor_TemperatureOver", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.Motor_ControllerTemperatureOver);
+                            session.AddLisFault("01,02," + ParsMethod.GetFaultlever(str_data1) + "," + session.cd_evt.Motor_ControllerTemperatureOver);
                             break;
                         case "062B":
                             num = 1;          //驱动电机控制器24V欠压
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.Motor_Controller24VTemperatureLow = int.Parse(str_data1.Substring(1, 1));
                             canfault += PublicMethods.GetCanFaultStr("Motor_Controller24VTemperatureLow", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.Motor_Controller24VTemperatureLow);
+                            session.AddLisFault("01,03," + ParsMethod.GetFaultlever(str_data1) + "," + session.cd_evt.Motor_Controller24VTemperatureLow);
                             break;
                         case "062C":
                             num = 1;             //旋变故障
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.Motor_ResolverFault = int.Parse(str_data1.Substring(1, 1));
                             canfault += PublicMethods.GetCanFaultStr("Motor_ResolverFault", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.Motor_ResolverFault);
+                            session.AddLisFault("01,03," + ParsMethod.GetFaultlever(str_data1) + "," + session.cd_evt.Motor_ResolverFault);
                             break;
                         case "062D":
                             num = 1;               //驱动电机输出缺相
                             str_data1 = str_all.Substring(0, 2);
                             session.cd_evt.Motor_DriveOutputPhase = int.Parse(str_data1.Substring(1, 1));
                             canfault += PublicMethods.GetCanFaultStr("Motor_DriveOutputPhase", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.Motor_DriveOutputPhase);
+                            session.AddLisFault("01,03," + ParsMethod.GetFaultlever(str_data1) + "," + session.cd_evt.Motor_DriveOutputPhase);
                             break;
                         case "062E":
                             num = 1;               //电机故障码
@@ -1192,6 +1208,7 @@ namespace ServerCenterLis
                             }
                             #endregion
                             canfault += PublicMethods.GetCanFaultStr("Motor_Fault", "0X" + str_data1, faultlever, session.cd_evt.Motor_Fault);
+                            session.AddLisFault("01,03," + 2 + "," + session.cd_evt.Motor_Fault);
                             break;
                         case "062F":
                             num = 1;               //DCDC故障   DCDC_Fault
@@ -1225,10 +1242,12 @@ namespace ServerCenterLis
                             if (str_data1.Contains("1"))
                             {
                                 session.cd_evt.DCDC_Fault = 1;
+                                session.AddLisFault("01,05," + 1 + "," + 1);
                             }
                             else
                             {
                                 session.cd_evt.DCDC_Fault = 0;
+                                session.AddLisFault("01,05," + 1 + "," + 0);
                             }
                             break;
                         case "0630":                    /// DCDC使能请求
@@ -1305,6 +1324,7 @@ namespace ServerCenterLis
                             result = str_data1.Substring(1, 1);
                             session.cd_evt.EBD_FaultLed = result;//.Equals("0") ? "" : result;
                             canfault += PublicMethods.GetCanFaultStr("EBD_FaultLed", "0X" + str_data2 + "-bit6", 1, int.Parse(result));
+                            session.AddLisFault("04,0F," + 2 + "," + 1);
                             break;
                         case "0701":             ///内网can通讯丢失 
                             num = 1;
@@ -1504,76 +1524,100 @@ namespace ServerCenterLis
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
                             faultint = ParsMethod.GetParsWholeByte(str_data1);
-                            session.cd_evt.BatteryPackChargingStatusAlarm = faultint;
+                            session.cd_evt.BatteryPackChargingStatusAlarm = faultint; faultlever = 2;
                             if (faultint > 0)
                                 canfault += string.Format("${0}:{1}:{2}:{3}", "BatteryPackChargingStatusAlarm", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,0E," + faultlever + "," + faultint);
                             break;
                         case "0C02":
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryPackDischargeState = ParsMethod.GetParsWholeByte(str_data1);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryPackDischargeState = faultint; faultlever = 2;
+                            if (faultint > 0)
+                                canfault += string.Format("${0}:{1}:{2}:{3}", "BatteryPackDischargeState", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,0E," + faultlever + "," + faultint);
                             break;
                         case "0C03":
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryPackTempState = ParsMethod.GetParsWholeByte(str_data1);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryPackTempState = faultint; faultlever = 2;
+                            canfault += PublicMethods.GetCanFaultStr("BatteryPackTempState", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,07," + faultlever + "," + faultint);
                             break;
                         case "0C04":
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryPackElectricLeakageState = ParsMethod.GetParsWholeByte(str_data1);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryPackElectricLeakageState = faultint; faultlever = 2;
+                            canfault += PublicMethods.GetCanFaultStr("BatteryPackElectricLeakageState", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,0C," + faultlever + "," + faultint);
                             break;
                         case "0C05":
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryPackElectricQuantityState = ParsMethod.GetParsWholeByte(str_data1);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryPackElectricQuantityState = faultint; faultlever = 1;
+                            canfault += PublicMethods.GetCanFaultStr("BatteryPackElectricQuantityState", "0X" + packageNumber, faultlever, faultint);
                             break;
                         case "0C06":
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.OverCurrentState = ParsMethod.GetParsWholeByte(str_data1);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.OverCurrentState = faultint; faultlever = 1;
+                            canfault += PublicMethods.GetCanFaultStr("OverCurrentState", "0X" + packageNumber, faultlever, faultint);
                             break;
                         case "0C07":
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
                             faultint = ParsMethod.GetParsWholeByte(str_data1);
-                            session.cd_evt.PowerBatteryUnderVoltage = faultint;
+                            session.cd_evt.PowerBatteryUnderVoltage = faultint; faultlever = 2;
                             if (faultint > 0)
                                 canfault += string.Format("${0}:{1}:{2}:{3}", "PowerBatteryUnderVoltage", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,0A," + faultlever + "," + faultint);
                             break;
                         case "0C08":
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
                             faultint = ParsMethod.GetParsWholeByte(str_data1);
-                            session.cd_evt.PowerBatteryPackOverVoltage = faultint;
+                            session.cd_evt.PowerBatteryPackOverVoltage = faultint; faultlever = 2;
                             if (faultint > 0)
                                 canfault += string.Format("${0}:{1}:{2}:{3}", "PowerBatteryPackOverVoltage", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,09," + faultlever + "," + faultint);
                             break;
                         case "0C09":
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
                             faultint = ParsMethod.GetParsWholeByte(str_data1);
-                            session.cd_evt.PowerBatteryWarningSign = faultint;
+                            session.cd_evt.PowerBatteryWarningSign = faultint; faultlever = 2;
                             if (faultint > 0)
                                 canfault += string.Format("${0}:{1}:{2}:{3}", "PowerBatteryWarningSign", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,0E," + faultlever + "," + faultint);
                             break;
                         case "0C0A":    /// 温度过高报警（电池）
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryFault_OverTemperature = ParsMethod.GetParsWholeByte(str_data1);
-                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_OverTemperature", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BatteryFault_OverTemperature);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryFault_OverTemperature = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_OverTemperature", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,07," + faultlever + "," + faultint);
                             break;
                         case "0C0B":    /// 充电温度过低（电池）
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryFault_ChargeTemperatureLow = ParsMethod.GetParsWholeByte(str_data1);
-                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_ChargeTemperatureLow", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BatteryFault_ChargeTemperatureLow);
+                            faultlever = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryFault_ChargeTemperatureLow = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_ChargeTemperatureLow", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,08," + faultlever + "," + faultint);
                             break;
                         case "0C0C":    /// 放电温度过低
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryFault_DischargeTemperatureLow = ParsMethod.GetParsWholeByte(str_data1);
-                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_DischargeTemperatureLow", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BatteryFault_DischargeTemperatureLow);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryFault_DischargeTemperatureLow = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_DischargeTemperatureLow", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,08," + faultlever + "," + faultint);
                             break;
                         case "0C0D":    /// 温差过大
                             num = 1;
@@ -1584,20 +1628,26 @@ namespace ServerCenterLis
                         case "0C0E":    /// 单体电压过高
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryFault_MonomerVoltageHigh = ParsMethod.GetParsWholeByte(str_data1);
-                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_MonomerVoltageHigh", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BatteryFault_MonomerVoltageHigh);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryFault_MonomerVoltageHigh = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_MonomerVoltageHigh", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,09," + faultlever + "," + faultint);
                             break;
                         case "0C0F":    /// 单体电压过低
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryFault_MonomerVoltageLow = ParsMethod.GetParsWholeByte(str_data1);
-                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_MonomerVoltageLow", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BatteryFault_MonomerVoltageLow);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryFault_MonomerVoltageLow = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_MonomerVoltageLow", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,0A," + faultlever + "," + faultint);
                             break;
                         case "0C10":    /// 压差过大
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryFault_PressureDifferenceLarge = ParsMethod.GetParsWholeByte(str_data1);
-                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_PressureDifferenceLarge", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BatteryFault_PressureDifferenceLarge);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryFault_PressureDifferenceLarge = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_PressureDifferenceLarge", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,06," + faultlever + "," + faultint);
                             break;
                         case "0C11":    /// SOC过低
                             num = 1;
@@ -1608,14 +1658,18 @@ namespace ServerCenterLis
                         case "0C12":    /// 总电压过高
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryFault_TotalVoltageHigh = ParsMethod.GetParsWholeByte(str_data1);
-                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_TotalVoltageHigh", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BatteryFault_TotalVoltageHigh);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryFault_TotalVoltageHigh = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_TotalVoltageHigh", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,06," + faultlever + "," + faultint);
                             break;
                         case "0C13":    /// 总电压过低
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryFault_TotalVoltageLow = ParsMethod.GetParsWholeByte(str_data1);
-                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_TotalVoltageLow", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BatteryFault_TotalVoltageLow);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryFault_TotalVoltageLow = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_TotalVoltageLow", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,06," + faultlever + "," + faultint);
                             break;
                         case "0C14":    /// 充电电流过大
                             num = 1;
@@ -1632,8 +1686,10 @@ namespace ServerCenterLis
                         case "0C16":    /// 绝缘故障
                             num = 1;
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BatteryFault_Insulation = ParsMethod.GetParsWholeByte(str_data1);
-                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_Insulation", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BatteryFault_Insulation);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BatteryFault_Insulation = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BatteryFault_Insulation", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,0C," + faultlever + "," + faultint);
                             break;
                         case "0C17":
                             num = 1;       //SOC过高（电池）
@@ -1644,8 +1700,10 @@ namespace ServerCenterLis
                         case "0C18":
                             num = 1;       //单体温度过低
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BMS_UnitTemperatureTooLow = int.Parse(str_data1.Substring(1, 1));
-                            canfault += PublicMethods.GetCanFaultStr("BMS_UnitTemperatureTooLow", "0X" + packageNumber, ParsMethod.GetFaultlever(str_data1), session.cd_evt.BMS_UnitTemperatureTooLow);
+                            faultint = int.Parse(str_data1.Substring(1, 1));
+                            session.cd_evt.BMS_UnitTemperatureTooLow = faultint; faultlever = ParsMethod.GetFaultlever(str_data1);
+                            canfault += PublicMethods.GetCanFaultStr("BMS_UnitTemperatureTooLow", "0X" + packageNumber, faultlever, faultint);
+                            session.AddLisFault("03,08," + faultlever + "," + faultint);
                             break;
                         case "0C19":
                             num = 1;       //极柱温度过高
@@ -1668,7 +1726,8 @@ namespace ServerCenterLis
                         case "0C1C":
                             num = 1;       //BMS电池故障码
                             str_data1 = str_all.Substring(0, 2);
-                            session.cd_evt.BMS_Fault = ParsMethod.GetParsWholeByte(str_data1);
+                            faultint = ParsMethod.GetParsWholeByte(str_data1);
+                            session.cd_evt.BMS_Fault=faultint;
                             #region switch
                             //BMK 2035-10-21 根据 2035-10-20 才总发送的邮件 <<【东电】安全预警需求>> 添加  52,51,50,4f,4e,4b,4A,48,47,46,21
                             switch (str_data1)
@@ -1806,7 +1865,8 @@ namespace ServerCenterLis
                             }
 
                             #endregion
-                            canfault += PublicMethods.GetCanFaultStr("BMS_Fault", "0X" + str_data1, faultlever, session.cd_evt.BMS_Fault);
+                            canfault += PublicMethods.GetCanFaultStr("BMS_Fault", "0X" + str_data1, faultlever, faultint);
+                            session.AddLisFault("03,0E," + faultlever + "," + faultint);
                             break;
                         case "0C30":
                             num = 4;    //电池故障信息

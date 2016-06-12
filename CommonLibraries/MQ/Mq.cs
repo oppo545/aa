@@ -49,4 +49,17 @@ using System.Text;
         /// </summary>
         /// <param name="info"></param>
         void SendMsgByForwardToSHDB(string info);
+
+        /// <summary>
+        ///    分时租赁
+        /// </summary>
+        /// <param name="info"></param>
+        void SendMsgByFSZL(string info);
+
+        /// <summary>
+        /// 充电桩
+        /// </summary>
+        /// <param name="info"></param>
+        void SendMsgByCharge(string info);
+
     }

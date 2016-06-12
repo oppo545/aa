@@ -27,6 +27,8 @@ public class MqActive : Mq
             sendDataTimerbyGPS = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyGPS), null, Polltime, Polltime);
             sendDataTimerbyAlarm = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyAlarm), null, Polltime, Polltime);
             sendDataTimerbyForward = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyForward), null, Polltime, Polltime);
+            sendDataTimerbyFSZL = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyFSZL), null, Polltime, Polltime);
+            sendDataTimerbyCharge = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyCharge), null, Polltime, Polltime);
         }
         catch (Exception)
         {
@@ -345,6 +347,7 @@ public class MqActive : Mq
             listemp3.Add(info);
         else listemp33.Add(info);
     }
+
     public static Mq CreateInstance()
     {
         if (mqa == null)
@@ -544,6 +547,8 @@ public class MqActive : Mq
 
     #endregion
 
+   //发送方法在里面--------------------------------------------------------------------------------------------------
+
     #region Send Forward To Center
     static System.Threading.Timer sendDataTimerbyForward = null;
     /// <summary>
@@ -639,6 +644,206 @@ public class MqActive : Mq
         catch (Exception ex)
         {
             lisForward.Clear();
+        }
+    }
+
+    #endregion
+
+    #region Send FSZL To Center  分时租赁
+    static System.Threading.Timer sendDataTimerbyFSZL = null;
+    /// <summary>
+    /// 入库lis
+    /// </summary>
+    static List<string> lisFSZL = new List<string>();
+    /// <summary>
+    /// 装载箱1
+    /// </summary>
+    static List<string> lisFSZL1 = new List<string>();
+    /// <summary>
+    /// 装载箱1
+    /// </summary>
+    static List<string> lisFSZL2 = new List<string>();
+    /// <summary>
+    /// 集合轮询调用开关
+    /// </summary>
+    static bool flagFSZL = false;
+    /// <summary>
+    /// lock
+    /// </summary>
+    private static object _lockFSZL = new object();
+
+    private static void SendDataCallbackbyFSZL(Object sender)
+    {
+        lock (_lockFSZL)
+        {
+            try
+            {
+                if ((lisFSZL1.Count > 0 || lisFSZL2.Count > 0) && lisFSZL.Count == 0)
+                {
+                    if (!flagFSZL)
+                    {
+                        flagFSZL = true;
+                        lisFSZL.AddRange(lisFSZL1);
+                        lisFSZL1.Clear();
+                    }
+                    else
+                    {
+                        flagFSZL = false;
+                        lisFSZL.AddRange(lisFSZL2);
+                        lisFSZL2.Clear();
+                    }
+                    if (lisFSZL.Count > 0)
+                    {
+                        sendObjectbyFSZL("FSZL_Reply", lisFSZL);
+                        lisFSZL.Clear();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog.WriteLogZLOther("ErrorAS", "______FSZLMq异常:SendDataCallback" + ex.Message, true);
+            }
+        }
+    }
+    public void SendMsgByFSZL(string info)
+    {
+        if (!flagFSZL)
+            lisFSZL1.Add(info);
+        else lisFSZL2.Add(info);
+    }
+    static IMessageProducer prodFSZL;
+    static ITextMessage messageFSZL;
+    public static void sendObjectbyFSZL(string mqname, List<string> SQLStringList)
+    {
+        try
+        {
+            List<string> lisSql = new List<string>();
+            lisSql.AddRange(SQLStringList);
+            using (connection = factory.CreateConnection())
+            {
+
+                //通过连接创建Session会话
+                using (session = connection.CreateSession())
+                {
+                    //通过会话创建生产者，方法里面new出来的是MQ中的Queue
+                    prodFSZL = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                    for (int i = 0; i < lisSql.Count(); i++)
+                    {
+                        //创建一个发送的消息对象
+                        messageFSZL = prodFSZL.CreateTextMessage();
+                        //给这个对象赋实际的消息
+                        messageFSZL.Text = lisSql[i].ToString();
+                        //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
+                        messageFSZL.Properties.SetString("filter", "demo");
+                        //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
+                        prodFSZL.Send(messageFSZL, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            lisFSZL.Clear();
+        }
+    }
+
+    #endregion
+
+    #region Send Charge To Center  充电桩
+    static System.Threading.Timer sendDataTimerbyCharge = null;
+    /// <summary>
+    /// 入库lis
+    /// </summary>
+    static List<string> lisCharge = new List<string>();
+    /// <summary>
+    /// 装载箱1
+    /// </summary>
+    static List<string> lisCharge1 = new List<string>();
+    /// <summary>
+    /// 装载箱1
+    /// </summary>
+    static List<string> lisCharge2 = new List<string>();
+    /// <summary>
+    /// 集合轮询调用开关
+    /// </summary>
+    static bool flagCharge = false;
+    /// <summary>
+    /// lock
+    /// </summary>
+    private static object _lockCharge = new object();
+
+    private static void SendDataCallbackbyCharge(Object sender)
+    {
+        lock (_lockCharge)
+        {
+            try
+            {
+                if ((lisCharge1.Count > 0 || lisCharge2.Count > 0) && lisCharge.Count == 0)
+                {
+                    if (!flagCharge)
+                    {
+                        flagCharge = true;
+                        lisCharge.AddRange(lisCharge1);
+                        lisCharge1.Clear();
+                    }
+                    else
+                    {
+                        flagCharge = false;
+                        lisCharge.AddRange(lisCharge2);
+                        lisCharge2.Clear();
+                    }
+                    if (lisCharge.Count > 0)
+                    {
+                        sendObjectbyCharge("chargeReceiveQueue", lisCharge);
+                        lisCharge.Clear();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog.WriteLogZLOther("ErrorAS", "______ChargeMq异常:SendDataCallback" + ex.Message, true);
+            }
+        }
+    }
+    public void SendMsgByCharge(string info)
+    {
+        if (!flagCharge)
+            lisCharge1.Add(info);
+        else lisCharge2.Add(info);
+    }
+    static IMessageProducer prodCharge;
+    static ITextMessage messageCharge;
+    public static void sendObjectbyCharge(string mqname, List<string> SQLStringList)
+    {
+        try
+        {
+            List<string> lisSql = new List<string>();
+            lisSql.AddRange(SQLStringList);
+            using (connection = factory.CreateConnection())
+            {
+
+                //通过连接创建Session会话
+                using (session = connection.CreateSession())
+                {
+                    //通过会话创建生产者，方法里面new出来的是MQ中的Queue
+                    prodCharge = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                    for (int i = 0; i < lisSql.Count(); i++)
+                    {
+                        //创建一个发送的消息对象
+                        messageCharge = prodCharge.CreateTextMessage();
+                        //给这个对象赋实际的消息
+                        messageCharge.Text = lisSql[i].ToString();
+                        //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
+                        messageCharge.Properties.SetString("filter", "demo");
+                        //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
+                        prodCharge.Send(messageCharge, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            lisCharge.Clear();
         }
     }
 

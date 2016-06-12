@@ -112,15 +112,18 @@ namespace SuperSocket.SocketEngine
             //通过连接创建一个会话
             ISession session = connection.CreateSession();
             //通过会话创建一个消费者，这里就是Queue这种会话类型的监听参数设置    //CentralCommand
-            IMessageConsumer consumer = session.CreateConsumer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("CentralCommand"), "filter='demo'");
+            IMessageConsumer consumer = session.CreateConsumer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("CentralCommand"));
 
-            //注册监听事件 1
+            //注册监听事件 1  下发指令测试软件
             consumer.Listener += new MessageListener(consumer_Listener);
 
-            //IMessageConsumer consumer1 = session.CreateConsumer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("secondQueue"), "filter='demo'");
-            ////注册监听事件 2
-            //consumer1.Listener += new MessageListener(consumer_Listener);
+            //智能充电下发
+            IMessageConsumer consumer1 = session.CreateConsumer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("chargeSendQueue"));
+            consumer1.Listener += new MessageListener(consumer_Listener);
 
+            //分时租赁
+            IMessageConsumer consumer2 = session.CreateConsumer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("FSZL_MSG"));
+            consumer2.Listener += new MessageListener(consumer_Listener);
         }
     }
 }

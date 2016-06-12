@@ -521,6 +521,18 @@ namespace ServerCenterLis
             return cls_hme;
         }
 
+        /// <summary>
+        ///充电桩数据
+        /// </summary>
+        public Cls_Charging cls_charg;
+        public Cls_Charging getCharg()
+        {
+            if (cls_charg == null)
+            {
+                cls_charg = new Cls_Charging();
+            }
+            return cls_charg;
+        }
 
         /// <summary>
         /// 实时上报接口

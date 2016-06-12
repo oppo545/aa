@@ -303,6 +303,7 @@ public class ParsMethod
         string info = string.Format("23 23 {0} FE {1} {2} 00 {3} {4}", commandName, lsh, vin, PublicMethods.Get10To16(dataUnit.Split(' ').Count().ToString(), 2).ToString(), dataUnit);
         info = Telnet_Session.GetXxfz(info);
         result += string.Format("{0} {1} 7E", info, PublicMethods.GetJy(info.Split(' ')));
+        WriteLog.WriteTestLog("SHDB", result, true);
         return result;
     }
 
@@ -368,7 +369,8 @@ public class ParsMethod
                 info2 = list1[i].Split(',')[2].ToString();
                 result += info + " ";      //编号
                 result += "0" + info2 + " ";     //报警信号值
-                result += "04 ";      //报警级别
+                result +=info1.Equals("")?"04":GetAlarmlever(PublicMethods.Get10To16(info1,1));      //报警级别
+                result += " ";
             }
         }
         if (list2.Count() > 0)
@@ -381,7 +383,8 @@ public class ParsMethod
                 info2 = list2[i].Split(',')[2].ToString();
                 result += info + " ";      //编号
                 result += "0" + info2 + " ";     //报警信号值
-                result += "04 ";      //报警级别
+                result += info1.Equals("") ? "04" :GetAlarmlever( PublicMethods.Get10To16(info1, 1));      //报警级别
+                result += " ";
             }
         }
         if (list3.Count() > 0)
@@ -395,7 +398,8 @@ public class ParsMethod
                 info2 = list3[i].Split(',')[2].ToString();
                 result += info + " ";      //编号
                 result += "0" + info2 + " ";     //报警信号值
-                result += "04 ";      //报警级别
+                result += info1.Equals("") ? "04" : GetAlarmlever(PublicMethods.Get10To16(info1, 1));      //报警级别
+                result += " ";
             }
         }
         if (list4.Count() > 0)
@@ -408,14 +412,38 @@ public class ParsMethod
                 info2 = list4[i].Split(',')[2].ToString();
                 result += info + " ";      //编号
                 result += "0" + info2 + " ";     //报警信号值
-                result += "04 ";      //报警级别
-             
+                result += info1.Equals("") ? "04" : GetAlarmlever(PublicMethods.Get10To16(info1, 1));      //报警级别
+                result += " ";
             }
         }
         #endregion
         lisFault.Clear();
         return result.Trim();
     }
+
+    public static string GetAlarmlever(string lever)
+    {
+        string result = "04";
+        int levertemp = int.Parse(lever);
+        if (levertemp == 1)
+        {
+            result = "04";
+        }
+        if (levertemp == 2)
+        {
+            result = "03";
+        }
+        if (levertemp == 3)
+        {
+            result = "02";
+        }
+        if (levertemp == 4)
+        {
+            result = "01";
+        }
+        return result;
+    }
+
     public static string GetFomateSHDB(string info, int number)
     {
         string result = "";

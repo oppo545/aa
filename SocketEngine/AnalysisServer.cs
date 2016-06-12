@@ -2023,7 +2023,6 @@ namespace SuperSocket.SocketEngine
                 }
                 catch (Exception ex)
                 {
-
                     WriteLog.WriteErrorLog("ErrorAS", "封装指令出错:" + ex.Message.ToString() + "\r\n原始:" + msg + "\r\n封装:" + qqstr, true);
                 }
             }
@@ -2140,7 +2139,7 @@ namespace SuperSocket.SocketEngine
                         }
                     case "G36": //平台回复
                         {
-                            temp = string.Format("{0}_{1}_{2}", identifying, string.Format("{0},{1},{2}", model.GetModel("data").GetValue("systemNo"), model.GetModel("data").GetValue("Fitness"), model.GetModel("data").GetValue("Balance")), 4);
+                            temp = string.Format("{0}_{1}_{2}", identifying, string.Format("{0},{1},{2}", model.GetModel("data").GetValue("systemNo"), model.GetModel("data").GetValue("fitness"), model.GetModel("data").GetValue("balance")), 4);
                             break;
                         }
                     default:
