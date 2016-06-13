@@ -81,7 +81,7 @@ namespace ServerCenterLis
                 string strindex = se.Substring(0, 2);
 
                 //接受的指令 直接 发送给车机(中转)
-                //81 参数设置 ; 82  车载终端控制命令 ; 80 查询     ;C0 分时租赁开关门;   A7 充电桩终端控制命令;A8平台回复
+                //81 参数设置 ; 82  车载终端控制命令 ; 80 查询     ;C0 分时租赁开关门(改为G100测试链路);   A7 充电桩终端控制命令;A8平台回复
                 string[] orderstr = { "81", "82", "80", "C0", "A7", "A8" };
                 if (orderstr.Contains(strindex))
                 {
@@ -215,8 +215,8 @@ namespace ServerCenterLis
                         }
                         if (!OrderCarIsonline)
                         {
-                            //不在线 
-                            if (strindex.Equals("C0"))
+                            #region 不在线的回复方式
+                            if (strindex.Equals("82"))
                             {
                                 string ydlsh = se.Substring(69, 2);
                                 buffer.Clear();
@@ -243,7 +243,7 @@ namespace ServerCenterLis
                                 // 开关门 车辆不在线 回复   (以下 如果是center下发 回复)
                                 if (session.OtherClient.Equals("center"))
                                 {
-                                    session.SendToReply(strinfo);
+                                    session.SendMsgByFSZL(strinfo);
                                 }
                                 else
                                 {
@@ -262,12 +262,25 @@ namespace ServerCenterLis
                                 }
 
                             }
+                            else if (strindex.Equals("C0"))
+                            {
+                                //测试
+                                buffer.Clear();
+                                buffer.Append("{\"key\":\"AMQ.Test\",");
+                                buffer.Append("\"identifying\":\"" + "G100" + "\",");
+                                buffer.Append("\"data\":{");
+                                buffer.Append("\"systemNo\":\"" + session.siCode + "\"");
+                                buffer.Append("}");
+                                buffer.Append("}");
+                                session.SendMsgByTest(buffer.ToString());
+                            }
                             else
                             {
-                                string info = "{\"key\":\"client_message\",\"sendType\":\"3\",\"receiver\":\"admin\",\"identifying\":\"G27\",\"data\":{\"sysnos\":\"" + session.siCode + "\",\"result\":\"4\"}}";
-                                session.SendToReply(info);
+                                //其他指令回复不在线 (暂时只有充电桩和分时租赁,最好是分指令回复不在线)
+                                //string info = "{\"key\":\"client_message\",\"sendType\":\"3\",\"receiver\":\"admin\",\"identifying\":\"G27\",\"data\":{\"systemNo\":\"" + session.siCode + "\",\"result\":\"4\"}}";
+                                //session.SendMsgByFSZL(info);
                             }
-
+                            #endregion
                         }
 
                         //为下发指令后, 处理指令后,避免 后面 在线之类的干扰
@@ -680,7 +693,7 @@ namespace ServerCenterLis
                         else
                         {
                             // 开关门 回复
-                            session.SendToReply(strinfo);
+                            session.SendMsgByFSZL(strinfo);
 
                             //记录指令回复
                             WriteLog.WriteLogZL("retrunRecv:" + strinfo);
@@ -689,61 +702,23 @@ namespace ServerCenterLis
 
                 }
                 #endregion
-                #region  C0 -分时租赁 回复{废弃_20160603协议修改到控制命令中}
-                //else if (strindex.Equals("C0"))
-                //{
-                //    string ydlsh = desc.Substring(0, 5);
-                //    //地标中 01 成功,02失败 FE
-                //    //部标中 0：成功/确认；1：失败；2：消息有误；3：不支持
-                //    string result = session.clsft_bjdb.Ml_yd.Equals("01") ? "00" : "01";
-                //    if (!result.Equals("FE"))
-                //    {
-                //        buffer.Clear();
-                //        buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
-                //        if (ydlsh.Equals("00 01") || ydlsh.Equals("01 01")) //开门     //01 01   01开头,是Other客户端发送标识
-                //        {
-                //            buffer.Append("\"signalName\":\"takeCarReply\",");
-                //        }
-                //        if (ydlsh.Equals("00 02") || ydlsh.Equals("01 02")) //关门
-                //        {
-                //            buffer.Append("\"signalName\":\"returnCarReply\",");
-                //        }
-                //        if (ydlsh.Equals("00 03") || ydlsh.Equals("01 03")) //开门
-                //        {
-                //            buffer.Append("\"signalName\":\"pushDoorReply\",");
-                //        }
-                //        if (ydlsh.Equals("00 04") || ydlsh.Equals("01 04")) //关门
-                //        {
-                //            buffer.Append("\"signalName\":\"shutDownReply\",");
-                //        }
-                //        buffer.Append("\"value\":\"" + result + "\"");
-                //        strinfo = Telnet_Session.FomatToJosn("client_message_lease", "2", session.siCode, "G18", buffer.ToString());
-
-                //        if (ydlsh.Contains("01 0")) //区别出客户端点击
-                //        {
-                //            //BMK添加其他客户端 2015-10-08
-                //            foreach (var s in session.AppServer.GetAllSessions())
-                //            {
-                //                if (!string.IsNullOrEmpty(s.OtherClient))
-                //                {
-                //                    if (s.OtherClient.Equals("android"))
-                //                    {
-                //                        s.Send(strinfo);
-                //                        WriteLog.WriteLogZLOther(s.OtherClient, strinfo, true);
-                //                    }
-                //                }
-                //            }
-                //        }
-                //        else
-                //        {
-                //            // 开关门 回复
-                //            session.SendToReply(strinfo);
-
-                //            //记录指令回复
-                //            WriteLog.WriteLogZL("retrunRecv:" + strinfo);
-                //        }
-                //    }
-                //}
+                #region  A1 注册
+                if (strindex.Equals("A1"))
+                {
+                    session.isChargPile = true;
+                    session.vlsType = 100;//充电桩
+                    byte[] btemp = SendPttyyd("A1", Simno);
+                    session.Send(btemp, 0, btemp.Length);
+                    return;
+                }
+                #endregion
+                #region  A3心跳 √
+                if (strindex.Equals("A3"))
+                {
+                    byte[] btemp = SendPttyyd("A3", Simno);
+                    session.Send(btemp, 0, btemp.Length);
+                    return;
+                }
                 #endregion
                 #region A7-充电桩终端控制命令回复
                 else if (strindex.Equals("A7"))
@@ -777,7 +752,7 @@ namespace ServerCenterLis
                     buffer.Append("\"value\":\"" + result + "\"");
                     strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, identifying, buffer.ToString());
 
-                    session.SendToReply(strinfo);
+                    session.SendMsgByCharge(strinfo);
                     //记录指令回复
                     WriteLog.WriteLogZL("retrunRecv:" + strinfo);
                 }
@@ -797,7 +772,7 @@ namespace ServerCenterLis
                     buffer.Append("}");
                     buffer.Append("}");
 
-                    session.SendToReply(buffer.ToString());
+                    session.SendMsgByCharge(buffer.ToString());
                     //记录指令回复
                     WriteLog.WriteLogZL("retrunRecv:" + buffer.ToString());
                 }
@@ -815,7 +790,7 @@ namespace ServerCenterLis
                     buffer.Append("}");
                     buffer.Append("}");
 
-                    session.SendToReply(buffer.ToString());
+                    session.SendMsgByCharge(buffer.ToString());
                     //记录指令回复
                     WriteLog.WriteLogZL("retrunRecv:" + buffer.ToString());
                 }
@@ -835,7 +810,7 @@ namespace ServerCenterLis
                     buffer.Append("\"value\":\"" + value + "\"");
                     strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, "G35", buffer.ToString());
 
-                    session.SendToReply(strinfo);
+                    session.SendMsgByCharge(strinfo);
                     //记录指令回复
                     WriteLog.WriteLogZL("retrunRecv:" + strinfo);
                 }
@@ -852,12 +827,12 @@ namespace ServerCenterLis
                     buffer.Append("\"value\":\"" + int.Parse(mlid) + "\"");
                     strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, "G33", buffer.ToString());
 
-                    session.SendToReply(strinfo);
+                    session.SendMsgByCharge(strinfo);
                     //记录指令回复
                     WriteLog.WriteLogZL("retrunRecv:" + strinfo);
                 }
                 #endregion
-                #region A2-充电桩实时数据上传信息
+                #region A2-A4-充电桩实时数据上传信息
                 else if (strindex.Equals("A2"))
                 {
                     try
@@ -942,10 +917,11 @@ namespace ServerCenterLis
                                             buffer.Clear();
                                             buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
                                             buffer.Append("\"signalName\":\"chargeNumber\",");
+                                            buffer.Append("\"time\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\",");
                                             buffer.Append("\"value\":\"" + session.cls_charg.ChargeNumber + "\"");
                                             strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, "G34", buffer.ToString());
 
-                                            session.SendToReply(strinfo);
+                                            session.SendMsgByCharge(strinfo);
                                             //记录指令回复
                                             WriteLog.WriteLogZL("retrunRecv:" + strinfo);
                                             break;
@@ -1865,7 +1841,23 @@ namespace ServerCenterLis
                     }
                 }
                 #endregion
-
+                #region 充电桩入库
+                if (session.isChargPile && session.cls_charg != null)
+                {
+                    StringBuilder sbbd = new StringBuilder();
+                    sbbd.Append(" insert into chargerunninginfo.pipe_base_info ( `system_no`,`connect_status`,`battery_charger_status`,`output_relay_status` )");
+                    sbbd.AppendFormat(" values ( \"{0}\", \"{1}\", \"{2}\", \"{3}\" ) ;", session.siCode, session.cls_charg.ConnectSwitchConfirm, session.cls_charg.WorkState, session.cls_charg.OutputRelayStatus);
+                    session.mqs.SendMsg(sbbd.ToString());
+                    sbbd.Clear();
+                    sbbd.Append(" insert into chargerunninginfo.pipe_charge_info ( `system_no`,`charge_interface_sign`,`charge_output_voltage`,`charge_output_current`,`meritorious_total_ammeter`,`total_charge_time`,`battery_soc`,`batterypack_lowest_temperature`,`batterypack_highest_temperature`,`monomer_battery_highest_voltage`,`monomer_battery_lowest_voltage`,`sys_current_time` )");
+                    sbbd.AppendFormat(" values ( \"{0}\", \"{1}\", \"{2}\", \"{3}\", \"{4}\", \"{5}\", \"{6}\", \"{7}\", \"{8}\", \"{9}\", \"{10}\", \"{11}\" ) ;", session.siCode, session.cls_charg.Charg_PortIdentification, session.cls_charg.ChargingOutputVoltage, session.cls_charg.ChargingOutputCurrent, session.cls_charg.TotalActivePower, session.cls_charg.TotalChargeTime, session.cls_charg.BMS_SOC, session.cls_charg.BatteryPackMinTemp, session.cls_charg.BatteryPackMaxTemp, session.cls_charg.BatteryMaxVoltage, session.cls_charg.BatteryMinVoltage, session.cls_charg.Date);
+                    session.mqs.SendMsg(sbbd.ToString());
+                    sbbd.Clear();
+                    sbbd.Append("INSERT INTO `chargerunninginfo`.`pipe_exception_record` (`system_no`, `sys_current_time`, `ACInputOverVoltageAlarm`, `ACInputUnderVoltageAlarm`, `ChargingCurrentOverloadAlarm`, `DCBusOutputOvervoltageAlarm`, `DCBusOutputUndervoltageAlarm`, `BatteryChargingOverCurrentAlarm`, `BatteryModuleSamplingPointOverTempAlarm`, `EmergencyStopButtonActionFault`, `CardReaderCommunicationFault`, `DCMeterExceptionFault`, `InsulationMonitoringFault`, `BatteryReverseFault`, `ArresterFault`, `ChargingGunNotConnectedAlarm`, `ChargerOverTempFault`, `SmokeAlarm`, `TransactionRecordFullAlarm`)  ");
+                    sbbd.AppendFormat(" VALUES ( \"{0}\", \"{1}\", \"{2}\", \"{3}\", \"{4}\", \"{5}\", \"{6}\", \"{7}\", \"{8}\", \"{9}\" , \"{10}\", \"{11}\", \"{12}\" , \"{13}\", \"{14}\", \"{15}\" , \"{16}\", \"{17}\", \"{18}\"   ) ;", session.siCode, session.cls_charg.Date, session.cls_charg.ACInputOverVoltageAlarm, session.cls_charg.ACInputUnderVoltageAlarm, session.cls_charg.ChargingCurrentOverloadAlarm, session.cls_charg.DCBusOutputOvervoltageAlarm, session.cls_charg.DCBusOutputUndervoltageAlarm, session.cls_charg.BatteryChargingOverCurrentAlarm, session.cls_charg.BatteryModuleSamplingPointOverTempAlarm, session.cls_charg.EmergencyStopButtonActionFault, session.cls_charg.CardReaderCommunicationFault, session.cls_charg.DCMeterExceptionFault, session.cls_charg.InsulationMonitoringFault, session.cls_charg.BatteryReverseFault, session.cls_charg.ArresterFault, session.cls_charg.ChargingGunNotConnectedAlarm, session.cls_charg.ChargerOverTempFault, session.cls_charg.SmokeAlarm, session.cls_charg.TransactionRecordFullAlarm);
+                    session.mqs.SendMsg(sbbd.ToString());
+                }
+                #endregion
 
             }
             catch (Exception ex)

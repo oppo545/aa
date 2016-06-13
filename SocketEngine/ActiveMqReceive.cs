@@ -124,6 +124,10 @@ namespace SuperSocket.SocketEngine
             //分时租赁
             IMessageConsumer consumer2 = session.CreateConsumer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("FSZL_MSG"));
             consumer2.Listener += new MessageListener(consumer_Listener);
+
+            //Text
+            IMessageConsumer consumer3 = session.CreateConsumer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("AMQ.TestMsg"));
+            consumer3.Listener += new MessageListener(consumer_Listener);
         }
     }
 }

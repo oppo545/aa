@@ -29,6 +29,7 @@ public class MqActive : Mq
             sendDataTimerbyForward = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyForward), null, Polltime, Polltime);
             sendDataTimerbyFSZL = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyFSZL), null, Polltime, Polltime);
             sendDataTimerbyCharge = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyCharge), null, Polltime, Polltime);
+            sendDataTimerbyTest = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyTest), null, Polltime, Polltime);
         }
         catch (Exception)
         {
@@ -341,6 +342,10 @@ public class MqActive : Mq
         else lisAlarm2.Add(info);
     }
 
+    /// <summary>
+    /// ActiveMQ.OrderReply
+    /// </summary>
+    /// <param name="info"></param>
     public void SendMsg4(string info)
     {
         if (!flagtemp3)
@@ -844,6 +849,106 @@ public class MqActive : Mq
         catch (Exception ex)
         {
             lisCharge.Clear();
+        }
+    }
+
+    #endregion
+
+    #region Send Test To Center  G100 测试 内部链接-ActiveMq收发 是否链路正常
+    static System.Threading.Timer sendDataTimerbyTest = null;
+    /// <summary>
+    /// 入库lis
+    /// </summary>
+    static List<string> lisTest = new List<string>();
+    /// <summary>
+    /// 装载箱1
+    /// </summary>
+    static List<string> lisTest1 = new List<string>();
+    /// <summary>
+    /// 装载箱1
+    /// </summary>
+    static List<string> lisTest2 = new List<string>();
+    /// <summary>
+    /// 集合轮询调用开关
+    /// </summary>
+    static bool flagTest = false;
+    /// <summary>
+    /// lock
+    /// </summary>
+    private static object _lockTest = new object();
+
+    private static void SendDataCallbackbyTest(Object sender)
+    {
+        lock (_lockTest)
+        {
+            try
+            {
+                if ((lisTest1.Count > 0 || lisTest2.Count > 0) && lisTest.Count == 0)
+                {
+                    if (!flagTest)
+                    {
+                        flagTest = true;
+                        lisTest.AddRange(lisTest1);
+                        lisTest1.Clear();
+                    }
+                    else
+                    {
+                        flagTest = false;
+                        lisTest.AddRange(lisTest2);
+                        lisTest2.Clear();
+                    }
+                    if (lisTest.Count > 0)
+                    {
+                        sendObjectbyTest("AMQ.TestReply", lisTest);
+                        lisTest.Clear();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog.WriteLogZLOther("ErrorAS", "______TestMq异常:SendDataCallback" + ex.Message, true);
+            }
+        }
+    }
+    public void SendMsgByTest(string info)
+    {
+        if (!flagTest)
+            lisTest1.Add(info);
+        else lisTest2.Add(info);
+    }
+    static IMessageProducer prodTest;
+    static ITextMessage messageTest;
+    public static void sendObjectbyTest(string mqname, List<string> SQLStringList)
+    {
+        try
+        {
+            List<string> lisSql = new List<string>();
+            lisSql.AddRange(SQLStringList);
+            using (connection = factory.CreateConnection())
+            {
+
+                //通过连接创建Session会话
+                using (session = connection.CreateSession())
+                {
+                    //通过会话创建生产者，方法里面new出来的是MQ中的Queue
+                    prodTest = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                    for (int i = 0; i < lisSql.Count(); i++)
+                    {
+                        //创建一个发送的消息对象
+                        messageTest = prodTest.CreateTextMessage();
+                        //给这个对象赋实际的消息
+                        messageTest.Text = lisSql[i].ToString();
+                        //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
+                        messageTest.Properties.SetString("filter", "demo");
+                        //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
+                        prodTest.Send(messageTest, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            lisTest.Clear();
         }
     }
 

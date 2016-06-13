@@ -2015,6 +2015,20 @@ namespace SuperSocket.SocketEngine
                         }
                     }
                     #endregion
+                    #region G100 测试 内部链接-ActiveMq收发 是否链路正常
+                    else if (qqzl.Equals("G100"))
+                    {
+                        string[] sendstr = yj.Split(','); //systemno,value
+                        string[] sysnos = sendstr[0].Split('-');
+                        vehicleMode = qqstr.Split('_')[2].ToString();
+                        if (vehicleMode.Equals("4"))
+                        {
+                            //2(验证)
+                            string yhzfc = string.Format("C0 FE {0} 00 00 02", PublicMethods.GetAsciiToHex(sysnos[0].ToString()));
+                            temp = string.Format("23 23 {0} {1}", yhzfc, GetJy(yhzfc.Split(' ')));
+                        }
+                    }
+                    #endregion
                     if (!string.IsNullOrEmpty(temp))
                     {
                         //按照协议发送到 不同Telnet_Session 
@@ -2140,6 +2154,12 @@ namespace SuperSocket.SocketEngine
                     case "G36": //平台回复
                         {
                             temp = string.Format("{0}_{1}_{2}", identifying, string.Format("{0},{1},{2}", model.GetModel("data").GetValue("systemNo"), model.GetModel("data").GetValue("fitness"), model.GetModel("data").GetValue("balance")), 4);
+                            break;
+                        }
+
+                    case "G100": //G100 测试 内部链接-ActiveMq收发 是否链路正常
+                        {
+                            temp = string.Format("{0}_{1}_{2}", identifying, model.GetModel("data").GetValue("systemNo"), model.GetModel("data").GetValue("deviceProtocolId"));
                             break;
                         }
                     default:

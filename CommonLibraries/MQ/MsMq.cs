@@ -223,4 +223,9 @@ public class MsMq : Mq
     {
 
     }
+
+    public void SendMsgByTest(string info)
+    {
+
+    }
 }

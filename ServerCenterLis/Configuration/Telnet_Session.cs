@@ -101,7 +101,7 @@ namespace ServerCenterLis
         /// </summary>
         public bool isCharging = false;
         /// <summary>
-        /// 是否为充电桩 （暂时未用)
+        /// 是否为充电桩 
         /// </summary>
         public bool isChargPile = false;
         /// <summary>
@@ -1174,6 +1174,15 @@ namespace ServerCenterLis
         }
 
         /// <summary>
+        /// activemq 区分   SendMsgByAlarm:  Alarm
+        /// </summary>
+        /// <param name="strinfo"></param>
+        public void SendAsToServersByAlarm(string strinfo)
+        {
+            mqs.SendMsgByAlarm(strinfo);
+        }
+
+        /// <summary>
         /// Sends as to .   gps+上线+回复
         /// </summary>
         /// <param name="session">The session.</param>
@@ -1191,18 +1200,44 @@ namespace ServerCenterLis
             mqs.SendMsg2(strinfo);
         }
 
+        /// <summary>
+        /// 地标设置指令回复(暂时由 指令测试.exe 使用)
+        /// </summary>
+        /// <param name="strinfo"></param>
         public void SendToReply(string strinfo)
         {
             mqs.SendMsg4(strinfo);
         }
+
         /// <summary>
-        /// activemq 区分   SendMsgByAlarm:  Alarm
+        ///分时租赁项目
         /// </summary>
         /// <param name="strinfo"></param>
-        public void SendAsToServersByAlarm(string strinfo)
+        public void SendMsgByFSZL(string strinfo)
         {
-            mqs.SendMsgByAlarm(strinfo);
+            mqs.SendMsgByFSZL(strinfo);
         }
+
+        /// <summary>
+        ///  智能充电项目
+        /// </summary>
+        /// <param name="strinfo"></param>
+        public void SendMsgByCharge(string strinfo)
+        {
+            mqs.SendMsgByCharge(strinfo);
+        }
+        /// <summary>
+        /// G100 测试 内部链接-ActiveMq收发 是否链路正常
+        /// </summary>
+        /// <param name="strinfo"></param>
+        public void SendMsgByTest(string strinfo)
+        {
+            mqs.SendMsgByTest(strinfo);
+        }
+        /// <summary>
+        ///  ToSHDB
+        /// </summary>
+        /// <param name="strinfo"></param>
         public void SendAsToServersByForwardToSHDB(string strinfo)
         {
             mqs.SendMsgByForwardToSHDB(strinfo);

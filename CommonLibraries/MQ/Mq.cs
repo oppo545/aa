@@ -62,4 +62,10 @@ using System.Text;
         /// <param name="info"></param>
         void SendMsgByCharge(string info);
 
+        /// <summary>
+        ///   Test
+        /// </summary>
+        /// <param name="info"></param>
+        void SendMsgByTest(string info);
+
     }
