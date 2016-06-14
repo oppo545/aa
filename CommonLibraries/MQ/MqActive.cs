@@ -254,9 +254,9 @@ public class MqActive : Mq
                         //给这个对象赋实际的消息
                         message.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
-                        message.Properties.SetString("filter", "demo");
+                       // message.Properties.SetString("filter", "demo");
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
-                        prod.Send(message, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                        prod.Send(message, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
                 }
             }
@@ -290,9 +290,9 @@ public class MqActive : Mq
                         //给这个对象赋实际的消息
                         message1.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
-                        message1.Properties.SetString("filter", "demo");
+                        //message1.Properties.SetString("filter", "demo");
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
-                        prod1.Send(message1, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                        prod1.Send(message1, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
                 }
             }
@@ -443,9 +443,9 @@ public class MqActive : Mq
                         //给这个对象赋实际的消息
                         messageGPS.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
-                        messageGPS.Properties.SetString("filter", "demo");
+                       // messageGPS.Properties.SetString("filter", "demo");
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
-                        prodGPS.Send(messageGPS, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                        prodGPS.Send(messageGPS, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
                 }
             }
@@ -537,9 +537,9 @@ public class MqActive : Mq
                         //给这个对象赋实际的消息
                         messageAlarm.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
-                        messageAlarm.Properties.SetString("filter", "demo");
+                        //messageAlarm.Properties.SetString("filter", "demo");
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
-                        prodAlarm.Send(messageAlarm, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                        prodAlarm.Send(messageAlarm, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
                 }
             }
@@ -639,9 +639,9 @@ public class MqActive : Mq
                         //给这个对象赋实际的消息
                         messageForward.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
-                        messageForward.Properties.SetString("filter", "demo");
+                        //messageForward.Properties.SetString("filter", "demo");
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
-                        prodForward.Send(messageForward, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                        prodForward.Send(messageForward, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
                 }
             }
@@ -739,9 +739,9 @@ public class MqActive : Mq
                         //给这个对象赋实际的消息
                         messageFSZL.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
-                        messageFSZL.Properties.SetString("filter", "demo");
+                       // messageFSZL.Properties.SetString("filter", "demo");
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
-                        prodFSZL.Send(messageFSZL, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                        prodFSZL.Send(messageFSZL, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
                 }
             }
@@ -839,9 +839,9 @@ public class MqActive : Mq
                         //给这个对象赋实际的消息
                         messageCharge.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
-                        messageCharge.Properties.SetString("filter", "demo");
+                        //messageCharge.Properties.SetString("filter", "demo");
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
-                        prodCharge.Send(messageCharge, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                        prodCharge.Send(messageCharge, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
                 }
             }
@@ -939,9 +939,9 @@ public class MqActive : Mq
                         //给这个对象赋实际的消息
                         messageTest.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
-                        messageTest.Properties.SetString("filter", "demo");
+                        //messageTest.Properties.SetString("filter", "demo");
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
-                        prodTest.Send(messageTest, MsgDeliveryMode.Persistent, MsgPriority.Normal, TimeSpan.MinValue);
+                        prodTest.Send(messageTest, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
                 }
             }

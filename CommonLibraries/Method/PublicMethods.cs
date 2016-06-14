@@ -243,6 +243,12 @@ public class PublicMethods
         return result;
     }
 
+    /// <summary>
+    /// 上标为右边补0
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="nums"></param>
+    /// <returns></returns>
     public static string GetFomartZKbyPadRight(string info, int nums)
     {
         if (info.Length < nums * 2)
@@ -383,7 +389,8 @@ public class PublicMethods
         StringBuilder sb = new StringBuilder();
         foreach (byte b in ba)
         {
-            sb.Append(b.ToString("x") + " ");
+            //sb.Append(b.ToString("x") + " ");
+            sb.Append(b.ToString("x").Length == 1 ? "0" + b.ToString("x") + " " : b.ToString("x") + " ");
         }
         return sb.ToString().Trim().ToUpper();
     }
