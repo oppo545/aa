@@ -13,7 +13,7 @@ namespace ServerCenterLis
         static string packageNumber;
         static string lastPackageNumber;
         static int num = 1;//信号长度 字节数
-        /// 故障值  0正常         /// 故障等级    1	轻微故障,2	一般故障,3	严重故障,4	致命故障
+        /// 故障值  0正常         /// 故障等级    1	轻微故障,2	一般故障,3	严重故障,4	致命故障  
         static int faultlever = 1; static int? faultint = 0;
         public static Cls_RealInformation GetParsEVT(Telnet_Session session, string info1, int msgnumber, ref string canfault)
         {
