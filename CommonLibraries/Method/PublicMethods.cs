@@ -134,7 +134,27 @@ public class PublicMethods
         }
         return time;
     }
-
+    /// <summary>
+    ///  time2 是否超过   time1    Seconds秒
+    /// </summary>
+    /// <param name="time1"></param>
+    /// <param name="time2"></param>
+    /// <param name="Seconds"></param>
+    /// <returns></returns>
+    public static bool IsOutTime(string time1, string time2, int Seconds)
+    {
+        bool flag = false;
+        DateTime dt = DateTime.Now; DateTime dt1 = DateTime.Now;
+        DateTime.TryParse(time1, out dt);
+        DateTime.TryParse(time2, out dt1);
+        DateTime dtnow = dt1.AddSeconds(-Seconds);
+        if (DateTime.Compare(dtnow, dt) >= 0)
+        {
+            dt = dtnow.AddMinutes(Seconds);
+            flag = true;
+        }
+        return flag;
+    }
     /// <summary>
     /// 是否为日期型字符串-正则验证 
     /// </summary>

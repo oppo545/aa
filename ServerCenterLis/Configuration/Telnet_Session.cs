@@ -1320,7 +1320,7 @@ namespace ServerCenterLis
                 #region BMK 入库数据处理规则  info + 故障
                 string sendmsgtol = "", sendtomysql = "";
 
-                if (!session.Lastcantime.Equals(datetime))
+                if (!session.Lastcantime.Equals(datetime) &&PublicMethods.IsOutTime(session.Lastcantime, datetime,30))
                 {
                     string infokey = "`SystemNo`,`Longitude`,`Latitude`,`Speed`,`Direction`,`Elevation`,`Acc`,`IsLocation`,`Mileage`,`Oil`,`CurrentTime`";
                     StringBuilder sbbd = new StringBuilder();

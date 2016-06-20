@@ -880,4 +880,420 @@ public class Cls_Evt : Cls_RealInformation
     public int? VehicleCurrentStatus { get; set; }
     [Description("液体燃料消耗量")]
     public int? LiquidFuelConsumption { get; set; }
+
+    //#region RQA15
+    //[Description("电机控制器U相电压 - 011B")]
+    //public double? Motor_UControllerVoltage { get; set; }
+    //[Description("电机控制器V相电压 - 011C")]
+    //public double? Motor_VControllerVoltage { get; set; }
+    //[Description("电机控制器W相电压 - 011D")]
+    //public double? Motor_WControllerVoltage { get; set; }
+    //[Description("V2L输出相电压-U相 - 011E")]
+    //public double? UP_V2LOutpuVoltage { get; set; }
+    //[Description("V2L输出相电压-V相 - 011F")]
+    //public double? VP_V2LOutpuVoltage { get; set; }
+    //[Description("V2L输出相电压-W相 - 0120")]
+    //public double? WP_V2LOutpuVoltage { get; set; }
+    //[Description("V2L输出相电流-U相 - 0121")]
+    //public double? UP_V2LOutpuCurrent { get; set; }
+    //[Description("V2L输出相电流-V相 - 0122")]
+    //public double? VP_V2LOutpuCurrent { get; set; }
+    //[Description("V2L输出相电流-W相 - 0123")]
+    //public double? WP_V2LOutpuCurrent { get; set; }
+    ////[Description("MCU冷却请求 - 0124")]
+    ////public int? MCU_CoolingRequest { get; set; }
+    ////[Description("V2L冷却请求 - 0125")]
+    ////public int? V2LCoolingRequest { get; set; }
+    //[Description("油门值 - 0128")]
+    //public double? ThrottleValue { get; set; }
+    //[Description("刹车值（模拟量） - 0129")]
+    //public double? BrakeValue { get; set; }
+    //[Description("刹车信号状态（数字量） - 012A")]
+    //public int? BrakeSignalState { get; set; }
+    //[Description("油门故障 - 012B")]
+    //public int? VCU_ThrottleFailure { get; set; }
+    //[Description("刹车故障 - 012C")]
+    //public int? BrakeFailure { get; set; }
+    //[Description("电机当前回馈模式 - 012D")]
+    //public int? VCU_Normal_Feedback { get; set; }
+    //[Description("电机预充电完成状态 - 012E")]
+    //public int? MCU_PrechargeCompleteSignal { get; set; }
+    //[Description("电机控制器初始化完成状态 - 012F")]
+    //public int? Motor_PreCchargingCompletionStatus { get; set; }
+    //[Description("IGBT温度保护 - 0130")]
+    //public int? IGBT_TemperatureProtection { get; set; }
+    //[Description("电机控制器过流 - 0131")]
+    //public int? Motor_ControllerOverCurrent { get; set; }
+    //[Description("控制器温度传感器故障 - 0132")]
+    //public int? ControllerTemperatureSensorFault { get; set; }
+    //[Description("电机温度传感器故障 - 0133")]
+    //public int? MotorTemperatureSensorFault { get; set; }
+    //[Description("控制器电流传感器故障 - 0134")]
+    //public int? ControllerCurrentSensorFault { get; set; }
+    //[Description("电机编码器故障 - 0135")]
+    //public int? Motor_EncoderFault { get; set; }
+    //[Description("电机相间短路 - 0136")]
+    //public int? Motor_PhaseShortCircuit { get; set; }
+    //[Description("电机对地短路 - 0137")]
+    //public int? Motor_ElectricMotorShortCircuit { get; set; }
+    //[Description("电机失速 - 0138")]
+    //public int? Motor_Stall { get; set; }
+    //[Description("MCU故障状态 - 0139")]
+    //public int? MCUFault { get; set; }
+    //[Description("整车系统状态（是否ready） - 013A")]
+    //public int? VehicleSystemStatus { get; set; }
+    //[Description("V2L工作状态 - 0221")]
+    //public int? V2LWorkingStatus { get; set; }
+    //[Description("V2L故障状态 - 0222")]
+    //public int? V2LFaultState { get; set; }
+    //[Description("当前输出频率 - 0223")]
+    //public double? CurrentOutputFrequency { get; set; }
+    //[Description("变压器温度1 - 0224")]
+    //public int? TransformerTemperature1 { get; set; }
+    //[Description("变压器温度2 - 0225")]
+    //public int? TransformerTemperature2 { get; set; }
+    //[Description("V2L温度1 - 0226")]
+    //public int? V2LTemperature1 { get; set; }
+    //[Description("V2L温度2 - 0227")]
+    //public int? V2LTemperature2 { get; set; }
+    ////[Description("充电机输出电压值 - 0228")]
+    ////public double? ONC_OutputVoltage { get; set; }
+    ////[Description("充电机输出电流 - 0229")]
+    ////public double? ONC_OutputCurrent { get; set; }
+    ////[Description("12V-DCDC冷却请求 - 0298")]
+    ////public int? DCDC_12VCoolingRequest { get; set; }
+    ////[Description("DC-DC输入电流 - 0299")]
+    ////public int? DCDC_InputCurrent { get; set; }
+
+ 
+    //[Description("12VDCDC控制器状态 - 029C")]
+    //public int? DCDC_12VControllerStatus { get; set; }
+    //[Description("12VDCDC输入电压 - 029D")]
+    //public int? DCDC_12VInputVoltage { get; set; }
+    //[Description("12VDCDC输入电流 - 029E")]
+    //public int? DCDC_12VInputCurrent { get; set; }
+    //[Description("12VDCDC输出电压 - 029F")]
+    //public double? DCDC_12VOutputVoltage { get; set; }
+    //[Description("12VDCDC输出电流 - 02A0")]
+    //public int? DCDC_12VOutputCurrent { get; set; }
+    //[Description("12VDCDC效率 - 02A1")]
+    //public int? DCDC_12VEfficiency { get; set; }
+    //[Description("12VDCDC温度 - 02A2")]
+    //public int? DCDC_12Temperature { get; set; }
+    //[Description("48VDCDC控制器状态 - 02A3")]
+    //public int? DCDC_48VControllerStatus { get; set; }
+    //[Description("48VDCDC输入电压 - 02A4")]
+    //public int? DCDC_48VInputVoltage { get; set; }
+    //[Description("48VDCDC输入电流 - 02A5")]
+    //public int? DCDC_48VInputCurrent { get; set; }
+    //[Description("48VDCDC输出电压 - 02A6")]
+    //public double? DCDC_48VOutputVoltage { get; set; }
+    //[Description("48VDCDC输出电流 - 02A7")]
+    //public int? DCDC_48VOutputCurrent { get; set; }
+    //[Description("48VDCDC效率 - 02A8")]
+    //public int? DCDC_48VEfficiency { get; set; }
+    //[Description("48VDCDC温度 - 02A9")]
+    //public int? DCDC_48Temperature { get; set; }
+    //[Description("12V-DC使能 - 02AA")]
+    //public int? DCDC_12VEnable { get; set; }
+    //[Description("V2L使能 - 02AB")]
+    //public int? V2LEnable { get; set; }
+    //[Description("48V-DC使能 - 02AC")]
+    //public int? DCDC_48VEnable { get; set; }
+    //[Description("电机位置传感器故障 - 0401")]
+    //public int? Motor_PositionSensorFault { get; set; }
+    //[Description("IGN断线故障 - 0402")]
+    //public int? IGN_DisconnectionFault { get; set; }
+    //[Description("控制器电源超限 - 0403")]
+    //public int? ControllerPowerLimit { get; set; }
+    //[Description("EHPS过温报警 - 0404")]
+    //public int? EHPS_OverTemperatureAlarm { get; set; }
+    //[Description("EHPS故障状态 - 0405")]
+    //public int? EHPS_FaultState { get; set; }
+    //[Description("EHPS工作状态 - 0406")]
+    //public int? EHPS_WorkingStatus { get; set; }
+    //[Description("电池包最大放电电流 - 092B")]
+    //public int? BatteryPackMaxDischargeCurrent { get; set; }
+    //[Description("电池包最大充电电流 - 092C")]
+    //public int? BatteryPackMaxChargeCurrent { get; set; }
+    //[Description("电池单体次高温度 - 092D")]
+    //public double? BatteryMonomerSubHighTemp { get; set; }
+    //[Description("电池单体次低温度 - 092E")]
+    //public double? BatteryMonomerSubLowTemp { get; set; }
+    //[Description("电池单体次高温度编号 - 092F")]
+    //public int? BatteryMonomerSubHighTempNumber { get; set; }
+    //[Description("电池单体次低温度编号 - 0930")]
+    //public int? BatteryMonomerSubLowTempNumber { get; set; }
+    //[Description("电池单体第三高温度 - 0931")]
+    //public double? BatteryMonomerThirdHighTemp { get; set; }
+    //[Description("电池单体第三低温度 - 0932")]
+    //public double? BatteryMonomerThirdLowTemp { get; set; }
+    //[Description("电池单体第三高温度编号 - 0933")]
+    //public int? BatteryMonomerThirdHighTempNumber { get; set; }
+    //[Description("电池单体第三低温度编号 - 0934")]
+    //public int? BatteryMonomerThirdLowTempNumber { get; set; }
+    //[Description("已充电时间 - 0935")]
+    //public int? ChargedTime { get; set; }
+    //[Description("剩余充电时间 - 0936")]
+    //public int? RemainingChargingTime { get; set; }
+    //[Description("已放电时间（逆变） - 0937")]
+    //public int? DischargeTime { get; set; }
+    //[Description("剩余放电时间（逆变） - 0938")]
+    //public int? RemainingDisChargeTime { get; set; }
+    //[Description("电池烟雾故障 - 0C31")]
+    //public int? BMS_SmokeFault { get; set; }
+
+   
+    //[Description("高压互锁状态 - 0C34")]
+    //public int? HighVoltageInterlock { get; set; }
+    //[Description("电池温度过低故障 - 0C35")]
+    //public int? BatteryTempLowFault { get; set; }
+    //[Description("能量系统ready - 0C36")]
+    //public int? EnergySystemReady { get; set; }
+    //[Description("BMS故障等级 - 0C37")]
+    //public int? BMS_FaultLevel { get; set; }
+    //[Description("与BSU通讯超时故障 - 0C38")]
+    //public int? WithBSUCommuniTimeout { get; set; }
+    //[Description("与充电机通讯超时故障（交、直） - 0C39")]
+    //public int? WithBatteryChargerCommuniTimeout { get; set; }
+    //[Description("电池自检故障 - 0C3A")]
+    //public int? BatterySelfCheckFault { get; set; }
+    //#endregion
+
+    #region RQA15
+    [Description("电机控制器U相电压 - 011B")]
+    public double? Motor_UControllerVoltage { get; set; }
+    [Description("电机控制器V相电压 - 011C")]
+    public double? Motor_VControllerVoltage { get; set; }
+    [Description("电机控制器W相电压 - 011D")]
+    public double? Motor_WControllerVoltage { get; set; }
+    [Description("V2L输出相电压-U相 - 011E")]
+    public double? UP_V2LOutpuVoltage { get; set; }
+    [Description("V2L输出相电压-V相 - 011F")]
+    public double? VP_V2LOutpuVoltage { get; set; }
+    [Description("V2L输出相电压-W相 - 0120")]
+    public double? WP_V2LOutpuVoltage { get; set; }
+    [Description("V2L输出相电流-U相 - 0121")]
+    public double? UP_V2LOutpuCurrent { get; set; }
+    [Description("V2L输出相电流-V相 - 0122")]
+    public double? VP_V2LOutpuCurrent { get; set; }
+    [Description("V2L输出相电流-W相 - 0123")]
+    public double? WP_V2LOutpuCurrent { get; set; }
+    [Description("油门值 - 0128")]
+    public double? ThrottleValue { get; set; }
+    [Description("刹车值（模拟量） - 0129")]
+    public double? BrakeValue { get; set; }
+    [Description("刹车信号状态（数字量） - 012A")]
+    public int? BrakeSignalState { get; set; }
+    [Description("油门故障 - 012B")]
+    public int? VCU_ThrottleFailure { get; set; }
+    [Description("刹车故障 - 012C")]
+    public int? BrakeFailure { get; set; }
+    [Description("电机当前回馈模式 - 012D")]
+    public int? VCU_Normal_Feedback { get; set; }
+    [Description("电机预充电完成状态 - 012E")]
+    public int? MCU_PrechargeCompleteSignal { get; set; }
+    [Description("电机控制器初始化完成状态 - 012F")]
+    public int? Motor_PreCchargingCompletionStatus { get; set; }
+    [Description("IGBT温度保护 - 0130")]
+    public int? IGBT_TemperatureProtection { get; set; }
+    [Description("电机控制器过流 - 0131")]
+    public int? Motor_ControllerOverCurrent { get; set; }
+    [Description("控制器温度传感器故障 - 0132")]
+    public int? ControllerTemperatureSensorFault { get; set; }
+    [Description("电机温度传感器故障 - 0133")]
+    public int? MotorTemperatureSensorFault { get; set; }
+    [Description("控制器电流传感器故障 - 0134")]
+    public int? ControllerCurrentSensorFault { get; set; }
+    [Description("电机编码器故障 - 0135")]
+    public int? Motor_EncoderFault { get; set; }
+    [Description("电机相间短路 - 0136")]
+    public int? Motor_PhaseShortCircuit { get; set; }
+    [Description("电机对地短路 - 0137")]
+    public int? Motor_ElectricMotorShortCircuit { get; set; }
+    [Description("电机失速 - 0138")]
+    public int? Motor_Stall { get; set; }
+    [Description("MCU故障状态 - 0139")]
+    public int? MCUFault { get; set; }
+    [Description("整车系统状态（是否ready） - 013A")]
+    public int? VehicleSystemStatus { get; set; }
+    [Description("V2L工作状态 - 0221")]
+    public int? V2LWorkingStatus { get; set; }
+    [Description("V2L故障状态 - 0222")]
+    public int? V2LFaultState { get; set; }
+    [Description("当前输出频率 - 0223")]
+    public double? CurrentOutputFrequency { get; set; }
+    [Description("变压器温度1 - 0224")]
+    public int? TransformerTemperature1 { get; set; }
+    [Description("变压器温度2 - 0225")]
+    public int? TransformerTemperature2 { get; set; }
+    [Description("V2L温度1 - 0226")]
+    public int? V2LTemperature1 { get; set; }
+    [Description("V2L温度2 - 0227")]
+    public int? V2LTemperature2 { get; set; }
+    //[Description("充电机输出电压值 - 0228")]
+    //public double? ONC_OutputVoltage { get; set; }
+    //[Description("充电机输出电流 - 0229")]
+    //public double? ONC_OutputCurrent { get; set; }
+    //[Description("DC-DC输入电流 - 0299")]
+    //public int? DCDC_InputCurrent { get; set; }
+    [Description("48vDCDC冷却请求 - 029A")]
+    public int? DCDC_48VCoolingRequest { get; set; }
+    [Description("12VDCDC控制器状态 - 029C")]
+    public int? DCDC_12VControllerStatus { get; set; }
+    [Description("12VDCDC输入电压 - 029D")]
+    public int? DCDC_12VInputVoltage { get; set; }
+    [Description("12VDCDC输入电流 - 029E")]
+    public int? DCDC_12VInputCurrent { get; set; }
+    [Description("12VDCDC输出电压 - 029F")]
+    public double? DCDC_12VOutputVoltage { get; set; }
+    [Description("12VDCDC输出电流 - 02A0")]
+    public int? DCDC_12VOutputCurrent { get; set; }
+    [Description("12VDCDC效率 - 02A1")]
+    public int? DCDC_12VEfficiency { get; set; }
+    [Description("12VDCDC温度 - 02A2")]
+    public int? DCDC_12Temperature { get; set; }
+    [Description("48VDCDC控制器状态 - 02A3")]
+    public int? DCDC_48VControllerStatus { get; set; }
+    [Description("48VDCDC输入电压 - 02A4")]
+    public int? DCDC_48VInputVoltage { get; set; }
+    [Description("48VDCDC输入电流 - 02A5")]
+    public int? DCDC_48VInputCurrent { get; set; }
+    [Description("48VDCDC输出电压 - 02A6")]
+    public double? DCDC_48VOutputVoltage { get; set; }
+    [Description("48VDCDC输出电流 - 02A7")]
+    public int? DCDC_48VOutputCurrent { get; set; }
+    [Description("48VDCDC效率 - 02A8")]
+    public int? DCDC_48VEfficiency { get; set; }
+    [Description("48VDCDC温度 - 02A9")]
+    public int? DCDC_48Temperature { get; set; }
+    [Description("12V-DC使能 - 02AA")]
+    public int? DCDC_12VEnable { get; set; }
+    [Description("V2L使能 - 02AB")]
+    public int? V2LEnable { get; set; }
+    [Description("48V-DC使能 - 02AC")]
+    public int? DCDC_48VEnable { get; set; }
+    [Description("电机位置传感器故障 - 0401")]
+    public int? Motor_PositionSensorFault { get; set; }
+    [Description("IGN断线故障 - 0402")]
+    public int? IGN_DisconnectionFault { get; set; }
+    [Description("控制器电源超限 - 0403")]
+    public int? ControllerPowerLimit { get; set; }
+    [Description("EHPS过温报警 - 0404")]
+    public int? EHPS_OverTemperatureAlarm { get; set; }
+    [Description("EHPS故障状态 - 0405")]
+    public int? EHPS_FaultState { get; set; }
+    [Description("EHPS工作状态 - 0406")]
+    public int? EHPS_WorkingStatus { get; set; }
+    [Description("电池包最大放电电流 - 092B")]
+    public int? BatteryPackMaxDischargeCurrent { get; set; }
+    [Description("电池包最大充电电流 - 092C")]
+    public int? BatteryPackMaxChargeCurrent { get; set; }
+    [Description("电池单体次高温度 - 092D")]
+    public double? BatteryMonomerSubHighTemp { get; set; }
+    [Description("电池单体次低温度 - 092E")]
+    public double? BatteryMonomerSubLowTemp { get; set; }
+    [Description("电池单体次高温度编号 - 092F")]
+    public int? BatteryMonomerSubHighTempNumber { get; set; }
+    [Description("电池单体次低温度编号 - 0930")]
+    public int? BatteryMonomerSubLowTempNumber { get; set; }
+    [Description("电池单体第三高温度 - 0931")]
+    public double? BatteryMonomerThirdHighTemp { get; set; }
+    [Description("电池单体第三低温度 - 0932")]
+    public double? BatteryMonomerThirdLowTemp { get; set; }
+    [Description("电池单体第三高温度编号 - 0933")]
+    public int? BatteryMonomerThirdHighTempNumber { get; set; }
+    [Description("电池单体第三低温度编号 - 0934")]
+    public int? BatteryMonomerThirdLowTempNumber { get; set; }
+    [Description("已充电时间 - 0935")]
+    public int? ChargedTime { get; set; }
+    [Description("剩余充电时间 - 0936")]
+    public int? RemainingChargingTime { get; set; }
+    [Description("已放电时间（逆变） - 0937")]
+    public int? DischargeTime { get; set; }
+    [Description("剩余放电时间（逆变） - 0938")]
+    public int? RemainingDisChargeTime { get; set; }
+    [Description("电池烟雾故障 - 0C31")]
+    public int? BMS_SmokeFault { get; set; }
+    [Description("高压互锁状态 - 0C34")]
+    public int? HighVoltageInterlock { get; set; }
+    [Description("电池温度过低故障 - 0C35")]
+    public int? BatteryTempLowFault { get; set; }
+    [Description("能量系统ready - 0C36")]
+    public int? EnergySystemReady { get; set; }
+    [Description("BMS故障等级 - 0C37")]
+    public int? BMS_FaultLevel { get; set; }
+    [Description("与BSU通讯超时故障 - 0C38")]
+    public int? WithBSUCommuniTimeout { get; set; }
+    [Description("与充电机通讯超时故障（交、直） - 0C39")]
+    public int? WithBatteryChargerCommuniTimeout { get; set; }
+    [Description("电池自检故障 - 0C3A")]
+    public int? BatterySelfCheckFault { get; set; }
+    [Description("水泵启动请求 - 0124")]
+    public int? MCU_PumpStart { get; set; }
+    [Description("低速风扇启动请求 - 0124")]
+    public int? MCU_LowSpeedFanStart { get; set; }
+    [Description("高速风扇启动请求 - 0124")]
+    public int? MCU_HighSpeedFanStart { get; set; }
+    [Description("水泵启动请求 - 0125")]
+    public int? V2L_PumpStart { get; set; }
+    [Description("低速风扇启动请求 - 0125")]
+    public int? V2L_LowSpeedFanStart { get; set; }
+    [Description("高速风扇启动请求 - 0125")]
+    public int? V2L_HighSpeedFanStart { get; set; }
+    [Description("DCDC输入过压故障 - 0296")]
+    public int? DCDC_12VInputOvervoltage { get; set; }
+    [Description("DCDC输入欠压故障 - 0296")]
+    public int? DCDC_12VInputUndervoltage { get; set; }
+    [Description("DCDC输出短路故障 - 0296")]
+    public int? DCDC_12VOutputShortcircuit { get; set; }
+    [Description("DCDC过热故障 - 0296")]
+    public int? DCDC_12VOverheatFault { get; set; }
+    [Description("DCDC输出欠压报警 - 0296")]
+    public int? DCDC_12VOutputUndervoltage { get; set; }
+    [Description("DCDC输出过压报警 - 0296")]
+    public int? DCDC_12VOutputOvervoltage { get; set; }
+    [Description("DCDC输入过压故障 - 0297")]
+    public int? DCDC_48VInputOvervoltage { get; set; }
+    [Description("DCDC输入欠压故障 - 0297")]
+    public int? DCDC_48VInputUndervoltage { get; set; }
+    [Description("DCDC输出短路故障 - 0297")]
+    public int? DCDC_48VOutputShortcircuit { get; set; }
+    [Description("DCDC过热故障 - 0297")]
+    public int? DCDC_48VOverheatFault { get; set; }
+    [Description("DCDC输出欠压报警 - 0297")]
+    public int? DCDC_48VOutputUndervoltage { get; set; }
+    [Description("DCDC输出过压报警 - 0297")]
+    public int? DCDC_48VOutputOvervoltage { get; set; }
+    [Description("水泵启动请求 - 0298")]
+    public int? DCDC_12VPumpStart { get; set; }
+    [Description("低速风扇启动请求 - 0298")]
+    public int? DCDC_12VLowSpeedFanStart { get; set; }
+    [Description("高速风扇启动请求 - 0298")]
+    public int? DCDC_12VHighSpeedFanStart { get; set; }
+    [Description("水泵启动请求 - 029A")]
+    public int? DCDC_48VPumpStart { get; set; }
+    [Description("低速风扇启动请求 - 029A")]
+    public int? DCDC_48VLowSpeedFanStart { get; set; }
+    [Description("高速风扇启动请求 - 029A")]
+    public int? DCDC_48VHighSpeedFanStart { get; set; }
+    [Description("水泵启动请求 - 029B")]
+    public int? OBC_PumpStart { get; set; }
+    [Description("低速风扇启动请求 - 029B")]
+    public int? OBC_LowSpeedFanStart { get; set; }
+    [Description("高速风扇启动请求 - 029B")]
+    public int? OBC_HighSpeedFanStart { get; set; }
+    [Description("总正接触器控制 - 0C32")]
+    public int? GeneralContactorControl { get; set; }
+    [Description("总负接触器控制 - 0C32")]
+    public int? TotalNegativeContactorControl { get; set; }
+    [Description("预充电接触器控制 - 0C32")]
+    public int? PrechargeContactorControl { get; set; }
+    [Description("总正接触器状态（触点反馈） - 0C33")]
+    public int? GeneralContactorControlFeedback { get; set; }
+    [Description("总负接触器状态（触点反馈） - 0C33")]
+    public int? TotalNegativeContactorControlFeedback { get; set; }
+    [Description("预充电接触器状态（触点反馈） - 0C33")]
+    public int? PrechargeContactorControlFeedback { get; set; }
+    #endregion
 }

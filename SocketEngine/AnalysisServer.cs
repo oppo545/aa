@@ -1056,10 +1056,10 @@ namespace SuperSocket.SocketEngine
         {
             try
             {
-                if (!IsStConnect)
-                {
+                //if (!IsStConnect)
+                //{
                     SessionOpen();
-                }
+                //}
 
                 if (IsStConnect)
                 {

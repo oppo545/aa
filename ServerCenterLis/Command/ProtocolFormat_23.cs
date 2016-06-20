@@ -210,6 +210,7 @@ namespace ServerCenterLis
                                     byte[] btemp = strToToHexByte(sendCommand);
                                     s.Send(btemp, 0, btemp.Length);
                                     OrderCarIsonline = true;
+                                    WriteLog.WriteLogZL(string.Format("send to {0}:{1}", s.siCode, sendCommand));
                                 }
                             }
                         }
@@ -260,7 +261,7 @@ namespace ServerCenterLis
                                         }
                                     }
                                 }
-
+                                WriteLog.WriteLogZL(string.Format("reply from {0}:不在线", session.siCode));
                             }
                             else if (strindex.Equals("C0"))
                             {
@@ -273,6 +274,15 @@ namespace ServerCenterLis
                                 buffer.Append("}");
                                 buffer.Append("}");
                                 session.SendMsgByTest(buffer.ToString());
+                            }
+                            else if (strindex.Equals("A7")) //  充电桩
+                            {
+                                buffer.Clear();
+                                buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
+                                buffer.Append("\"signalName\":\"offline\",");
+                                buffer.Append("\"value\":\"4\"");
+                                strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, "G38", buffer.ToString());
+                                session.SendMsgByCharge(strinfo);
                             }
                             else
                             {
@@ -740,7 +750,7 @@ namespace ServerCenterLis
                     }
                     if (mlid.Equals("03"))
                     {
-                        buffer.Append("\"signalName\":\"startChargReply\",");
+                        buffer.Append("\"signalName\":\"startChargeReply\",");
                         identifying = "G32";
                     }
                     if (mlid.Equals("04"))
@@ -749,7 +759,7 @@ namespace ServerCenterLis
                         identifying = "G32";
                     }
                     buffer.Append("\"time\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\",");
-                    buffer.Append("\"value\":\"" + result + "\"");
+                    buffer.Append("\"result\":\"" + result + "\"");
                     strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, identifying, buffer.ToString());
 
                     session.SendMsgByCharge(strinfo);
@@ -795,6 +805,7 @@ namespace ServerCenterLis
                     WriteLog.WriteLogZL("retrunRecv:" + buffer.ToString());
                 }
                 #endregion
+
                 #region B1-充电完成信息 上传信息
                 else if (strindex.Equals("B1"))
                 {
@@ -874,6 +885,15 @@ namespace ServerCenterLis
                                             session.cls_charg.OutputRelayStatus = ParsMethod.GetParsWholeByte(zcinfo.Substring(42, 2));
                                             session.cls_charg.TotalActivePower = ParsMethod.GetParsWholeByte(zcinfo.Substring(48, 11), 0.1);
                                             session.cls_charg.TotalChargeTime = ParsMethod.GetParsWholeByte(zcinfo.Substring(54, 5));
+                                            int startindexnum = (26 + 1) * 3;
+                                            if (info.Length > startindexnum)
+                                            {
+                                                info = info.Substring(startindexnum, info.Length - startindexnum);
+                                            }
+                                            else
+                                            {
+                                                info = "";
+                                            }
                                             break;
                                         }
                                     #endregion
@@ -907,12 +927,22 @@ namespace ServerCenterLis
                                             session.cls_charg.ChargerOverTempFault = ParsMethod.GetParsWholeByte(zcinfo.Substring(127, 2));
                                             session.cls_charg.SmokeAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(130, 2));
                                             session.cls_charg.TransactionRecordFullAlarm = ParsMethod.GetParsWholeByte(zcinfo.Substring(133, 2));
+                                            int startindexnum = (46+1) * 3;
+                                            if (info.Length > startindexnum)
+                                            {
+                                                info = info.Substring(startindexnum, info.Length - startindexnum);
+                                            }
+                                            else
+                                            {
+                                                info = "";
+                                            }
                                             break;
                                         }
                                     #endregion
                                     #region 03-充电信息
                                     case "03":
                                         {
+                                            int num = 4;
                                             session.cls_charg.ChargeNumber = ParsMethod.GetParsWholeByte(zcinfo.Substring(0, 11), 0.1);
                                             buffer.Clear();
                                             buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
@@ -922,6 +952,17 @@ namespace ServerCenterLis
                                             strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, "G34", buffer.ToString());
 
                                             session.SendMsgByCharge(strinfo);
+
+                                            int startindexnum = (num+1)*3;
+                                            if (info.Length > startindexnum)
+                                            {
+                                                info = info.Substring(startindexnum, info.Length - startindexnum);
+                                            }
+                                            else
+                                            {
+                                                info = "";
+                                            }
+
                                             //记录指令回复
                                             WriteLog.WriteLogZL("retrunRecv:" + strinfo);
                                             break;
@@ -935,6 +976,26 @@ namespace ServerCenterLis
                                         }
                                 }
                             }
+                            int pipeStatus=0;//空闲
+                            if (session.cls_charg.WorkState == 3)
+                            {
+                                pipeStatus = 1;   //使用
+                            }
+                            if (session.cls_charg.WorkState == 4)
+                            {
+                                pipeStatus = 2;    //离线
+                            }
+                            buffer.Clear();
+                            buffer.Append("\"systemNo\":\"" + session.siCode + "\",");
+                            buffer.Append("\"signalName\":\"chargePipe\",");
+                            buffer.Append("\"time\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\",");
+                            buffer.Append("\"pipeStatus\":\"" + pipeStatus + "\",");
+                            buffer.Append("\"voltage\":\"" + session.cls_charg.ChargingOutputVoltage + "\",");
+                            buffer.Append("\"current\":\"" + session.cls_charg.ChargingOutputCurrent + "\",");
+                            buffer.Append("\"totalChargeTime\":\"" + session.cls_charg.TotalChargeTime + "\"");
+                            strinfo = Telnet_Session.FomatToJosn("client_message_charge", "3", session.siCode, "G39", buffer.ToString());
+
+                            session.SendMsgByCharge(strinfo);
                         }
                         else
                         {

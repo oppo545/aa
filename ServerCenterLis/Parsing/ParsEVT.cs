@@ -1727,7 +1727,7 @@ namespace ServerCenterLis
                             num = 1;       //BMS电池故障码
                             str_data1 = str_all.Substring(0, 2);
                             faultint = ParsMethod.GetParsWholeByte(str_data1);
-                            session.cd_evt.BMS_Fault=faultint;
+                            session.cd_evt.BMS_Fault = faultint;
                             #region switch
                             //BMK 2035-10-21 根据 2035-10-20 才总发送的邮件 <<【东电】安全预警需求>> 添加  52,51,50,4f,4e,4b,4A,48,47,46,21
                             switch (str_data1)
@@ -2052,6 +2052,621 @@ namespace ServerCenterLis
                             str_data1 = str_all.Substring(0, 5);
                             session.Org_LiquidFuelConsumption = str_data1;
                             session.cd_evt.LiquidFuelConsumption = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        #endregion
+                        #region RQA15
+                        case "011B":///电机控制器U相电压 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.Motor_UControllerVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "011C":///电机控制器V相电压 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.Motor_VControllerVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "011D":///电机控制器W相电压 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.Motor_WControllerVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "011E":///V2L输出相电压-U相 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.UP_V2LOutpuVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "011F":///V2L输出相电压-V相 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.VP_V2LOutpuVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "0120":///V2L输出相电压-W相 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.WP_V2LOutpuVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "0121":///V2L输出相电流-U相 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.UP_V2LOutpuCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "0122":///V2L输出相电流-V相 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.VP_V2LOutpuCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "0123":///V2L输出相电流-W相 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.WP_V2LOutpuCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "0128":///油门值 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.ThrottleValue = ParsMethod.GetParsWholeByte(str_data1, 0.004);
+                            break;
+                        case "0129":///刹车值（模拟量） 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BrakeValue = ParsMethod.GetParsWholeByte(str_data1, 0.004);
+                            break;
+                        case "012A":///刹车信号状态（数字量） 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BrakeSignalState = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "012B":///油门故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.VCU_ThrottleFailure = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "012C":///刹车故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BrakeFailure = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "012D":///电机当前回馈模式 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.VCU_Normal_Feedback = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "012E":///电机预充电完成状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.MCU_PrechargeCompleteSignal = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "012F":///电机控制器初始化完成状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.Motor_PreCchargingCompletionStatus = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0130":///IGBT温度保护 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.IGBT_TemperatureProtection = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0131":///电机控制器过流 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.Motor_ControllerOverCurrent = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0132":///控制器温度传感器故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.ControllerTemperatureSensorFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0133":///电机温度传感器故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.MotorTemperatureSensorFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0134":///控制器电流传感器故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.ControllerCurrentSensorFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0135":///电机编码器故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.Motor_EncoderFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0136":///电机相间短路 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.Motor_PhaseShortCircuit = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0137":///电机对地短路 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.Motor_ElectricMotorShortCircuit = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0138":///电机失速 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.Motor_Stall = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0139":///MCU故障状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.MCUFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "013A":///整车系统状态（是否ready） 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.VehicleSystemStatus = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0221":///V2L工作状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.V2LWorkingStatus = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0222":///V2L故障状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.V2LFaultState = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0223":///当前输出频率 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.CurrentOutputFrequency = ParsMethod.GetParsWholeByte(str_data1, 0.001);
+                            break;
+                        case "0224":///变压器温度1 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.TransformerTemperature1 = ParsMethod.GetParsWholeByte(str_data1, 0, -40);
+                            break;
+                        case "0225":///变压器温度2 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.TransformerTemperature2 = ParsMethod.GetParsWholeByte(str_data1, 0, -40);
+                            break;
+                        case "0226":///V2L温度1 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.V2LTemperature1 = ParsMethod.GetParsWholeByte(str_data1, 0, -40);
+                            break;
+                        case "0227":///V2L温度2 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.V2LTemperature2 = ParsMethod.GetParsWholeByte(str_data1, 0, -40);
+                            break;
+                        case "0228":///充电机输出电压值 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.ONC_OutputVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "0229":///充电机输出电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.ONC_OutputCurrent = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "0299":///DC-DC输入电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.DCDC_InputCurrent = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "029C":///12VDCDC控制器状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_12VControllerStatus = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "029D":///12VDCDC输入电压 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.DCDC_12VInputVoltage = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "029E":///12VDCDC输入电流 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_12VInputCurrent = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "029F":///12VDCDC输出电压 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_12VOutputVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "02A0":///12VDCDC输出电流 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_12VOutputCurrent = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "02A1":///12VDCDC效率 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_12VEfficiency = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "02A2":///12VDCDC温度 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_12Temperature = ParsMethod.GetParsWholeByte(str_data1, 0, -40);
+                            break;
+                        case "02A3":///48VDCDC控制器状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_48VControllerStatus = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "02A4":///48VDCDC输入电压 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.DCDC_48VInputVoltage = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "02A5":///48VDCDC输入电流 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_48VInputCurrent = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "02A6":///48VDCDC输出电压 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_48VOutputVoltage = ParsMethod.GetParsWholeByte(str_data1, 0.1);
+                            break;
+                        case "02A7":///48VDCDC输出电流 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_48VOutputCurrent = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "02A8":///48VDCDC效率 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_48VEfficiency = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "02A9":///48VDCDC温度 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_48Temperature = ParsMethod.GetParsWholeByte(str_data1, 0, -40);
+                            break;
+                        case "02AA":///12V-DC使能 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_12VEnable = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "02AB":///V2L使能 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.V2LEnable = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "02AC":///48V-DC使能 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.DCDC_48VEnable = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0401":///电机位置传感器故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.Motor_PositionSensorFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0402":///IGN断线故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.IGN_DisconnectionFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0403":///控制器电源超限 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.ControllerPowerLimit = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0404":///EHPS过温报警 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.EHPS_OverTemperatureAlarm = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0405":///EHPS故障状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.EHPS_FaultState = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0406":///EHPS工作状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.EHPS_WorkingStatus = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "092B":///电池包最大放电电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BatteryPackMaxDischargeCurrent = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "092C":///电池包最大充电电流 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BatteryPackMaxChargeCurrent = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "092D":///电池单体次高温度 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BatteryMonomerSubHighTemp = ParsMethod.GetParsWholeByte(str_data1, 0.1, -40);
+                            break;
+                        case "092E":///电池单体次低温度 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BatteryMonomerSubLowTemp = ParsMethod.GetParsWholeByte(str_data1, 0.1, -40);
+                            break;
+                        case "092F":///电池单体次高温度编号 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BatteryMonomerSubHighTempNumber = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0930":///电池单体次低温度编号 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BatteryMonomerSubLowTempNumber = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0931":///电池单体第三高温度 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BatteryMonomerThirdHighTemp = ParsMethod.GetParsWholeByte(str_data1, 0.1, -40);
+                            break;
+                        case "0932":///电池单体第三低温度 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.BatteryMonomerThirdLowTemp = ParsMethod.GetParsWholeByte(str_data1, 0.1, -40);
+                            break;
+                        case "0933":///电池单体第三高温度编号 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BatteryMonomerThirdHighTempNumber = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0934":///电池单体第三低温度编号 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BatteryMonomerThirdLowTempNumber = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0935":///已充电时间 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.ChargedTime = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0936":///剩余充电时间 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.RemainingChargingTime = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0937":///已放电时间（逆变） 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.DischargeTime = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0938":///剩余放电时间（逆变） 
+                            num = 2;
+                            str_data1 = str_all.Substring(0, 5);
+                            session.cd_evt.RemainingDisChargeTime = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0C31":///电池烟雾故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BMS_SmokeFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0C34":///高压互锁状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.HighVoltageInterlock = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0C35":///电池温度过低故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BatteryTempLowFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0C36":///能量系统ready 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.EnergySystemReady = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0C37":///BMS故障等级 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BMS_FaultLevel = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0C38":///与BSU通讯超时故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.WithBSUCommuniTimeout = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0C39":///与充电机通讯超时故障（交、直） 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.WithBatteryChargerCommuniTimeout = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0C3A":///电池自检故障 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            session.cd_evt.BatterySelfCheckFault = ParsMethod.GetParsWholeByte(str_data1);
+                            break;
+                        case "0124":///MCU冷却请求 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            str_data2 = regex.Replace(str_data1, "");
+                            data1 = Convert.ToInt32(str_data2, 16);
+                            str_data1 = Convert.ToString(data1, 2);
+                            if (str_data1.Length < 8)
+                                str_data1 = str_data1.PadLeft(8, '0');
+                            result = str_data1.Substring(7);//水泵启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.MCU_PumpStart = faultint;
+                            result = str_data1.Substring(6);//低速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.MCU_LowSpeedFanStart = faultint;
+                            result = str_data1.Substring(5);//高速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.MCU_HighSpeedFanStart = faultint;
+                            break;
+                        case "0125":///V2L冷却请求 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            str_data2 = regex.Replace(str_data1, "");
+                            data1 = Convert.ToInt32(str_data2, 16);
+                            str_data1 = Convert.ToString(data1, 2);
+                            if (str_data1.Length < 8)
+                                str_data1 = str_data1.PadLeft(8, '0');
+                            result = str_data1.Substring(7);//水泵启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.V2L_PumpStart = faultint;
+                            result = str_data1.Substring(6);//低速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.V2L_LowSpeedFanStart = faultint;
+                            result = str_data1.Substring(5);//高速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.V2L_HighSpeedFanStart = faultint;
+                            break;
+                        case "0296":///12vDCDC报警信息 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            str_data2 = regex.Replace(str_data1, "");
+                            data1 = Convert.ToInt32(str_data2, 16);
+                            str_data1 = Convert.ToString(data1, 2);
+                            if (str_data1.Length < 8)
+                                str_data1 = str_data1.PadLeft(8, '0');
+                            result = str_data1.Substring(7);//DCDC输入过压故障 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_12VInputOvervoltage = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_12VInputOvervoltage", "0X" + str_data2 + "-bit0", 1, faultint);
+                            result = str_data1.Substring(6);//DCDC输入欠压故障 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_12VInputUndervoltage = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_12VInputUndervoltage", "0X" + str_data2 + "-bit1", 1, faultint);
+                            result = str_data1.Substring(5);//DCDC输出短路故障 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_12VOutputShortcircuit = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_12VOutputShortcircuit", "0X" + str_data2 + "-bit2", 1, faultint);
+                            result = str_data1.Substring(4);//DCDC过热故障 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_12VOverheatFault = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_12VOverheatFault", "0X" + str_data2 + "-bit3", 1, faultint);
+                            result = str_data1.Substring(3);//DCDC输出欠压报警 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_12VOutputUndervoltage = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_12VOutputUndervoltage", "0X" + str_data2 + "-bit4", 1, faultint);
+                            result = str_data1.Substring(2);//DCDC输出过压报警 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_12VOutputOvervoltage = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_12VOutputOvervoltage", "0X" + str_data2 + "-bit5", 1, faultint);
+                            break;
+                        case "0297":///48vDCDC报警信息 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            str_data2 = regex.Replace(str_data1, "");
+                            data1 = Convert.ToInt32(str_data2, 16);
+                            str_data1 = Convert.ToString(data1, 2);
+                            if (str_data1.Length < 8)
+                                str_data1 = str_data1.PadLeft(8, '0');
+                            result = str_data1.Substring(7);//DCDC输入过压故障 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_48VInputOvervoltage = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_48VInputOvervoltage", "0X" + str_data2 + "-bit0", 1, faultint);
+                            result = str_data1.Substring(6);//DCDC输入欠压故障 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_48VInputUndervoltage = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_48VInputUndervoltage", "0X" + str_data2 + "-bit1", 1, faultint);
+                            result = str_data1.Substring(5);//DCDC输出短路故障 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_48VOutputShortcircuit = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_48VOutputShortcircuit", "0X" + str_data2 + "-bit2", 1, faultint);
+                            result = str_data1.Substring(4);//DCDC过热故障 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_48VOverheatFault = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_48VOverheatFault", "0X" + str_data2 + "-bit3", 1, faultint);
+                            result = str_data1.Substring(3);//DCDC输出欠压报警 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_48VOutputUndervoltage = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_48VOutputUndervoltage", "0X" + str_data2 + "-bit4", 1, faultint);
+                            result = str_data1.Substring(2);//DCDC输出过压报警 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_48VOutputOvervoltage = faultint;
+                            canfault += PublicMethods.GetCanFaultStr("DCDC_48VOutputOvervoltage", "0X" + str_data2 + "-bit5", 1, faultint);
+                            break;
+                        case "0298":///12V-DCDC冷却请求 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            str_data2 = regex.Replace(str_data1, "");
+                            data1 = Convert.ToInt32(str_data2, 16);
+                            str_data1 = Convert.ToString(data1, 2);
+                            if (str_data1.Length < 8)
+                                str_data1 = str_data1.PadLeft(8, '0');
+                            result = str_data1.Substring(7);//水泵启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_12VPumpStart = faultint;
+                            result = str_data1.Substring(6);//低速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_12VLowSpeedFanStart = faultint;
+                            result = str_data1.Substring(5);//高速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_12VHighSpeedFanStart = faultint;
+                            break;
+                        case "029A":///48vDCDC冷却请求 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            str_data2 = regex.Replace(str_data1, "");
+                            data1 = Convert.ToInt32(str_data2, 16);
+                            str_data1 = Convert.ToString(data1, 2);
+                            if (str_data1.Length < 8)
+                                str_data1 = str_data1.PadLeft(8, '0');
+                            result = str_data1.Substring(7);//水泵启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_48VPumpStart = faultint;
+                            result = str_data1.Substring(6);//低速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_48VLowSpeedFanStart = faultint;
+                            result = str_data1.Substring(5);//高速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.DCDC_48VHighSpeedFanStart = faultint;
+                            break;
+                        case "029B":///OBC冷却请求 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            str_data2 = regex.Replace(str_data1, "");
+                            data1 = Convert.ToInt32(str_data2, 16);
+                            str_data1 = Convert.ToString(data1, 2);
+                            if (str_data1.Length < 8)
+                                str_data1 = str_data1.PadLeft(8, '0');
+                            result = str_data1.Substring(7);//水泵启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.OBC_PumpStart = faultint;
+                            result = str_data1.Substring(6);//低速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.OBC_LowSpeedFanStart = faultint;
+                            result = str_data1.Substring(5);//高速风扇启动请求 
+                            faultint = int.Parse(result);
+                            session.cd_evt.OBC_HighSpeedFanStart = faultint;
+                            break;
+                        case "0C32":///接触器控制状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            str_data2 = regex.Replace(str_data1, "");
+                            data1 = Convert.ToInt32(str_data2, 16);
+                            str_data1 = Convert.ToString(data1, 2);
+                            if (str_data1.Length < 8)
+                                str_data1 = str_data1.PadLeft(8, '0');
+                            result = str_data1.Substring(7);//总正接触器控制 
+                            faultint = int.Parse(result);
+                            session.cd_evt.GeneralContactorControl = faultint;
+                            result = str_data1.Substring(6);//总负接触器控制 
+                            faultint = int.Parse(result);
+                            session.cd_evt.TotalNegativeContactorControl = faultint;
+                            result = str_data1.Substring(5);//预充电接触器控制 
+                            faultint = int.Parse(result);
+                            session.cd_evt.PrechargeContactorControl = faultint;
+                            break;
+                        case "0C33":///反馈点接触器状态 
+                            num = 1;
+                            str_data1 = str_all.Substring(0, 2);
+                            str_data2 = regex.Replace(str_data1, "");
+                            data1 = Convert.ToInt32(str_data2, 16);
+                            str_data1 = Convert.ToString(data1, 2);
+                            if (str_data1.Length < 8)
+                                str_data1 = str_data1.PadLeft(8, '0');
+                            result = str_data1.Substring(6, 2);//总正接触器状态（触点反馈） 
+                            faultint = PublicMethods.Get2To10(result);
+                            session.cd_evt.GeneralContactorControlFeedback = faultint;
+                            if (faultint > 1)
+                                canfault += string.Format("${0}::{1}:{2}", "GeneralContactorControlFeedback", 1, faultint);
+                            result = str_data1.Substring(4, 2);//总负接触器状态（触点反馈） 
+                            faultint = PublicMethods.Get2To10(result);
+                            session.cd_evt.TotalNegativeContactorControlFeedback = faultint;
+                            if (faultint > 1)
+                                canfault += string.Format("${0}::{1}:{2}", "TotalNegativeContactorControlFeedback", 1, faultint);
+                            result = str_data1.Substring(2, 2);//预充电接触器状态（触点反馈） 
+                            faultint = PublicMethods.Get2To10(result);
+                            session.cd_evt.PrechargeContactorControlFeedback = faultint;
+                            if (faultint > 1)
+                                canfault += string.Format("${0}::{1}:{2}", "PrechargeContactorControlFeedback", 1, faultint);
                             break;
                         #endregion
                         default:

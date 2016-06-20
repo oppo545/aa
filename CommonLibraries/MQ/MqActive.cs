@@ -30,6 +30,32 @@ public class MqActive : Mq
             sendDataTimerbyFSZL = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyFSZL), null, Polltime, Polltime);
             sendDataTimerbyCharge = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyCharge), null, Polltime, Polltime);
             sendDataTimerbyTest = new System.Threading.Timer(new System.Threading.TimerCallback(SendDataCallbackbyTest), null, Polltime, Polltime);
+
+            connection = factory.CreateConnection();
+            session = connection.CreateSession();
+
+            prodGPS = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("GPS"));
+            messageGPS = prodGPS.CreateTextMessage();
+
+            prod = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("Can"));
+            message = prod.CreateTextMessage();
+
+            prodAlarm = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("Alarm"));
+            messageAlarm = prodAlarm.CreateTextMessage();
+
+            prod1 = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("PutQueue"));
+            message1 = prod1.CreateTextMessage();
+
+            prodForward = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("ForwardToSHDB"));
+            messageForward = prodForward.CreateTextMessage();
+
+            prodFSZL = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("FSZL_Reply"));
+            messageFSZL = prodFSZL.CreateTextMessage();
+
+            prodCharge = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue("chargeReceiveQueue"));
+            messageCharge = prodCharge.CreateTextMessage();
+
+
         }
         catch (Exception)
         {
@@ -239,18 +265,18 @@ public class MqActive : Mq
         {
             List<string> lisSql = new List<string>();
             lisSql.AddRange(SQLStringList);
-            using (connection = factory.CreateConnection())
-            {
+            //using (connection = factory.CreateConnection())
+            //{
 
-                //通过连接创建Session会话
-                using (session = connection.CreateSession())
-                {
+            //    //通过连接创建Session会话
+            //    using (session = connection.CreateSession())
+            //    {
                     //通过会话创建生产者，方法里面new出来的是MQ中的Queue
-                    prod = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                   // prod = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
                     for (int i = 0; i < lisSql.Count(); i++)
                     {
                         //创建一个发送的消息对象
-                        message = prod.CreateTextMessage();
+                        //message = prod.CreateTextMessage();
                         //给这个对象赋实际的消息
                         message.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
@@ -258,8 +284,8 @@ public class MqActive : Mq
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
                         prod.Send(message, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
-                }
-            }
+            //    }
+            //}
         }
         catch (Exception ex)
         {
@@ -275,27 +301,27 @@ public class MqActive : Mq
         {
             List<string> lisSql = new List<string>();
             lisSql.AddRange(SQLStringList);
-            using (connection = factory.CreateConnection())
-            {
+            //using (connection = factory.CreateConnection())
+            //{
 
-                //通过连接创建Session会话
-                using (session = connection.CreateSession())
-                {
+            //    //通过连接创建Session会话
+            //    using (session = connection.CreateSession())
+            //    {
                     //通过会话创建生产者，方法里面new出来的是MQ中的Queue
-                    prod1 = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                   // prod1 = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
                     for (int i = 0; i < lisSql.Count(); i++)
                     {
                         //创建一个发送的消息对象
-                        message1 = prod1.CreateTextMessage();
+                       // message1 = prod1.CreateTextMessage();
                         //给这个对象赋实际的消息
                         message1.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
-                        //message1.Properties.SetString("filter", "demo");
+                        message1.Properties.SetString("filter", "demo");
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
                         prod1.Send(message1, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
-                }
-            }
+            //    }
+            //}
         }
         catch (Exception ex)
         {
@@ -420,6 +446,7 @@ public class MqActive : Mq
             }
         }
     }
+
     static IMessageProducer prodGPS;
     static ITextMessage messageGPS;
     public static void sendObjectbyGPS(string mqname, List<string> SQLStringList)
@@ -428,18 +455,18 @@ public class MqActive : Mq
         {
             List<string> lisSql = new List<string>();
             lisSql.AddRange(SQLStringList);
-            using (connection = factory.CreateConnection())
-            {
+            //using (connection = factory.CreateConnection())
+            //{
 
-                //通过连接创建Session会话
-                using (session = connection.CreateSession())
-                {
+            //    //通过连接创建Session会话
+            //    using (session = connection.CreateSession())
+            //    {
                     //通过会话创建生产者，方法里面new出来的是MQ中的Queue
-                    prodGPS = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                    //prodGPS = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
                     for (int i = 0; i < lisSql.Count(); i++)
                     {
                         //创建一个发送的消息对象
-                        messageGPS = prodGPS.CreateTextMessage();
+                        //messageGPS = prodGPS.CreateTextMessage();
                         //给这个对象赋实际的消息
                         messageGPS.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
@@ -447,8 +474,8 @@ public class MqActive : Mq
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
                         prodGPS.Send(messageGPS, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
-                }
-            }
+            //    }
+            //}
         }
         catch (Exception ex)
         {
@@ -522,18 +549,18 @@ public class MqActive : Mq
         {
             List<string> lisSql = new List<string>();
             lisSql.AddRange(SQLStringList);
-            using (connection = factory.CreateConnection())
-            {
+            //using (connection = factory.CreateConnection())
+            //{
 
-                //通过连接创建Session会话
-                using (session = connection.CreateSession())
-                {
+            //    //通过连接创建Session会话
+            //    using (session = connection.CreateSession())
+            //    {
                     //通过会话创建生产者，方法里面new出来的是MQ中的Queue
-                    prodAlarm = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                   // prodAlarm = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
                     for (int i = 0; i < lisSql.Count(); i++)
                     {
                         //创建一个发送的消息对象
-                        messageAlarm = prodAlarm.CreateTextMessage();
+                       // messageAlarm = prodAlarm.CreateTextMessage();
                         //给这个对象赋实际的消息
                         messageAlarm.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
@@ -541,8 +568,8 @@ public class MqActive : Mq
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
                         prodAlarm.Send(messageAlarm, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
-                }
-            }
+            //    }
+            //}
         }
         catch (Exception ex)
         {
@@ -624,18 +651,18 @@ public class MqActive : Mq
         {
             List<string> lisSql = new List<string>();
             lisSql.AddRange(SQLStringList);
-            using (connection = factory.CreateConnection())
-            {
+            //using (connection = factory.CreateConnection())
+            //{
 
-                //通过连接创建Session会话
-                using (session = connection.CreateSession())
-                {
+            //    //通过连接创建Session会话
+            //    using (session = connection.CreateSession())
+            //    {
                     //通过会话创建生产者，方法里面new出来的是MQ中的Queue
-                    prodForward = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                   // prodForward = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
                     for (int i = 0; i < lisSql.Count(); i++)
                     {
                         //创建一个发送的消息对象
-                        messageForward = prodForward.CreateTextMessage();
+                       // messageForward = prodForward.CreateTextMessage();
                         //给这个对象赋实际的消息
                         messageForward.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
@@ -643,8 +670,8 @@ public class MqActive : Mq
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
                         prodForward.Send(messageForward, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
-                }
-            }
+            //    }
+            //}
         }
         catch (Exception ex)
         {
@@ -724,18 +751,18 @@ public class MqActive : Mq
         {
             List<string> lisSql = new List<string>();
             lisSql.AddRange(SQLStringList);
-            using (connection = factory.CreateConnection())
-            {
+            //using (connection = factory.CreateConnection())
+            //{
 
-                //通过连接创建Session会话
-                using (session = connection.CreateSession())
-                {
+            //    //通过连接创建Session会话
+            //    using (session = connection.CreateSession())
+            //    {
                     //通过会话创建生产者，方法里面new出来的是MQ中的Queue
-                    prodFSZL = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                    //prodFSZL = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
                     for (int i = 0; i < lisSql.Count(); i++)
                     {
                         //创建一个发送的消息对象
-                        messageFSZL = prodFSZL.CreateTextMessage();
+                        //messageFSZL = prodFSZL.CreateTextMessage();
                         //给这个对象赋实际的消息
                         messageFSZL.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
@@ -743,8 +770,8 @@ public class MqActive : Mq
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
                         prodFSZL.Send(messageFSZL, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
-                }
-            }
+            //    }
+            //}
         }
         catch (Exception ex)
         {
@@ -824,18 +851,18 @@ public class MqActive : Mq
         {
             List<string> lisSql = new List<string>();
             lisSql.AddRange(SQLStringList);
-            using (connection = factory.CreateConnection())
-            {
+            //using (connection = factory.CreateConnection())
+            //{
 
-                //通过连接创建Session会话
-                using (session = connection.CreateSession())
-                {
+            //    //通过连接创建Session会话
+            //    using (session = connection.CreateSession())
+            //    {
                     //通过会话创建生产者，方法里面new出来的是MQ中的Queue
-                    prodCharge = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
+                   // prodCharge = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(mqname));
                     for (int i = 0; i < lisSql.Count(); i++)
                     {
                         //创建一个发送的消息对象
-                        messageCharge = prodCharge.CreateTextMessage();
+                       // messageCharge = prodCharge.CreateTextMessage();
                         //给这个对象赋实际的消息
                         messageCharge.Text = lisSql[i].ToString();
                         //设置消息对象的属性，这个很重要哦，是Queue的过滤条件，也是P2P消息的唯一指定属性
@@ -843,8 +870,8 @@ public class MqActive : Mq
                         //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消+息优先级别，发送最小单位，当然还有其他重载
                         prodCharge.Send(messageCharge, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
                     }
-                }
-            }
+            //    }
+            //}
         }
         catch (Exception ex)
         {
